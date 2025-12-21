@@ -1,0 +1,523 @@
+:root {
+    --primary: #0056b3;
+    --accent: #ff9900;
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --text: #e0e0e0;
+    --input-bg: #2c2c2c;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    padding-bottom: 80px;
+}
+
+header {
+    background-color: var(--surface);
+    padding: 15px;
+    text-align: center;
+    border-bottom: 2px solid var(--primary);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.container {
+    padding: 15px;
+    display: none;
+    animation: fadeIn 0.3s;
+}
+
+.container.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.card {
+    width: 96%;
+    background-color: var(--surface);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: var(--accent);
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background-color: var(--input-bg);
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid var(--primary);
+    border-color: transparent;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button.secondary {
+    background-color: #444;
+    margin-top: 10px;
+}
+
+.result-box {
+    background-color: rgba(0, 86, 179, 0.2);
+    border: 1px solid var(--primary);
+    color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: none;
+    font-weight: bold;
+}
+
+nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--surface);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid #333;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+    color: #888;
+    text-align: center;
+    font-size: 0.75rem;
+    background: none;
+    border: none;
+    padding: 5px;
+    flex: 1;
+}
+
+.nav-item.active {
+    color: var(--primary);
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 3px;
+}
+
+#searchBar {
+    margin-bottom: 10px;
+}
+
+.norm-item {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.norm-item small {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 2px;
+}
+
+
+/* Styling für die Material-Listen */
+.project-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    border-left: 4px solid #0056b3;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.material-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.material-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-icon-small {
+    background: none;
+    border: none;
+    color: #ff4444;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+/* Eingabe-Gruppe für Material */
+.input-group {
+    display: flex;
+    gap: 8px;
+    /* Abstand zwischen den Feldern */
+    margin-bottom: 15px;
+}
+
+/* Das Mengen-Feld: schmaler */
+.input-small {
+    width: 60px;
+    text-align: center;
+    flex-shrink: 0;
+    /* Darf nicht kleiner gequetscht werden */
+}
+
+/* Das Text-Feld: nimmt den Restplatz */
+.input-group input[type="text"] {
+    flex-grow: 1;
+    margin-bottom: 0;
+    /* Standard-Margin überschreiben */
+}
+
+/* Der Plus-Button */
+.btn-add {
+    flex-shrink: 0;
+    width: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 0;
+}
+
+/* Styling für die Menge in der Liste */
+.item-amount {
+    background: #0056b3;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 0.9rem;
+    min-width: 30px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* Container für die Tabs */
+.archive-toggle {
+    display: flex;
+    background: #e0e0e0;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 10px;
+}
+
+/* Die einzelnen Tabs */
+.toggle-btn {
+    flex: 1;
+    background: transparent;
+    color: #555;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Aktiver Tab */
+.toggle-btn.active {
+    background: white;
+    color: #0056b3;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style für archivierte Items in der Liste (etwas ausgegraut) */
+.project-item.archived-style {
+    border-left-color: #888;
+    opacity: 0.8;
+}
+
+/* Styling für das Notizfeld */
+/* #quick_note {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 100px;
+    background: #fff; 
+    color: #333;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#quick_note:focus {
+    outline: none;
+    border-color: #f39c12;
+    box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.2);
+} */
+
+/* --- Styling für den Notizblock (Dark Mode) --- */
+.note-card {
+    border-left: 4px solid #f39c12;
+    /* Oranger Akzent bleibt */
+    /* Hintergrund passend zum Rest der App nehmen wir automatisch vom .card Style, 
+       aber wir stellen sicher, dass Text hell ist */
+}
+
+#quick_note {
+    width: 98%;
+    border: 1px solid #444; 
+    border-radius: 4px;
+    padding: 10px;
+    font-family: monospace; 
+    font-size: 1rem;
+    min-height: 100px;
+    background: #2b2b2b; 
+    color: #e0e0e0; 
+    resize: vertical;
+    outline: none;
+}
+
+
+
+#quick_note:focus {
+    border-color: #f39c12;
+    box-shadow: 0 0 5px rgba(243, 156, 18, 0.3);
+}
+
+/* Das "Gespeichert" Badge */
+.save-badge {
+    font-size: 0.8rem;
+    color: #2ecc71;
+    /* Helles Grün */
+    background: rgba(46, 204, 113, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    opacity: 0;
+    /* Standardmäßig unsichtbar */
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+/* Kleine Buttons unten */
+.small-btn {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+}
+
+.btn-danger {
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+.btn-danger:hover {
+    background: rgba(255, 107, 107, 0.1);
+}
+
+/* Styling für die technischen Tabellen */
+
+
+.tech-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: var(--text);
+    /* Helle Textfarbe erzwingen */
+}
+
+.tech-table th,
+.tech-table td {
+    border: 1px solid #444;
+    /* Dunklere, dezente Rahmen */
+    padding: 12px 10px;
+    /* Mehr Platz (Höhe) macht es lesbarer */
+    text-align: left;
+}
+
+.tech-table th {
+    background-color: #2a2a2a;
+    /* Dunkelgrauer Kopf statt Weiß */
+    color: var(--accent);
+    /* Orange Akzentfarbe für Überschriften */
+    font-weight: bold;
+    border-bottom: 2px solid #555;
+}
+
+/* Zebra-Streifen: Nur ganz leicht aufhellen statt Weiß */
+.tech-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Hover-Effekt: Zeile leuchtet auf, wenn man drübergeht (hilft dem Auge) */
+.tech-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Styling für die Suchergebnisse der Normen */
+.norm-item:hover {
+    background-color: #f0f8ff;
+    /* Helles Blau beim Drüberfahren */
+    cursor: default;
+}
+
+#searchBar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    /* Damit Padding nicht die Breite sprengt */
+}
+
+@keyframes highlight {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.result-box {
+    /* bestehende styles... */
+    transition: all 0.3s ease;
+}
+
+.result-box.updated {
+    animation: highlight 0.3s ease-in-out;
+}
+
+/* --- Elektro Zonen Visualisierung --- */
+.zone-visual {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.zone {
+    flex: 1;
+    padding: 15px 5px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+}
+
+.zone span {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.zone small {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+/* Farben mit Transparenz für Dark Mode */
+.z0 {
+    background-color: rgba(255, 68, 68, 0.15);
+    border-color: #ff4444;
+    color: #ff8888;
+    /* Helles Rot */
+}
+
+.z1 {
+    background-color: rgba(255, 187, 51, 0.15);
+    border-color: #ffbb33;
+    color: #ffcc66;
+    /* Helles Gelb */
+}
+
+.z2 {
+    background-color: rgba(0, 200, 81, 0.15);
+    border-color: #00c851;
+    color: #66ff99;
+    /* Helles Grün */
+}
+
+/* Styling für die Ventil-Anzeige */
+#valve_visual {
+    font-family: monospace;
+    text-shadow: 0 0 5px rgba(255, 153, 0, 0.6);
+}
