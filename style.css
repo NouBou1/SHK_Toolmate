@@ -7,6 +7,14 @@
     --input-bg: #2c2c2c;
 }
 
+/* "Resette" alle Elemente, damit Breiten stimmen */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg);
@@ -14,6 +22,8 @@ body {
     margin: 0;
     padding: 0;
     padding-bottom: 80px;
+    overflow-x: hidden; 
+    width: 100vw;
 }
 
 header {
@@ -39,6 +49,11 @@ header h1 {
     padding: 15px;
     display: none;
     animation: fadeIn 0.3s;
+    width: 100%;           /* Nutze immer 100% vom verfügbaren Platz */
+    max-width: 600px;      /* Aber werd auf dem PC nicht breiter als 600px */
+    margin: 0 auto;        /* Zentriert das Ganze auf dem PC */
+    padding: 10px;         /* Ein bisschen Luft zum Rand am Handy */
+    padding-bottom: 80px;  /* Platz unten lassen für das Menü */
 }
 
 .container.active {
@@ -69,6 +84,7 @@ header h1 {
     color: var(--accent);
     border-bottom: 1px solid #333;
     padding-bottom: 8px;
+    margin-bottom: 15px;
 }
 
 label {
@@ -130,7 +146,7 @@ button.secondary {
     font-weight: bold;
 }
 
-nav {
+/* nav {
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -160,8 +176,62 @@ nav {
     font-size: 1.5rem;
     display: block;
     margin-bottom: 3px;
+} */
+
+
+/* --- NAVIGATION UNTEN (Mobile optimiert) --- */
+nav {
+    position: fixed;        /* Klebt fest am Boden */
+    bottom: 0;
+    left: 0;
+    width: 100%;            /* Volle Breite */
+    height: 60px;           /* Feste Höhe */
+    background-color: #1e1e1e; /* Dunkler Hintergrund */
+    border-top: 1px solid #333;
+    display: flex;          /* Die Magie: Nebeneinander anordnen */
+    justify-content: space-around; /* Platz gleichmäßig verteilen */
+    align-items: center;    /* Vertikal zentrieren */
+    z-index: 1000;          /* Immer ganz oben sichtbar */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.5); /* Leichter Schatten nach oben */
 }
 
+.nav-item {
+    background: none;
+    border: none;
+    color: #888;            /* Inaktive Farbe (Grau) */
+    display: flex;
+    flex-direction: column; /* Icon oben, Text unten */
+    align-items: center;
+    justify-content: center;
+    flex: 1;                /* WICHTIG: Jeder Button kriegt exakt 1/5 vom Platz */
+    height: 100%;
+    padding: 5px 0;
+    cursor: pointer;
+    font-family: inherit;   /* Schriftart vererben */
+}
+
+.nav-icon {
+    font-size: 1.4rem;      /* Icon Größe */
+    margin-bottom: 2px;
+    display: block;
+}
+
+/* Text unter dem Icon */
+.nav-item span:not(.nav-icon) {
+    font-size: 0.7rem;      /* Kleine Schrift für "Lager", "Plan" etc. */
+}
+
+/* Aktiver Tab (wird Orange) */
+.nav-item.active {
+    color: var(--primary); /* Dein Orange (#ff9900) */
+    background-color: rgba(255, 153, 0, 0.05); /* Ganz leichtes Leuchten */
+    border-top: 3px solid var(--primary); /* Orangener Strich oben */
+}
+
+/* Klick-Effekt entfernen (blauer Rahmen) */
+.nav-item:focus {
+    outline: none;
+}
 #searchBar {
     margin-bottom: 10px;
 }
@@ -524,3 +594,129 @@ nav {
     font-family: monospace;
     text-shadow: 0 0 5px rgba(255, 153, 0, 0.6);
 }
+
+/* --- Kalender Styles --- */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.cal-header {
+    text-align: center;
+    font-weight: bold;
+    color: var(--accent);
+    font-size: 0.9rem;
+    padding-bottom: 5px;
+}
+
+.cal-day {
+    background: #2a2a2a;
+    border-radius: 6px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid #444;
+}
+
+.cal-day:hover {
+    background: #333;
+    border-color: var(--primary);
+}
+
+.cal-day.today {
+    background: rgba(0, 86, 179, 0.3);
+    border: 1px solid var(--primary);
+    font-weight: bold;
+}
+
+.cal-day.selected {
+    background: white;
+    color: black;
+}
+
+/* Der rote Punkt für Termine */
+.cal-dot {
+    position: absolute;
+    bottom: 4px;
+    width: 6px;
+    height: 6px;
+    background-color: #ff4444;
+    border-radius: 50%;
+}
+
+/* Event Karte unter dem Kalender */
+.cal-event-card {
+    background: #333;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    border-left: 3px solid var(--accent);
+}
+.cal-event-card:hover {
+    background: #444;
+}
+
+
+/* Globale Regel für alle Trennlinien */
+hr {
+    border: 0;                  /* Alten 3D-Rahmen entfernen */
+    height: 1px;                /* Nur 1 Pixel hoch */
+    background-color: #444;     /* Dunkelgraue Farbe */
+    margin: 15px 0;             /* Abstand nach oben/unten */
+    width: 100%;                /* Nicht breiter als der Container! */
+    box-sizing: border-box;     /* Wichtig für Padding-Berechnung */
+}
+
+/* Wetter Karte Design */
+.weather-card {
+    background: linear-gradient(135deg, #005f9e, #0088cc); /* SHK Blau */
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    font-family: sans-serif;
+}
+
+.weather-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.weather-status {
+    font-size: 0.9rem;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+.weather-body {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.big-temp {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.warning-box {
+    background-color: #ffcc00; /* Warn-Gelb */
+    color: #333;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-left: 5px solid #cc3300;
+}
+
