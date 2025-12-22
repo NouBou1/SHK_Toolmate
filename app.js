@@ -1049,3 +1049,32 @@ function calcRealPower() {
         `(${Math.round(watt)} Watt)`
     );
 }
+
+// --- RECHNER FILTER FUNKTION ---
+function filterCalculators() {
+    // 1. Suchbegriff holen
+    const input = document.getElementById('calcSearchInput');
+    const filter = input.value.toLowerCase();
+
+    // 2. Den Container holen, wo die Rechner drin sind
+    const container = document.getElementById('view-rechner');
+
+    // 3. Alle Karten DARIN holen
+    const cards = container.getElementsByClassName('card');
+
+    // 4. Durch alle Karten gehen und prüfen
+    for (let i = 0; i < cards.length; i++) {
+        const card = cards[i];
+
+        // Wir suchen im gesamten Text der Karte (Titel + Inhalt)
+        const text = card.innerText || card.textContent;
+
+        if (text.toLowerCase().indexOf(filter) > -1) {
+            // Treffer: Anzeigen
+            card.style.display = "";
+        } else {
+            // Kein Treffer: Ausblenden
+            card.style.display = "none";
+        }
+    }
+}

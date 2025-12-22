@@ -54,6 +54,13 @@
 
     <div id="view-rechner" class="container active">
 
+        <div
+            style="margin-bottom: 15px; position:sticky; top:0; z-index:90; background-color:var(--bg); padding-top:5px; padding-bottom:5px;">
+            <input type="text" id="calcSearchInput" onkeyup="filterCalculators()"
+                placeholder="🔍 Rechner suchen (z.B. Heizlast, Gas)..."
+                style="width:100%; padding:12px; border-radius:8px; border:1px solid #444; background:#2c2c2c; color:white; font-size:1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+        </div>
+
         <div class="card">
             <h3>🔥 Leistung via Gaszähler (auslitern)</h3>
             <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Stoppe die Zeit für eine Menge (z.B. 0,01 m³)</p>
@@ -577,62 +584,61 @@
             </div>
         </div>
 
-            <div class="card">
-                <h3 onclick="toggleTable('tab_sw')"
-                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
-                    🔧 Schlüsselweiten (SW) <span>▼</span>
-                </h3>
-                <div id="tab_sw" style="display:none; margin-top:10px;">
-                    <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">Sechskantmuttern (ISO 4032)</p>
-                    <table class="tech-table">
-                        <thead>
-                            <tr>
-                                <th>Gewinde</th>
-                                <th>SW (mm)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>M 6</td>
-                                <td>10 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 8</td>
-                                <td>13 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 10</td>
-                                <td>17 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 12</td>
-                                <td>19 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 16</td>
-                                <td>24 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 20</td>
-                                <td>30 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 24</td>
-                                <td>36 mm</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="card">
+            <h3 onclick="toggleTable('tab_sw')"
+                style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                🔧 Schlüsselweiten (SW) <span>▼</span>
+            </h3>
+            <div id="tab_sw" style="display:none; margin-top:10px;">
+                <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">Sechskantmuttern (ISO 4032)</p>
+                <table class="tech-table">
+                    <thead>
+                        <tr>
+                            <th>Gewinde</th>
+                            <th>SW (mm)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>M 6</td>
+                            <td>10 mm</td>
+                        </tr>
+                        <tr>
+                            <td>M 8</td>
+                            <td>13 mm</td>
+                        </tr>
+                        <tr>
+                            <td>M 10</td>
+                            <td>17 mm</td>
+                        </tr>
+                        <tr>
+                            <td>M 12</td>
+                            <td>19 mm</td>
+                        </tr>
+                        <tr>
+                            <td>M 16</td>
+                            <td>24 mm</td>
+                        </tr>
+                        <tr>
+                            <td>M 20</td>
+                            <td>30 mm</td>
+                        </tr>
+                        <tr>
+                            <td>M 24</td>
+                            <td>36 mm</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <div class="card">
-                <h3>📚 Normen & Regelwerke</h3>
-                <input type="text" id="searchBar" onkeyup="filterNormen()"
-                    placeholder="Suche (z.B. Gas, Trinkwasser)...">
-                <div id="normList"></div>
-            </div>
-
         </div>
+
+        <div class="card">
+            <h3>📚 Normen & Regelwerke</h3>
+            <input type="text" id="searchBar" onkeyup="filterNormen()" placeholder="Suche (z.B. Gas, Trinkwasser)...">
+            <div id="normList"></div>
+        </div>
+
+    </div>
 
 
     </div>
