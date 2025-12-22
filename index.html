@@ -17,6 +17,26 @@
         <h1>SHK-ToolMate</h1>
     </header>
 
+    <div class="card">
+        <h3>🌤️ Wetter am Standort</h3>
+        <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Wichtig für Kleber, Dichtmittel & Frostschutz.
+        </p>
+
+        <div id="weather_box" style="display:flex; align-items:center; justify-content:space-between;">
+            <div>
+                <span id="weather_temp" style="font-size:2rem; font-weight:bold;">--°C</span>
+                <div id="weather_desc" style="font-size:0.9rem;">Lade Standort...</div>
+            </div>
+            <div style="text-align:right;">
+                <div id="weather_wind">💨 -- km/h</div>
+                <div id="weather_rain">💧 -- mm</div>
+            </div>
+        </div>
+
+        <button onclick="getSiteWeather()" style="margin-top:10px;">Standort aktualisieren</button>
+        <div id="weather_warning" class="result-box"
+            style="display:none; margin-top:10px; border-color:#ff9900; background:rgba(255,153,0,0.1);"></div>
+    </div>
 
     <div class="card note-card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
@@ -35,6 +55,24 @@
     <div id="view-rechner" class="container active">
 
         <div class="card">
+            <h3>🔥 Leistung via Gaszähler (auslitern)</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Stoppe die Zeit für eine Menge (z.B. 0,01 m³)</p>
+
+            <label>Gestoppte Zeit (Sekunden)</label>
+            <input type="number" id="gas_sec" placeholder="z.B. 30">
+
+            <label>Gezählte Menge (am Zähler)</label>
+            <select id="gas_vol">
+                <option value="0.01">0,01 m³ (10 Liter) - Standard</option>
+                <option value="0.1">0,1 m³ (100 Liter)</option>
+                <option value="1.0">1,0 m³ (1000 Liter)</option>
+            </select>
+
+            <button onclick="calcGasPower()">Leistung ermitteln</button>
+            <div id="res_gas" class="result-box"></div>
+        </div>
+
+        <div class="card">
             <h3>🔥 Heizlast (Überschlag)</h3>
             <label>Raumfläche (m²)</label>
             <input type="number" id="hl_flaeche" placeholder="z.B. 20">
@@ -50,87 +88,11 @@
         </div>
 
         <div class="card">
-            <h3>💧 Volumenstrom (Pumpe)</h3>
-            <label>Leistung (kW)</label>
-            <input type="number" id="vs_kw" placeholder="z.B. 15">
-            <label>Spreizung Kelvin (ΔT)</label>
-            <input type="number" id="vs_dt" value="15" placeholder="Standard: 15">
-            <button onclick="calcVolumenstrom()">Berechnen</button>
-            <div id="res_volumen" class="result-box"></div>
-        </div>
-
-        <div class="card">
-            <h3>🔄 Zirkulation (3-Liter-Regel)</h3>
-            <label>Leitungslänge WW (m)</label>
-            <input type="number" id="zirk_m" placeholder="Länge bis Zapfstelle">
-            <label>Rohrdimension</label>
-            <select id="zirk_dn">
-                <option value="0.13">DN 12 (Cu 15x1) ~0.13 l/m</option>
-                <option value="0.20">DN 15 (Cu 18x1) ~0.20 l/m</option>
-                <option value="0.31">DN 20 (Cu 22x1) ~0.31 l/m</option>
-                <option value="0.50">DN 25 (Cu 28x1.5) ~0.50 l/m</option>
-            </select>
-            <button onclick="calcZirkulation()">Prüfen</button>
-            <div id="res_zirk" class="result-box"></div>
-        </div>
-
-
-        <div class="card">
             <h3>🔴 MAG Vordruck (Heizung)</h3>
             <label>Statische Höhe (Meter)</label>
             <input type="number" id="mag_hoehe" placeholder="Höhe bis oberster HK (z.B. 7)">
             <button onclick="calcMAG()">Berechnen</button>
             <div id="res_mag" class="result-box"></div>
-        </div>
-
-        <div class="card">
-            <h3>🚿 Mischwasser-Ertrag</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Wie viel Badewasser (ca. 38-40°C) ergibt mein
-                Speicher?</p>
-
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1">
-                    <label>Speicher T (°C)</label>
-                    <input type="number" id="mix_t_hot" value="60">
-                </div>
-                <div style="flex:1">
-                    <label>Speicher Vol. (L)</label>
-                    <input type="number" id="mix_vol" placeholder="z.B. 160">
-                </div>
-            </div>
-            <label>Kaltwasser T (°C)</label>
-            <input type="number" id="mix_t_cold" value="10">
-
-            <button onclick="calcMixWater()">Berechnen</button>
-            <div id="res_mix" class="result-box"></div>
-        </div>
-
-        <div class="card">
-            <h3>🕳️ Kernbohrung Maße</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Berechnet den benötigten Durchmesser inkl.
-                Dämmung & Spiel.</p>
-
-            <label>Rohr Dimension</label>
-            <select id="kb_dn">
-                <option value="50">DN 50 (50mm)</option>
-                <option value="75">DN 70/80 (75mm)</option>
-                <option value="110">DN 100 (110mm)</option>
-                <option value="125">DN 125 (125mm)</option>
-                <option value="160">DN 150 (160mm)</option>
-            </select>
-
-            <label>Dämmstärke (mm)</label>
-            <select id="kb_iso">
-                <option value="0">Keine Dämmung</option>
-                <option value="4">4 mm (Schwitzwasser)</option>
-                <option value="9">9 mm (Schutzschlauch)</option>
-                <option value="20">20 mm (50% EnEV)</option>
-                <option value="40">40 mm (100% EnEV)</option>
-                <option value="100">Brandschutzschale (ca. 100mm)</option>
-            </select>
-
-            <button onclick="calcCoreDrill()">Bohrdurchmesser berechnen</button>
-            <div id="res_kb" class="result-box"></div>
         </div>
 
         <div class="card">
@@ -168,129 +130,28 @@
 
         </div>
 
-        <div class="card">
-            <h3>📐 Etagen-Sprung (45°)</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Berechnet die Länge der Diagonalen (Mitte-Mitte).
-            </p>
-
-            <label>Versatz / Sprungmaß (cm)</label>
-            <input type="number" id="offset_cm" placeholder="z.B. 15">
-
-            <button onclick="calcOffset()">Länge berechnen</button>
-            <div id="res_offset" class="result-box"></div>
-        </div>
 
         <div class="card">
-            <h3>📉 Abwasser Gefälle</h3>
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1">
-                    <label>Länge (m)</label>
-                    <input type="number" id="slope_len" placeholder="2.5">
-                </div>
-                <div style="flex:1">
-                    <label>Gefälle (%)</label>
-                    <select id="slope_perc">
-                        <option value="1">1% (min. Belüftet)</option>
-                        <option value="2" selected>2% (Standard)</option>
-                        <option value="0.5">0.5% (Sammel.)</option>
-                        <option value="5">5% (max)</option>
-                    </select>
-                </div>
-            </div>
-            <button onclick="calcSlope()">Höhenunterschied</button>
-            <div id="res_slope" class="result-box"></div>
-        </div>
+            <h3>🔥 Leistung-Check (Ist-Zustand)</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Berechnet die momentane Leistung aus Durchfluss &
+                Delta-T.</p>
 
-        <div class="card">
-            <h3>📏 Rohr-Inhalt (Liter)</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Wichtig für TRGI & Spülungen</p>
+            <label>Volumenstrom (l/h)</label>
+            <input type="number" id="real_flow" placeholder="Abgelesen am Tacosetter/WMZ">
 
             <div style="display:flex; gap:10px;">
                 <div style="flex:1">
-                    <label>Länge (m)</label>
-                    <input type="number" id="vol_len" placeholder="Länge">
+                    <label>Vorlauf °C</label>
+                    <input type="number" id="real_vl" placeholder="VL">
                 </div>
                 <div style="flex:1">
-                    <label>Dimension</label>
-                    <select id="vol_dim">
-                        <option value="12">DN 12 (15mm) Stahl/Cu</option>
-                        <option value="15">DN 15 (18mm) Stahl/Cu</option>
-                        <option value="20">DN 20 (22mm) Stahl/Cu</option>
-                        <option value="25">DN 25 (28mm) Stahl/Cu</option>
-                        <option value="32">DN 32 (35mm) Stahl/Cu</option>
-                        <option value="40">DN 40 (42mm) Stahl/Cu</option>
-                        <option value="50">DN 50 (54mm) Stahl/Cu</option>
-                    </select>
-                </div>
-            </div>
-            <button onclick="calcPipeVol()">Volumen berechnen</button>
-            <div id="res_pipevol" class="result-box"></div>
-        </div>
-
-        <div class="card">
-            <h3>🛢️ Tank-Inhalt (Liegender Zylinder)</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Für Öltanks oder Zisternen. Berechnet Inhalt
-                anhand Füllhöhe.</p>
-
-            <label>Tank Durchmesser (cm)</label>
-            <input type="number" id="tank_d" placeholder="z.B. 125">
-
-            <label>Tank Länge (cm)</label>
-            <input type="number" id="tank_l" placeholder="z.B. 200">
-
-            <label>Gemessene Füllhöhe (cm)</label>
-            <input type="number" id="tank_h" placeholder="Aktueller Pegel">
-
-            <button onclick="calcTank()">Inhalt berechnen</button>
-            <div id="res_tank" class="result-box"></div>
-
-        </div>
-
-        <div class="card">
-            <h3>💨 Strömungsgeschwindigkeit</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Prüfung gegen Geräusche & Druckverlust.</p>
-
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1">
-                    <label>Volumenstrom</label>
-                    <input type="number" id="flow_vol" placeholder="Menge">
-                </div>
-                <div style="flex:1">
-                    <label>Einheit</label>
-                    <select id="flow_unit">
-                        <option value="l_h">l/h (Heizung)</option>
-                        <option value="l_min">l/min (Wasser)</option>
-                        <option value="m3_h">m³/h (Lüftung)</option>
-                    </select>
+                    <label>Rücklauf °C</label>
+                    <input type="number" id="real_rl" placeholder="RL">
                 </div>
             </div>
 
-            <label>Rohr Innendurchmesser (mm)</label>
-            <input type="number" id="flow_dn" placeholder="z.B. 15 (für DN15)">
-
-            <button onclick="calcFlowSpeed()">Geschwindigkeit (m/s)</button>
-            <div id="res_flow" class="result-box"></div>
-        </div>
-
-        <div class="card">
-            <h3>💧 Kondensat-Rechner</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Wie viel Wasser fällt beim Brennwertkessel an?
-            </p>
-
-            <label>Kessel-Leistung (kW)</label>
-            <input type="number" id="cond_kw" placeholder="z.B. 20">
-
-            <label>Brennstoff</label>
-            <select id="cond_fuel">
-                <option value="0.14">Erdgas (ca. 0,14 l/kWh)</option>
-                <option value="0.06">Heizöl EL (ca. 0,06 l/kWh)</option>
-            </select>
-
-            <label>Laufzeit (Stunden/Tag)</label>
-            <input type="number" id="cond_hours" value="8" placeholder="Volllast-Stunden">
-
-            <button onclick="calcCondensate()">Menge berechnen</button>
-            <div id="res_cond" class="result-box"></div>
+            <button onclick="calcRealPower()">Leistung ermitteln</button>
+            <div id="res_realpower" class="result-box"></div>
         </div>
 
         <div class="card">
@@ -323,30 +184,36 @@
         </div>
 
         <div class="card">
-            <h3>💨 Raum-Lüftung (Check) - Belüftung berechnen</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Benötigter Volumenstrom für Feuchteschutz (grob).
-            </p>
+            <h3>💧 Volumenstrom (Pumpe)</h3>
+            <label>Leistung (kW)</label>
+            <input type="number" id="vs_kw" placeholder="z.B. 15">
+            <label>Spreizung Kelvin (ΔT)</label>
+            <input type="number" id="vs_dt" value="15" placeholder="Standard: 15">
+            <button onclick="calcVolumenstrom()">Berechnen</button>
+            <div id="res_volumen" class="result-box"></div>
+        </div>
+
+
+        <div class="card">
+            <h3>🚿 Mischwasser-Ertrag</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Wie viel Badewasser (ca. 38-40°C) ergibt mein
+                Speicher?</p>
 
             <div style="display:flex; gap:10px;">
                 <div style="flex:1">
-                    <label>Raumfläche (m²)</label>
-                    <input type="number" id="air_qm" placeholder="z.B. 10">
+                    <label>Speicher T (°C)</label>
+                    <input type="number" id="mix_t_hot" value="60">
                 </div>
                 <div style="flex:1">
-                    <label>Raumhöhe (m)</label>
-                    <input type="number" id="air_h" value="2.5">
+                    <label>Speicher Vol. (L)</label>
+                    <input type="number" id="mix_vol" placeholder="z.B. 160">
                 </div>
             </div>
+            <label>Kaltwasser T (°C)</label>
+            <input type="number" id="mix_t_cold" value="10">
 
-            <label>Raumtyp</label>
-            <select id="air_type">
-                <option value="0.5">Wohnraum (0.5-fach)</option>
-                <option value="1.0">Küche/Bad (Fensterlos) (1.0-fach)</option>
-                <option value="40">Bad Ventilator (Pausch. 40-60m³)</option>
-            </select>
-
-            <button onclick="calcAirExchange()">Volumenstrom prüfen</button>
-            <div id="res_air" class="result-box"></div>
+            <button onclick="calcMixWater()">Berechnen</button>
+            <div id="res_mix" class="result-box"></div>
         </div>
 
         <div class="card">
@@ -376,6 +243,189 @@
         </div>
 
         <div class="card">
+            <h3>🔄 Zirkulation (3-Liter-Regel)</h3>
+            <label>Leitungslänge WW (m)</label>
+            <input type="number" id="zirk_m" placeholder="Länge bis Zapfstelle">
+            <label>Rohrdimension</label>
+            <select id="zirk_dn">
+                <option value="0.13">DN 12 (Cu 15x1) ~0.13 l/m</option>
+                <option value="0.20">DN 15 (Cu 18x1) ~0.20 l/m</option>
+                <option value="0.31">DN 20 (Cu 22x1) ~0.31 l/m</option>
+                <option value="0.50">DN 25 (Cu 28x1.5) ~0.50 l/m</option>
+            </select>
+            <button onclick="calcZirkulation()">Prüfen</button>
+            <div id="res_zirk" class="result-box"></div>
+        </div>
+
+        <div class="card">
+            <h3>💨 Strömungsgeschwindigkeit</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Prüfung gegen Geräusche & Druckverlust.</p>
+
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1">
+                    <label>Volumenstrom</label>
+                    <input type="number" id="flow_vol" placeholder="Menge">
+                </div>
+                <div style="flex:1">
+                    <label>Einheit</label>
+                    <select id="flow_unit">
+                        <option value="l_h">l/h (Heizung)</option>
+                        <option value="l_min">l/min (Wasser)</option>
+                        <option value="m3_h">m³/h (Lüftung)</option>
+                    </select>
+                </div>
+            </div>
+
+            <label>Rohr Innendurchmesser (mm)</label>
+            <input type="number" id="flow_dn" placeholder="z.B. 15 (für DN15)">
+
+            <button onclick="calcFlowSpeed()">Geschwindigkeit (m/s)</button>
+            <div id="res_flow" class="result-box"></div>
+        </div>
+
+        <div class="card">
+            <h3>📏 Rohr-Inhalt (Liter)</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Wichtig für TRGI & Spülungen</p>
+
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1">
+                    <label>Länge (m)</label>
+                    <input type="number" id="vol_len" placeholder="Länge">
+                </div>
+                <div style="flex:1">
+                    <label>Dimension</label>
+                    <select id="vol_dim">
+                        <option value="12">DN 12 (15mm) Stahl/Cu</option>
+                        <option value="15">DN 15 (18mm) Stahl/Cu</option>
+                        <option value="20">DN 20 (22mm) Stahl/Cu</option>
+                        <option value="25">DN 25 (28mm) Stahl/Cu</option>
+                        <option value="32">DN 32 (35mm) Stahl/Cu</option>
+                        <option value="40">DN 40 (42mm) Stahl/Cu</option>
+                        <option value="50">DN 50 (54mm) Stahl/Cu</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcPipeVol()">Volumen berechnen</button>
+            <div id="res_pipevol" class="result-box"></div>
+        </div>
+
+        <div class="card">
+            <h3>📉 Abwasser Gefälle</h3>
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1">
+                    <label>Länge (m)</label>
+                    <input type="number" id="slope_len" placeholder="2.5">
+                </div>
+                <div style="flex:1">
+                    <label>Gefälle (%)</label>
+                    <select id="slope_perc">
+                        <option value="1">1% (min. Belüftet)</option>
+                        <option value="2" selected>2% (Standard)</option>
+                        <option value="0.5">0.5% (Sammel.)</option>
+                        <option value="5">5% (max)</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="calcSlope()">Höhenunterschied</button>
+            <div id="res_slope" class="result-box"></div>
+        </div>
+
+        <div class="card">
+            <h3>💧 Kondensat-Rechner</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Wie viel Wasser fällt beim Brennwertkessel an?
+            </p>
+
+            <label>Kessel-Leistung (kW)</label>
+            <input type="number" id="cond_kw" placeholder="z.B. 20">
+
+            <label>Brennstoff</label>
+            <select id="cond_fuel">
+                <option value="0.14">Erdgas (ca. 0,14 l/kWh)</option>
+                <option value="0.06">Heizöl EL (ca. 0,06 l/kWh)</option>
+            </select>
+
+            <label>Laufzeit (Stunden/Tag)</label>
+            <input type="number" id="cond_hours" value="8" placeholder="Volllast-Stunden">
+
+            <button onclick="calcCondensate()">Menge berechnen</button>
+            <div id="res_cond" class="result-box"></div>
+        </div>
+
+        <div class="card">
+            <h3>🛢️ Tank-Inhalt (Liegender Zylinder)</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Für Öltanks oder Zisternen. Berechnet Inhalt
+                anhand Füllhöhe.</p>
+
+            <label>Tank Durchmesser (cm)</label>
+            <input type="number" id="tank_d" placeholder="z.B. 125">
+
+            <label>Tank Länge (cm)</label>
+            <input type="number" id="tank_l" placeholder="z.B. 200">
+
+            <label>Gemessene Füllhöhe (cm)</label>
+            <input type="number" id="tank_h" placeholder="Aktueller Pegel">
+
+            <button onclick="calcTank()">Inhalt berechnen</button>
+            <div id="res_tank" class="result-box"></div>
+
+        </div>
+
+        <div class="card">
+            <h3>💨 Raum-Lüftung (Check) - Belüftung berechnen</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Benötigter Volumenstrom für Feuchteschutz (grob).
+            </p>
+
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1">
+                    <label>Raumfläche (m²)</label>
+                    <input type="number" id="air_qm" placeholder="z.B. 10">
+                </div>
+                <div style="flex:1">
+                    <label>Raumhöhe (m)</label>
+                    <input type="number" id="air_h" value="2.5">
+                </div>
+            </div>
+
+            <label>Raumtyp</label>
+            <select id="air_type">
+                <option value="0.5">Wohnraum (0.5-fach)</option>
+                <option value="1.0">Küche/Bad (Fensterlos) (1.0-fach)</option>
+                <option value="40">Bad Ventilator (Pausch. 40-60m³)</option>
+            </select>
+
+            <button onclick="calcAirExchange()">Volumenstrom prüfen</button>
+            <div id="res_air" class="result-box"></div>
+        </div>
+
+        <div class="card">
+            <h3>🕳️ Kernbohrung Maße</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Berechnet den benötigten Durchmesser inkl.
+                Dämmung & Spiel.</p>
+
+            <label>Rohr Dimension</label>
+            <select id="kb_dn">
+                <option value="50">DN 50 (50mm)</option>
+                <option value="75">DN 70/80 (75mm)</option>
+                <option value="110">DN 100 (110mm)</option>
+                <option value="125">DN 125 (125mm)</option>
+                <option value="160">DN 150 (160mm)</option>
+            </select>
+
+            <label>Dämmstärke (mm)</label>
+            <select id="kb_iso">
+                <option value="0">Keine Dämmung</option>
+                <option value="4">4 mm (Schwitzwasser)</option>
+                <option value="9">9 mm (Schutzschlauch)</option>
+                <option value="20">20 mm (50% EnEV)</option>
+                <option value="40">40 mm (100% EnEV)</option>
+                <option value="100">Brandschutzschale (ca. 100mm)</option>
+            </select>
+
+            <button onclick="calcCoreDrill()">Bohrdurchmesser berechnen</button>
+            <div id="res_kb" class="result-box"></div>
+        </div>
+
+        <div class="card">
             <h3>📏 Max. Schellenabstand</h3>
             <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Richtwerte für waagerechte Leitungen.</p>
 
@@ -400,36 +450,22 @@
             <div id="res_clip" class="result-box"></div>
         </div>
 
+
         <div class="card">
-            <h3>🔥 Leistung-Check (Ist-Zustand)</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Berechnet die momentane Leistung aus Durchfluss &
-                Delta-T.</p>
+            <h3>📐 Etagen-Sprung (45°)</h3>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Berechnet die Länge der Diagonalen (Mitte-Mitte).
+            </p>
 
-            <label>Volumenstrom (l/h)</label>
-            <input type="number" id="real_flow" placeholder="Abgelesen am Tacosetter/WMZ">
+            <label>Versatz / Sprungmaß (cm)</label>
+            <input type="number" id="offset_cm" placeholder="z.B. 15">
 
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1">
-                    <label>Vorlauf °C</label>
-                    <input type="number" id="real_vl" placeholder="VL">
-                </div>
-                <div style="flex:1">
-                    <label>Rücklauf °C</label>
-                    <input type="number" id="real_rl" placeholder="RL">
-                </div>
-            </div>
-
-            <button onclick="calcRealPower()">Leistung ermitteln</button>
-            <div id="res_realpower" class="result-box"></div>
+            <button onclick="calcOffset()">Länge berechnen</button>
+            <div id="res_offset" class="result-box"></div>
         </div>
     </div>
 
     <div id="view-normen" class="container">
-        <div class="card">
-            <h3>📚 Normen & Regelwerke</h3>
-            <input type="text" id="searchBar" onkeyup="filterNormen()" placeholder="Suche (z.B. Gas, Trinkwasser)...">
-            <div id="normList"></div>
-        </div>
+
 
         <div class="card">
             <h3 onclick="toggleTable('tab_elektro')"
@@ -541,58 +577,79 @@
             </div>
         </div>
 
-        <div class="card">
-            <h3 onclick="toggleTable('tab_sw')"
-                style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
-                🔧 Schlüsselweiten (SW) <span>▼</span>
-            </h3>
-            <div id="tab_sw" style="display:none; margin-top:10px;">
-                <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">Sechskantmuttern (ISO 4032)</p>
-                <table class="tech-table">
-                    <thead>
-                        <tr>
-                            <th>Gewinde</th>
-                            <th>SW (mm)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>M 6</td>
-                            <td>10 mm</td>
-                        </tr>
-                        <tr>
-                            <td>M 8</td>
-                            <td>13 mm</td>
-                        </tr>
-                        <tr>
-                            <td>M 10</td>
-                            <td>17 mm</td>
-                        </tr>
-                        <tr>
-                            <td>M 12</td>
-                            <td>19 mm</td>
-                        </tr>
-                        <tr>
-                            <td>M 16</td>
-                            <td>24 mm</td>
-                        </tr>
-                        <tr>
-                            <td>M 20</td>
-                            <td>30 mm</td>
-                        </tr>
-                        <tr>
-                            <td>M 24</td>
-                            <td>36 mm</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card">
+                <h3 onclick="toggleTable('tab_sw')"
+                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                    🔧 Schlüsselweiten (SW) <span>▼</span>
+                </h3>
+                <div id="tab_sw" style="display:none; margin-top:10px;">
+                    <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">Sechskantmuttern (ISO 4032)</p>
+                    <table class="tech-table">
+                        <thead>
+                            <tr>
+                                <th>Gewinde</th>
+                                <th>SW (mm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>M 6</td>
+                                <td>10 mm</td>
+                            </tr>
+                            <tr>
+                                <td>M 8</td>
+                                <td>13 mm</td>
+                            </tr>
+                            <tr>
+                                <td>M 10</td>
+                                <td>17 mm</td>
+                            </tr>
+                            <tr>
+                                <td>M 12</td>
+                                <td>19 mm</td>
+                            </tr>
+                            <tr>
+                                <td>M 16</td>
+                                <td>24 mm</td>
+                            </tr>
+                            <tr>
+                                <td>M 20</td>
+                                <td>30 mm</td>
+                            </tr>
+                            <tr>
+                                <td>M 24</td>
+                                <td>36 mm</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+            <div class="card">
+                <h3>📚 Normen & Regelwerke</h3>
+                <input type="text" id="searchBar" onkeyup="filterNormen()"
+                    placeholder="Suche (z.B. Gas, Trinkwasser)...">
+                <div id="normList"></div>
+            </div>
+
         </div>
+
+
     </div>
 
     </div>
 
     <div id="view-tools" class="container">
+
+
+
+        <div class="card">
+            <h3>Fehlercode Suche</h3>
+            <p style="color:#aaa; font-size:0.9rem;">(Demo-Funktion: Leitet zu Google weiter)</p>
+            <input type="text" id="error_code" placeholder="z.B. Viessmann F4">
+            <button class="secondary" onclick="searchError()">Auf Google suchen</button>
+        </div>
+
         <div class="card">
             <h3>🛠 Einheiten-Wandler</h3>
             <label>Wert eingeben</label>
@@ -616,12 +673,7 @@
             <div id="res_conv" class="result-box"></div>
         </div>
 
-        <div class="card">
-            <h3>Fehlercode Suche</h3>
-            <p style="color:#aaa; font-size:0.9rem;">(Demo-Funktion: Leitet zu Google weiter)</p>
-            <input type="text" id="error_code" placeholder="z.B. Viessmann F4">
-            <button class="secondary" onclick="searchError()">Auf Google suchen</button>
-        </div>
+
 
         <div class="card">
             <h3>💧 Wasserhärte (VDI 2035)</h3>
@@ -636,23 +688,7 @@
             <div id="res_hard" class="result-box"></div>
         </div>
 
-        <div class="card">
-            <h3>🔥 Leistung via Gaszähler</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Stoppe die Zeit für eine Menge (z.B. 0,01 m³)</p>
 
-            <label>Gestoppte Zeit (Sekunden)</label>
-            <input type="number" id="gas_sec" placeholder="z.B. 30">
-
-            <label>Gezählte Menge (am Zähler)</label>
-            <select id="gas_vol">
-                <option value="0.01">0,01 m³ (10 Liter) - Standard</option>
-                <option value="0.1">0,1 m³ (100 Liter)</option>
-                <option value="1.0">1,0 m³ (1000 Liter)</option>
-            </select>
-
-            <button onclick="calcGasPower()">Leistung ermitteln</button>
-            <div id="res_gas" class="result-box"></div>
-        </div>
     </div>
 
     <div id="view-material" class="container">
@@ -710,7 +746,7 @@
             <span class="nav-icon">🧮</span>Rechner
         </button>
         <button class="nav-item" onclick="switchTab('normen', this)">
-            <span class="nav-icon">📖</span>Normen/Regeln/Maße
+            <span class="nav-icon">📖</span>Normen/Maße
         </button>
         <button class="nav-item" onclick="switchTab('tools', this)">
             <span class="nav-icon">🔧</span>Tools
@@ -722,6 +758,7 @@
 
 
     <script src="app.js"></script>
+    <script src="js/fetch.js"></script>
 
 </body>
 
