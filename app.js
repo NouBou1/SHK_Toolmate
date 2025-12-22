@@ -1207,3 +1207,12 @@ function toggleFavorite(card, id, starEl) {
 
 // System starten (kurze Verzögerung, damit HTML sicher da ist)
 setTimeout(initFavorites, 500);
+
+// Service Worker registrieren (macht die App offline-fähig)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker registriert!', reg))
+            .catch(err => console.log('Service Worker Fehler:', err));
+    });
+}
