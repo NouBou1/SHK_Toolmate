@@ -44,26 +44,84 @@ function switchTab(viewId, btn) {
     btn.classList.add('active');
 }
 
-
-
+// --- ERGEBNIS ANZEIGEN & TEILEN ---
 function showResult(elementId, text, isError = false) {
     const el = document.getElementById(elementId);
 
-    // 1. Sichtbar machen
+    // 1. Sichtbar machen & Stylen
     el.style.display = 'block';
-
-    // 2. Farben setzen (Das war dein "bestehender Code")
     el.style.backgroundColor = isError ? 'rgba(180, 0, 0, 0.2)' : 'rgba(0, 86, 179, 0.2)';
     el.style.borderColor = isError ? '#ff4444' : '#0056b3';
 
-    // 3. Text einfügen
-    el.innerText = text;
+    // 2. Text für HTML aufbereiten (Zeilenumbrüche \n zu <br> wandeln)
+    const htmlText = text.replace(/\n/g, '<br>');
 
-    // 4. Animation neu starten (Der neue Teil)
-    el.classList.remove('updated'); // Klasse wegnehmen
-    void el.offsetWidth;            // "Reflow" erzwingen (Browser-Trick, damit er merkt, dass die Klasse weg war)
-    el.classList.add('updated');    // Klasse wieder hinzufügen -> Animation startet neu
+    // 3. Inhalt setzen: Text + Teilen-Button (nur wenn kein Fehler)
+    if (isError) {
+        el.innerHTML = `<strong>⚠️ Fehler:</strong><br>${htmlText}`;
+    } else {
+        // Wir speichern den rohen Text in einem data-Attribut, damit wir ihn leicht teilen können
+        el.setAttribute('data-result-text', text);
+
+        el.innerHTML = `
+            <div>${htmlText}</div>
+            <div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.1); padding-top:8px;">
+                <button class="small-btn secondary" onclick="shareResult(this)" style="width:auto; display:inline-flex; align-items:center; gap:5px;">
+                    📤 Senden / Kopieren
+                </button>
+            </div>
+        `;
+    }
+
+    // 4. Animation
+    el.classList.remove('updated');
+    void el.offsetWidth;
+    el.classList.add('updated');
 }
+
+// --- DIE TEILEN-LOGIK ---
+function shareResult(btn) {
+    // Den Text aus dem Eltern-Element (der Box) holen
+    const box = btn.closest('.result-box');
+    const textToShare = "SHK-Mate Ergebnis:\n\n" + box.getAttribute('data-result-text');
+
+    // Prüfen, ob der Browser "Teilen" unterstützt (Handys können das meistens)
+    if (navigator.share) {
+        navigator.share({
+            title: 'SHK-Mate Berechnung',
+            text: textToShare
+        })
+            .then(() => console.log('Erfolgreich geteilt'))
+            .catch((error) => console.log('Teilen abgebrochen', error));
+    } else {
+        // Fallback für PC: In Zwischenablage kopieren
+        navigator.clipboard.writeText(textToShare).then(() => {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✅ Kopiert!";
+            setTimeout(() => btn.innerHTML = originalText, 2000);
+        });
+    }
+}
+
+
+// function showResult(elementId, text, isError = false) {
+//     const el = document.getElementById(elementId);
+
+//     // 1. Sichtbar machen
+//     el.style.display = 'block';
+
+//     // 2. Farben setzen (Das war dein "bestehender Code")
+//     el.style.backgroundColor = isError ? 'rgba(180, 0, 0, 0.2)' : 'rgba(0, 86, 179, 0.2)';
+//     el.style.borderColor = isError ? '#ff4444' : '#0056b3';
+
+//     // 3. Text einfügen
+//     el.innerText = text;
+
+//     // 4. Animation neu starten (Der neue Teil)
+//     el.classList.remove('updated'); // Klasse wegnehmen
+//     void el.offsetWidth;            // "Reflow" erzwingen (Browser-Trick, damit er merkt, dass die Klasse weg war)
+//     el.classList.add('updated');    // Klasse wieder hinzufügen -> Animation startet neu
+// }
 
 // --- RECHNER FUNKTIONEN ---
 function calcHeizlast() {
@@ -1078,3 +1136,74 @@ function filterCalculators() {
         }
     }
 }
+
+// --- FAVORITEN SYSTEM ---
+
+function initFavorites() {
+    const container = document.getElementById('view-rechner');
+    const cards = container.getElementsByClassName('card');
+
+    // Gespeicherte Favoriten laden
+    const favs = JSON.parse(localStorage.getItem('shk_favs')) || [];
+
+    // Durch alle Karten gehen
+    Array.from(cards).forEach((card, index) => {
+        const titleEl = card.querySelector('h3');
+        if (!titleEl) return;
+
+        // Eindeutige ID für die Karte erzeugen (anhand des Titels)
+        const cardId = titleEl.innerText.trim();
+
+        // Sternchen erstellen
+        const star = document.createElement('span');
+        star.style.float = 'right';
+        star.style.cursor = 'pointer';
+        star.style.fontSize = '1.2rem';
+
+        // Ist es schon ein Favorit?
+        if (favs.includes(cardId)) {
+            star.innerText = '⭐'; // Voll
+            card.classList.add('is-favorite');
+            // Karte nach oben schieben
+            container.insertBefore(card, container.children[1]); // Index 1 wegen Suchleiste!
+        } else {
+            star.innerText = '☆'; // Leer
+        }
+
+        // Klick-Event
+        star.onclick = function (e) {
+            e.stopPropagation(); // Verhindert, dass Accordions (falls vorhanden) zuklappen
+            toggleFavorite(card, cardId, star);
+        };
+
+        titleEl.appendChild(star);
+    });
+}
+
+function toggleFavorite(card, id, starEl) {
+    let favs = JSON.parse(localStorage.getItem('shk_favs')) || [];
+    const container = document.getElementById('view-rechner');
+
+    if (favs.includes(id)) {
+        // Löschen
+        favs = favs.filter(f => f !== id);
+        starEl.innerText = '☆';
+        card.classList.remove('is-favorite');
+        // Optional: Wieder nach unten sortieren (komplex, lassen wir erstmal)
+    } else {
+        // Hinzufügen
+        favs.push(id);
+        starEl.innerText = '⭐';
+        card.classList.add('is-favorite');
+        // Sofort nach oben schieben (unter die Suchleiste)
+        container.insertBefore(card, container.children[1]);
+
+        // Kleines Feedback
+        alert("Zu Favoriten hinzugefügt! (Erscheint jetzt immer oben)");
+    }
+
+    localStorage.setItem('shk_favs', JSON.stringify(favs));
+}
+
+// System starten (kurze Verzögerung, damit HTML sicher da ist)
+setTimeout(initFavorites, 500);
