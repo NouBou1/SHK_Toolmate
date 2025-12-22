@@ -1208,6 +1208,550 @@ function toggleFavorite(card, id, starEl) {
 // System starten (kurze Verzögerung, damit HTML sicher da ist)
 setTimeout(initFavorites, 500);
 
+
+
+// --- WASSERWAAGE ---
+function requestLevelPerm() {
+    // iOS (iPhone) braucht eine Erlaubnis per Klick
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+            .then(response => {
+                if (response === 'granted') {
+                    window.addEventListener('deviceorientation', handleOrientation);
+                } else {
+                    alert("Erlaubnis verweigert.");
+                }
+            })
+            .catch(console.error);
+    } else {
+        // Android & PC funktionieren meist direkt
+        window.addEventListener('deviceorientation', handleOrientation);
+    }
+}
+
+function handleOrientation(event) {
+    // Werte holen (Beta = Vor/Zurück, Gamma = Links/Rechts)
+    const x = event.gamma; // Neigung links/rechts (-90 bis 90)
+    const y = event.beta;  // Neigung vor/zurück (-180 bis 180)
+
+    // Anzeigen
+    document.getElementById('tilt_x').innerText = Math.round(x);
+    document.getElementById('tilt_y').innerText = Math.round(y);
+
+    // Blase bewegen (Begrenzen auf den Kreis)
+    // Wir skalieren die Werte etwas, damit sie nicht sofort aus dem Bild fliegen
+    let moveX = x * 2;
+    let moveY = y * 2;
+
+    // Begrenzung (Radius ca. 80px)
+    const max = 80;
+    if (moveX > max) moveX = max;
+    if (moveX < -max) moveX = -max;
+    if (moveY > max) moveY = max;
+    if (moveY < -max) moveY = -max;
+
+    // Blase bewegen
+    const bubble = document.getElementById('bubble');
+    bubble.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+
+    // Farbe ändern wenn "im Wasser" (nahe 0)
+    if (Math.abs(x) < 2 && Math.abs(y) < 2) {
+        bubble.style.backgroundColor = "#00c851"; // Grün
+        bubble.style.boxShadow = "0 0 15px #00c851";
+    } else {
+        bubble.style.backgroundColor = "#ff4444"; // Rot
+        bubble.style.boxShadow = "none";
+    }
+}
+
+
+// --- UNTERSCHRIFTEN MODUL ---
+let canvas, ctx, isDrawing = false;
+
+function openSignatureModal() {
+    document.getElementById('sig_modal').style.display = 'flex';
+    canvas = document.getElementById('sig_canvas');
+    ctx = canvas.getContext('2d');
+    
+    // Einstellungen für den Stift
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+
+    // Events für Touch (Handy) & Maus (PC)
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('touchstart', startDraw, {passive: false});
+    canvas.addEventListener('touchmove', draw, {passive: false});
+    canvas.addEventListener('touchend', endDraw);
+}
+
+function closeSignatureModal() {
+    document.getElementById('sig_modal').style.display = 'none';
+}
+
+function startDraw(e) {
+    isDrawing = true;
+    draw(e); // Erster Punkt
+}
+
+function endDraw() {
+    isDrawing = false;
+    ctx.beginPath(); // Pfad unterbrechen
+}
+
+function draw(e) {
+    if (!isDrawing) return;
+    e.preventDefault(); // Verhindert Scrollen beim Malen!
+
+    // Position ermitteln (Maus oder Touch)
+    const rect = canvas.getBoundingClientRect();
+    let x, y;
+    
+    if(e.type.includes('touch')) {
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+    } else {
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+    }
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
+
+function clearSignature() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function saveSignature() {
+    // Bild als Daten-URL erzeugen
+    const dataURL = canvas.toDataURL("image/png");
+    
+    // Hier könntest du das Bild speichern oder anzeigen. 
+    // Wir simulieren einen Download:
+    const link = document.createElement('a');
+    link.download = `rapport_${Date.now()}.png`;
+    link.href = dataURL;
+    link.click();
+    
+    closeSignatureModal();
+    alert("Unterschrift als Bild gespeichert!");
+}
+
+
+// --- WARTUNGS CHECKLISTE ---
+const checklistData = [
+    "Anlage spannungsfrei schalten",
+    "Gashahn schließen",
+    "Verkleidung entfernen",
+    "Wärmetauscher reinigen",
+    "Elektroden prüfen/tauschen",
+    "Siphon reinigen & füllen",
+    "Vordruck MAG prüfen (Drucklos!)",
+    "Wasserdruck prüfen & füllen",
+    "Gashahn öffnen & Dichtheit prüfen",
+    "Abgasmessung durchführen (Schornsteinfeger-Taste)",
+    "Aufkleber anbringen"
+];
+
+// Laden & Anzeigen
+function loadChecklist() {
+    const container = document.getElementById('checklist_container');
+    if(!container) return; // Nur wenn View existiert
+    
+    container.innerHTML = '';
+    
+    // Gespeicherte Haken laden
+    const saved = JSON.parse(localStorage.getItem('shk_maintenance')) || {};
+
+    let doneCount = 0;
+
+    checklistData.forEach((task, index) => {
+        const isDone = saved[index] === true;
+        if(isDone) doneCount++;
+
+        const div = document.createElement('div');
+        div.style.padding = "10px";
+        div.style.borderBottom = "1px solid #444";
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.cursor = "pointer";
+        
+        // Checkbox Logik
+        div.onclick = () => toggleCheck(index);
+
+        div.innerHTML = `
+            <span style="font-size:1.5rem; margin-right:10px;">${isDone ? '✅' : '⬜'}</span>
+            <span style="${isDone ? 'text-decoration:line-through; color:#777;' : ''}">${task}</span>
+        `;
+        
+        container.appendChild(div);
+    });
+
+    // Fortschrittsbalken updaten
+    const percent = (doneCount / checklistData.length) * 100;
+    document.getElementById('check_progress').style.width = percent + "%";
+}
+
+function toggleCheck(index) {
+    const saved = JSON.parse(localStorage.getItem('shk_maintenance')) || {};
+    
+    // Status umkehren
+    if(saved[index]) {
+        delete saved[index];
+    } else {
+        saved[index] = true;
+    }
+    
+    localStorage.setItem('shk_maintenance', JSON.stringify(saved));
+    loadChecklist(); // Neu malen
+}
+
+function resetChecklist() {
+    if(confirm("Alles zurücksetzen?")) {
+        localStorage.removeItem('shk_maintenance');
+        loadChecklist();
+    }
+}
+
+// Initial laden
+document.addEventListener('DOMContentLoaded', loadChecklist);
+
+
+// --- FAHRZEUG LAGER ---
+let inventoryDB = JSON.parse(localStorage.getItem('shk_inventory')) || [];
+
+function renderInventory() {
+    const list = document.getElementById('inventory_list');
+    if(!list) return;
+    list.innerHTML = '';
+
+    inventoryDB.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'material-item';
+        li.innerHTML = `
+            <div style="display:flex; align-items:center; flex:1;">
+                <div style="display:flex; flex-direction:column; align-items:center; margin-right:15px;">
+                    <button class="small-btn" onclick="updateStock(${index}, 1)" style="padding:2px 8px; margin-bottom:2px;">▲</button>
+                    <span style="font-weight:bold; color:${item.amount < 3 ? '#ff4444' : 'white'}">${item.amount}</span>
+                    <button class="small-btn secondary" onclick="updateStock(${index}, -1)" style="padding:2px 8px; margin-top:2px;">▼</button>
+                </div>
+                <span>${item.name}</span>
+            </div>
+            <button class="btn-icon-small" onclick="deleteInventoryItem(${index})">×</button>
+        `;
+        list.appendChild(li);
+    });
+}
+
+function addInventoryItem() {
+    const name = document.getElementById('inv_name').value;
+    let amount = parseInt(document.getElementById('inv_amount').value);
+    if(!name) return;
+    if(isNaN(amount)) amount = 1;
+
+    inventoryDB.push({ name, amount });
+    saveInventory();
+    renderInventory();
+    
+    document.getElementById('inv_name').value = '';
+    document.getElementById('inv_amount').value = '';
+}
+
+function updateStock(index, change) {
+    inventoryDB[index].amount += change;
+    if(inventoryDB[index].amount < 0) inventoryDB[index].amount = 0;
+    saveInventory();
+    renderInventory();
+}
+
+function deleteInventoryItem(index) {
+    if(confirm("Löschen?")) {
+        inventoryDB.splice(index, 1);
+        saveInventory();
+        renderInventory();
+    }
+}
+
+function saveInventory() {
+    localStorage.setItem('shk_inventory', JSON.stringify(inventoryDB));
+}
+
+// Initial laden
+document.addEventListener('DOMContentLoaded', renderInventory);
+
+
+// --- KALENDER MODUL ---
+let currentDate = new Date();
+
+function renderCalendar() {
+    const grid = document.getElementById('calendar_grid');
+    const title = document.getElementById('cal_month_year');
+    if(!grid) return;
+
+    grid.innerHTML = '';
+    
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth(); // 0 = Jan
+    
+    // Titel setzen
+    const monthNames = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+    title.innerText = `${monthNames[month]} ${year}`;
+
+    // Erster Tag des Monats & Anzahl Tage
+    const firstDayIndex = new Date(year, month, 1).getDay(); // 0 = So, 1 = Mo
+    // Korrektur: Wir wollen Montag als Start (dt. Woche)
+    const startDay = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+    
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Wochentage Header
+    const daysHeader = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+    daysHeader.forEach(d => {
+        const div = document.createElement('div');
+        div.className = 'cal-header';
+        div.innerText = d;
+        grid.appendChild(div);
+    });
+
+    // Leere Felder davor
+    for(let i=0; i<startDay; i++) {
+        const div = document.createElement('div');
+        grid.appendChild(div);
+    }
+
+    // Tage füllen
+    const today = new Date();
+    
+    for(let d=1; d<=daysInMonth; d++) {
+        const div = document.createElement('div');
+        div.className = 'cal-day';
+        div.innerText = d;
+        
+        // Checken ob heute
+        if(d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+            div.classList.add('today');
+        }
+
+        // Checken ob Projekte an diesem Tag liegen
+        // Format im Projekt DB: "2024-05-20" (ISO vom Input field)
+        // Wir bauen den String für diesen Tag
+        const dateString = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        
+        // Suchen in projectsDB (Globale Variable aus deinem Material-Teil)
+        const hasProject = projectsDB.some(p => p.isoDate === dateString); // Achtung: Wir müssen addProject anpassen!
+
+        if(hasProject) {
+            const dot = document.createElement('div');
+            dot.className = 'cal-dot';
+            div.appendChild(dot);
+        }
+
+        // Klick Event
+        div.onclick = () => showEventsForDay(dateString, d);
+        
+        grid.appendChild(div);
+    }
+}
+
+function changeMonth(dir) {
+    currentDate.setMonth(currentDate.getMonth() + dir);
+    renderCalendar();
+}
+
+function showEventsForDay(isoDate, dayNum) {
+    const container = document.getElementById('calendar_events');
+    // Filter Projekte
+    const events = projectsDB.filter(p => p.isoDate === isoDate);
+    
+    let html = `<h5>Projekte am ${dayNum}.:</h5>`;
+    
+    if(events.length === 0) {
+        html += '<p style="color:#777;">Keine Einträge.</p>';
+    } else {
+        events.forEach(p => {
+            // Wir nutzen onclick, um direkt zur Materialliste zu springen
+            // Dafür müssen wir die ID kennen
+            html += `
+            <div class="cal-event-card" onclick="jumpToProject(${p.id})">
+                <strong>${p.name}</strong><br>
+                <small>${p.items.length} Positionen</small>
+                <span style="float:right;">➜</span>
+            </div>`;
+        });
+    }
+    container.innerHTML = html;
+    
+    // Highlight Auswahl
+    document.querySelectorAll('.cal-day').forEach(el => el.classList.remove('selected'));
+    // (Einfache Lösung: Wir lassen das Highlighting erstmal weg oder machen es über event target)
+}
+
+function jumpToProject(id) {
+    // 1. Tab wechseln
+    switchTab('material', document.querySelectorAll('.nav-item')[1]); // Index 1 = Listen
+    // 2. Projekt öffnen
+    openProject(id);
+}
+
+// ACHTUNG: Wir müssen deine "addProject" Funktion patchen, 
+// damit sie das Datum vom neuen Input-Feld speichert!
+// Kopiere diese Funktion und überschreibe deine alte addProject:
+
+function addProject() {
+    const inputName = document.getElementById('new_project_name');
+    const inputDate = document.getElementById('new_project_date');
+    const name = inputName.value.trim();
+    let dateVal = inputDate.value; // Format yyyy-mm-dd
+
+    if (!name) return;
+
+    // Wenn kein Datum gewählt, nimm heute
+    if(!dateVal) {
+        const now = new Date();
+        dateVal = now.toISOString().split('T')[0];
+    }
+
+    // Deutsches Datum für die Anzeige
+    const dateObj = new Date(dateVal);
+    const dateDisplay = dateObj.toLocaleDateString('de-DE');
+
+    const newProject = {
+        id: Date.now(),
+        name: name,
+        date: dateDisplay,    // Für die Anzeige in der Liste
+        isoDate: dateVal,     // NEU: Für den Kalender-Vergleich
+        archived: false,
+        items: []
+    };
+
+    projectsDB.unshift(newProject);
+    saveProjects();
+    
+    // Refresh
+    setProjectView('active');
+    renderCalendar(); // Damit der Punkt im Kalender erscheint
+    
+    inputName.value = '';
+    // Datum lassen wir evtl stehen oder löschen es auch
+}
+
+
+// --- WETTER API (Open-Meteo) für SHK-MATE ---
+
+/**
+ * Übersetzt die WMO-Wettercodes von Open-Meteo in Text & Icons
+ * Quelle: https://open-meteo.com/en/docs
+ */
+function getWeatherDescription(code) {
+    const codes = {
+        0: { text: "Klarer Himmel", icon: "☀️" },
+        1: { text: "Leicht bewölkt", icon: "🌤️" },
+        2: { text: "Bewölkt", icon: "⛅" },
+        3: { text: "Bedeckt", icon: "☁️" },
+        45: { text: "Nebel", icon: "🌫️" },
+        48: { text: "Nebel", icon: "🌫️" },
+        51: { text: "Leichter Niesel", icon: "💧" },
+        53: { text: "Nieselregen", icon: "💧" },
+        61: { text: "Leichter Regen", icon: "🌧️" },
+        63: { text: "Regen", icon: "🌧️" },
+        71: { text: "Leichter Schnee", icon: "❄️" },
+        73: { text: "Schnee", icon: "❄️" },
+        95: { text: "Gewitter", icon: "⚡" },
+        96: { text: "Gewitter & Hagel", icon: "⛈️" }
+    };
+    return codes[code] || { text: "Unbekannt", icon: "❓" };
+}
+
+function getSiteWeather() {
+    const descEl = document.getElementById('weather_desc');
+    const tempEl = document.getElementById('weather_temp');
+    const windEl = document.getElementById('weather_wind');
+    const warnBox = document.getElementById('weather_warning');
+    
+    // UI zurücksetzen
+    if(warnBox) warnBox.style.display = 'none';
+
+    if (!navigator.geolocation) {
+        descEl.innerText = "GPS nicht unterstützt.";
+        return;
+    }
+
+    descEl.innerText = "Orte Satelliten...";
+
+    navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        
+        // API Abruf
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+            .then(response => {
+                if (!response.ok) throw new Error("Wetterdaten nicht verfügbar");
+                return response.json();
+            })
+            .then(data => {
+                const w = data.current_weather;
+                const weatherInfo = getWeatherDescription(w.weathercode);
+                
+                // 1. Grundwerte setzen
+                tempEl.innerText = `${w.temperature}°C`;
+                windEl.innerText = `💨 ${w.windspeed} km/h`;
+                descEl.innerText = `${weatherInfo.icon} ${weatherInfo.text}`;
+                
+                // 2. SHK-spezifische Prüfungen (Warnungen)
+                let warnings = [];
+
+                // Kleber/Chemie
+                if(w.temperature < 5) {
+                    warnings.push("❄️ <b>< 5°C:</b> Vorsicht bei Klebern & Silikon.");
+                }
+                // Frostschutz
+                if(w.temperature < 0) {
+                    warnings.push("🧊 <b>FROST:</b> Leitungen entleeren/schützen!");
+                }
+                // Dacharbeiten
+                if(w.windspeed > 35) {
+                    warnings.push("💨 <b>Wind > 35km/h:</b> Keine Dacharbeiten!");
+                }
+                // Regen bei Außenarbeiten
+                if(w.weathercode >= 51 && w.weathercode <= 67) {
+                    warnings.push("🌧️ <b>Nässe:</b> Außenisolierung schützen.");
+                }
+
+                // Warnbox anzeigen oder verstecken
+                if(warnings.length > 0 && warnBox) {
+                    warnBox.style.display = 'block';
+                    warnBox.innerHTML = warnings.join('<br>');
+                    warnBox.classList.add('fade-in'); // Optional für Animation
+                }
+            })
+            .catch(err => {
+                descEl.innerText = "Wetter-Fehler.";
+                console.error(err);
+            });
+    }, (error) => {
+        // Fehlerbehandlung für GPS
+        console.warn(error);
+        if(error.code === 1) {
+            descEl.innerText = "GPS verweigert.";
+            // Hier könnte man später ein Eingabefeld für PLZ einblenden
+        } else {
+            descEl.innerText = "GPS Zeitüberschreitung.";
+        }
+    }, { timeout: 10000 }); // Nach 10 Sek abbrechen
+}
+
+// Sobald die Seite geladen ist:
+    window.addEventListener('load', () => {
+        getSiteWeather();
+    });
+
+// Initialer Render Kalender
+document.addEventListener('DOMContentLoaded', renderCalendar);
+
 // Service Worker registrieren (macht die App offline-fähig)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
