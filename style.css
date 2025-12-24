@@ -71,7 +71,7 @@ header h1 {
 }
 
 .card {
-    width: 96%;
+    width: 100%;
     background-color: var(--surface);
     border-radius: 12px;
     padding: 15px;
@@ -98,7 +98,7 @@ input,
 select {
     width: 100%;
     padding: 12px;
-    margin-bottom: 15px;
+    /* margin-bottom: 15px; */
     background-color: var(--input-bg);
     border: 1px solid #444;
     border-radius: 8px;
