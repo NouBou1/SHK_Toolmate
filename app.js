@@ -359,13 +359,36 @@ function renderMaterialItems() {
         li.className = 'material-item';
 
         const displayAmount = item.amount ? item.amount : '1';
+        const hasImage = item.image ? true : false;
 
         li.innerHTML = `
-            <div style="display:flex; align-items:center;">
-                <span class="item-amount">${displayAmount}x</span>
-                <span>${item.text}</span>
+            <div style="display:flex; flex-direction:column; width:100%;">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span>
+                <strong>${item.amount}x</strong> ${item.name}
+            </span>
+            <div class="material_item_btns">
+                <button class="small-btn secondary" onclick="triggerPhoto(${index})" style="margin-right:5px;">
+                    📷
+                </button>
+                <button class="small-btn btn-danger" onclick="deleteMaterialItem(${index})">×</button>
             </div>
-            <button class="btn-icon-small" onclick="deleteMaterialItem(${index})">×</button>
+        </div>
+
+        ${hasImage ? `
+            <div style="margin-top:10px; position:relative; width:fit-content;">
+                <img src="${item.image}" onclick="showBigImage('${item.image}')" 
+                     style="height:60px; border-radius:4px; border:1px solid #555; cursor:pointer;">
+                
+                <button onclick="deletePhoto(${index})" 
+                        style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:20px; height:20px; font-size:12px; line-height:1; padding:0; border:none;">
+                    ×
+                </button>
+            </div>
+        ` : ''}
+
+    </div>
         `;
         listContainer.appendChild(li);
     });
@@ -402,6 +425,101 @@ function deleteCurrentProject() {
             closeProject();
         }
     }
+}
+
+// --- FOTO MODUL ---
+let currentPhotoItemIndex = null; // Merkt sich, wo das Foto hin soll
+
+// 1. Button wurde geklickt -> Kamera öffnen
+function triggerPhoto(index) {
+    currentPhotoItemIndex = index;
+    document.getElementById('global_camera_input').click();
+}
+
+// 2. Foto wurde gemacht -> Komprimieren & Speichern
+function processPhoto(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            // Wir erstellen ein virtuelles Bild, um es zu verkleinern
+            const img = new Image();
+            img.onload = function() {
+                // Leinwand (Canvas) erstellen
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                // Ziel-Größe festlegen (max 800px Breite)
+                const MAX_WIDTH = 800;
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+
+                // Bild auf die Leinwand zeichnen (verkleinert)
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                // Als komprimierten Text (DataURL) holen (Qualität 0.7 = 70%)
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+                // --- SPEICHERN ---
+                // Wir greifen auf dein aktuelles Projekt zu
+                // (Achtung: Prüfe, ob deine Variable 'currentProject' oder 'projectsDB' heißt!)
+                
+                // Wir suchen das aktive Projekt in der DB
+                const activeProj = projectsDB.find(p => p.id === currentProjectId); // currentProjectId musst du haben!
+                
+                if(activeProj) {
+                    // Bild an den Artikel hängen
+                    activeProj.items[currentPhotoItemIndex].image = dataUrl;
+                    saveProjects();
+                    renderProjectItems(); // Liste neu zeichnen
+                }
+            }
+            img.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+    // Input leeren für das nächste Mal
+    input.value = '';
+}
+
+// 3. Foto löschen Funktion
+function deletePhoto(index) {
+    if(confirm("Foto löschen?")) {
+        const activeProj = projectsDB.find(p => p.id === currentProjectId);
+        if(activeProj) {
+            delete activeProj.items[index].image; // Eigenschaft löschen
+            saveProjects();
+            renderProjectItems();
+        }
+    }
+}
+
+// 4. Foto groß anzeigen (Modal)
+function showBigImage(src) {
+    // Einfaches Overlay erzeugen
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.9)';
+    overlay.style.zIndex = '2000';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.onclick = () => document.body.removeChild(overlay); // Klick schließt es
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.style.maxWidth = '95%';
+    img.style.maxHeight = '95%';
+    img.style.border = '2px solid white';
+    
+    overlay.appendChild(img);
+    document.body.appendChild(overlay);
 }
 
 // Hilfsfunktion: Speichern
@@ -1753,10 +1871,10 @@ function getSiteWeather() {
 document.addEventListener('DOMContentLoaded', renderCalendar);
 
 // Service Worker registrieren (macht die App offline-fähig)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('Service Worker registriert!', reg))
-            .catch(err => console.log('Service Worker Fehler:', err));
-    });
-}
+// if ('serviceWorker' in navigator) {
+//     window.addEventListener('load', () => {
+//         navigator.serviceWorker.register('sw.js')
+//             .then(reg => console.log('Service Worker registriert!', reg))
+//             .catch(err => console.log('Service Worker Fehler:', err));
+//     });
+// }

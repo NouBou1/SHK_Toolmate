@@ -43,6 +43,7 @@ header h1 {
     color: var(--primary);
     text-transform: uppercase;
     letter-spacing: 1px;
+    padding-right: 20px;
 }
 
 .container {
@@ -720,3 +721,88 @@ hr {
     border-left: 5px solid #cc3300;
 }
 
+
+
+.material_item_btns {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+/* --- BILDER IN DER LISTE --- */
+/* .item-image-container {
+    margin-top: 10px;
+    position: relative;
+    display: inline-block;
+} */
+
+.item-thumbnail {
+    height: 60px;          /* Feste Höhe, damit die Liste nicht explodiert */
+    width: auto;           /* Breite passt sich an */
+    border-radius: 6px;
+    border: 1px solid #555;
+    cursor: zoom-in;       /* Zeigt Lupe beim Drüberfahren */
+    transition: transform 0.2s;
+}
+
+.item-thumbnail:hover {
+    transform: scale(1.05); /* Kleiner Zoom-Effekt */
+    border-color: var(--primary);
+}
+
+/* Der kleine rote Löschen-Knopf am Bild */
+.btn-delete-photo {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4444;
+    color: white;
+    border: 2px solid #2a2a2a; /* Kleiner Rand zur Trennung */
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- VOLLBILD MODAL (Overlay) --- */
+.image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95); /* Fast schwarz, transparent */
+    z-index: 2000; /* Ganz oben */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+}
+
+.image-modal img {
+    max-width: 95%;
+    max-height: 95%;
+    border: 2px solid white;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.header_logo {
+    height: 40px;
+    border-radius: 30px;
+    margin-left: 10px;
+    box-shadow: #0056b3 0px 0px 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
