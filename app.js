@@ -406,61 +406,67 @@ function processPhoto(input) {
         const file = input.files[0];
         const reader = new FileReader();
 
+        // Erst wenn die Datei gelesen wurde...
         reader.onload = function(e) {
-            // Wir erstellen ein virtuelles Bild, um es zu verkleinern
             const img = new Image();
+            
+            // Erst wenn das Bild als Objekt bereit ist...
             img.onload = function() {
-                // Leinwand (Canvas) erstellen
+                // --- BILD VERKLEINERN ---
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-
-                // Ziel-Größe festlegen (max 800px Breite)
                 const MAX_WIDTH = 800;
                 const scaleSize = MAX_WIDTH / img.width;
                 canvas.width = MAX_WIDTH;
                 canvas.height = img.height * scaleSize;
-
-                // Bild auf die Leinwand zeichnen (verkleinert)
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                // Als komprimierten Text (DataURL) holen (Qualität 0.7 = 70%)
+                
+                // Als Text holen
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
 
                 // --- SPEICHERN ---
-                // Wir greifen auf dein aktuelles Projekt zu
-                // (Achtung: Prüfe, ob deine Variable 'currentProject' oder 'projectsDB' heißt!)
+                const activeProj = projectsDB.find(p => p.id === currentProjectId);
                 
-                // Wir suchen das aktive Projekt in der DB
-                const activeProj = projectsDB.find(p => p.id === currentProjectId); // currentProjectId musst du haben!
-                
-                if(activeProj) {
-                    // Bild an den Artikel hängen
+                if(activeProj && activeProj.items[currentPhotoItemIndex]) {
+                    // 1. Daten ändern
                     activeProj.items[currentPhotoItemIndex].image = dataUrl;
+                    
+                    // 2. Speichern
                     saveProjects();
-                    renderProjectItems(); // Liste neu zeichnen
+                    
+                    // 3. WICHTIG: Genau HIER aktualisieren!
+                    // Nur hier ist sicher, dass das Bild schon in der Datenbank liegt.
+                    console.log("Bild gespeichert, aktualisiere Liste..."); // Zur Kontrolle in der Konsole
+                    renderMaterialItems(); 
                 }
             }
             img.src = e.target.result;
         }
         reader.readAsDataURL(file);
     }
-    // Input leeren für das nächste Mal
+    // Input leeren
     input.value = '';
 }
 
-// 3. Foto löschen Funktion
 function deletePhoto(index) {
-    if(confirm("Foto löschen?")) {
-        const activeProj = projectsDB.find(p => p.id === currentProjectId);
-        if(activeProj) {
-            delete activeProj.items[index].image; // Eigenschaft löschen
-            saveProjects();
-            renderProjectItems();
-          
-        }
+    // Sicherheitsfrage
+    if(!confirm("Möchtest du dieses Foto entfernen?")) return;
+
+    const activeProj = projectsDB.find(p => p.id === currentProjectId);
+    
+    if(activeProj && activeProj.items[index]) {
+        // 1. Bild aus dem Objekt löschen
+        delete activeProj.items[index].image; 
+        
+        // 2. Datenbank speichern
+        saveProjects();
+        
+        // 3. Ansicht aktualisieren
+        // Achte genau auf den Namen: renderMaterialItems()
+        console.log("Bild gelöscht, aktualisiere Liste..."); 
+        renderMaterialItems(); 
     }
 }
-
 // 4. Foto groß anzeigen (Modal)
 function showBigImage(src) {
     // Einfaches Overlay erzeugen
@@ -999,28 +1005,60 @@ document.addEventListener('DOMContentLoaded', loadChecklist);
 // --- FAHRZEUG LAGER ---
 let inventoryDB = JSON.parse(localStorage.getItem('shk_inventory')) || [];
 
+// --- FAHRZEUG LAGER (Repariert) ---
+
 function renderInventory() {
     const list = document.getElementById('inventory_list');
     if(!list) return;
+    
+    // Liste leeren
     list.innerHTML = '';
+    
+    // Klasse hinzufügen für CSS Styling
+    list.className = 'inventory-list';
 
     inventoryDB.forEach((item, index) => {
         const li = document.createElement('li');
-        li.className = 'material-item';
+        li.className = 'inventory-item';
+        
+        // Ist der Bestand niedrig? (unter 3)
+        const isLow = item.amount < 3;
+
         li.innerHTML = `
-            <div style="display:flex; align-items:center; flex:1;">
-                <div style="display:flex; flex-direction:column; align-items:center; margin-right:15px;">
-                    <button class="small-btn" onclick="updateStock(${index}, 1)" style="padding:2px 8px; margin-bottom:2px;">▲</button>
-                    <span style="font-weight:bold; color:${item.amount < 3 ? '#ff4444' : 'white'}">${item.amount}</span>
-                    <button class="small-btn secondary" onclick="updateStock(${index}, -1)" style="padding:2px 8px; margin-top:2px;">▼</button>
-                </div>
-                <span>${item.name}</span>
+            <div class="inventory-controls">
+                <button class="inventory-btn" onclick="updateStock(${index}, -1)">-</button>
+                <span class="inventory-count ${isLow ? 'low-stock' : ''}">${item.amount}</span>
+                <button class="inventory-btn" onclick="updateStock(${index}, 1)">+</button>
             </div>
-            <button class="btn-icon-small" onclick="deleteInventoryItem(${index})">×</button>
+
+            <div class="inventory-name">
+                ${item.name}
+            </div>
+
+            <button class="btn-icon-small btn-danger" onclick="deleteInventoryItem(${index})" style="height:35px; width:35px;">
+                ×
+            </button>
         `;
         list.appendChild(li);
     });
 }
+
+function updateStock(index, change) {
+    // 1. Wert ändern
+    inventoryDB[index].amount += change;
+    
+    // Nicht unter 0 gehen
+    if(inventoryDB[index].amount < 0) inventoryDB[index].amount = 0;
+    
+    // 2. Speichern
+    saveInventory();
+    
+    // 3. Neu anzeigen (WICHTIG!)
+    renderInventory();
+}
+
+// (Die deleteInventoryItem, addInventoryItem und saveInventory kannst du lassen wie sie waren, 
+//  solange addInventoryItem am Ende auch renderInventory() aufruft)
 
 function addInventoryItem() {
     const name = document.getElementById('inv_name').value;
@@ -1037,9 +1075,16 @@ function addInventoryItem() {
 }
 
 function updateStock(index, change) {
+    // 1. Wert ändern
     inventoryDB[index].amount += change;
+    
+    // Nicht unter 0 gehen
     if(inventoryDB[index].amount < 0) inventoryDB[index].amount = 0;
+    
+    // 2. Speichern
     saveInventory();
+    
+    // 3. Neu anzeigen (WICHTIG!)
     renderInventory();
 }
 
