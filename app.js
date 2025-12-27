@@ -366,7 +366,7 @@ function renderMaterialItems() {
         
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <span>
-                <strong>${item.amount}x</strong> ${item.name}
+               <strong>${item.amount}x</strong> ${item.name || item.text || 'Ohne Namen'}
             </span>
             <div class="material_item_btns">
                 <button class="small-btn secondary" onclick="triggerPhoto(${index})" style="margin-right:5px;">
@@ -492,6 +492,7 @@ function deletePhoto(index) {
             delete activeProj.items[index].image; // Eigenschaft löschen
             saveProjects();
             renderProjectItems();
+          
         }
     }
 }
