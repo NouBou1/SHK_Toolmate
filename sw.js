@@ -1,11 +1,11 @@
-const CACHE_NAME = 'shk-mate-v4';
+const CACHE_NAME = 'shk-mate-v5';
 const ASSETS = [
   '/',
   '/index.html',
   '/style.css',
-  '/app.js',
-  '/js/calc.js',
-  '/js/fetch.js',
+  '/app.js?v=5',
+  '/js/calc.js?v=5',
+  '/js/fetch.js?v=5',
   '/normen.json',
   '/manifest.json',
   '/icons/shk-toolmate_darkbg.png'
