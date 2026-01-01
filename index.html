@@ -950,14 +950,14 @@
 
     </main>
 
-    <script src="app.js?v=5"></script>
-    <script src="js/fetch.js?v=5"></script>
-    <script src="js/calc.js?v=5"></script>
+    <script src="app.js?v=6"></script>
+    <script src="js/fetch.js?v=6"></script>
+    <script src="js/calc.js?v=6"></script>
     
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed:', err));
+            navigator.serviceWorker.register('/sw.js?v=6').catch(err => console.log('SW registration failed:', err));
         }
     </script>
 </body>
