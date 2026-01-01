@@ -13,13 +13,13 @@
   "dir": "ltr",
   "icons": [
     {
-      "src": "/icons/shk-toolmate_darkbg.png",
+      "src": "icons/shk-toolmate_darkbg.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/shk-toolmate_darkbg.png",
+      "src": "icons/shk-toolmate_darkbg.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -27,13 +27,13 @@
   ],
   "screenshots": [
     {
-      "src": "/assets/img/Gemini_Generated_Image_2qyqza2qyqza2qyq.png",
+      "src": "assets/img/Gemini_Generated_Image_2qyqza2qyqza2qyq.png",
       "sizes": "540x720",
       "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "/assets/img/Gemini_Generated_Image_2qyqza2qyqza2qyq.png",
+      "src": "assets/img/Gemini_Generated_Image_2qyqza2qyqza2qyq.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
@@ -47,7 +47,7 @@
       "url": "/?action=new_project",
       "icons": [
         {
-          "src": "/icons/shk-toolmate_darkbg.png",
+          "src": "icons/shk-toolmate_darkbg.png",
           "sizes": "192x192",
           "type": "image/png"
         }
