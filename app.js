@@ -1652,23 +1652,61 @@ async function exportMaterialListPDFWithSignature() {
     const isCap = typeof window !== 'undefined' && window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
     const Filesystem = isCap ? window.Capacitor.Plugins?.Filesystem : null;
 
-    // Einfacher Weg: PDF als Blob speichern und Browser-Download nutzen
-    try {
-        const pdfBlob = pdf.output('blob');
-        const url = URL.createObjectURL(pdfBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'Rapport_' + project.name + '.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+    if (Filesystem) {
+        // Native Android Weg
+        try {
+            const safeName = ('Rapport_' + project.name + '.pdf').replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+            const pdfBlob = pdf.output('blob');
+            
+            const reader = new FileReader();
+            reader.onloadend = async function() {
+                try {
+                    const base64data = reader.result.split(',')[1];
+                    
+                    console.log('Schreibe PDF in Downloads...');
+                    
+                    // Schreibe in Downloads-Verzeichnis
+                    const result = await Filesystem.writeFile({
+                        path: safeName,
+                        data: base64data,
+                        directory: 'DOWNLOADS',
+                        recursive: true
+                    });
+                    
+                    console.log('PDF erfolgreich gespeichert:', result);
+                    alert('✅ PDF gespeichert in Downloads: ' + safeName);
+                } catch (err) {
+                    console.error('Fehler beim Speichern in DOWNLOADS:', err);
+                    // Fallback: Cache versuchen
+                    try {
+                        const base64data = reader.result.split(',')[1];
+                        await Filesystem.writeFile({
+                            path: safeName,
+                            data: base64data,
+                            directory: 'CACHE',
+                            recursive: true
+                        });
+                        alert('⚠️ PDF in Cache gespeichert (nicht in Downloads): ' + safeName);
+                    } catch (cacheErr) {
+                        console.error('Auch Cache fehlgeschlagen:', cacheErr);
+                        alert('❌ PDF-Fehler: ' + cacheErr.message);
+                    }
+                }
+            };
+            reader.readAsDataURL(pdfBlob);
+            return;
+        } catch (err) {
+            console.error('PDF-Fehler:', err);
+            alert('❌ PDF-Fehler: ' + err.message);
+        }
+    }
 
-        alert('✅ PDF wird heruntergeladen. Schau in deine Downloads!');
-        return;
+    // Fallback für Browser (nicht-Android)
+    try {
+        pdf.save('Rapport_' + project.name + '.pdf');
+        alert('✅ PDF wurde heruntergeladen.');
     } catch (err) {
-        console.error('PDF-Download fehlgeschlagen:', err);
-        alert('⚠️ Fehler beim PDF-Export: ' + err.message);
+        alert('❌ PDF-Export fehlgeschlagen: ' + err.message);
     }
 
     // Fallback: klassischer Download im Browser
