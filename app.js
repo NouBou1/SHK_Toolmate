@@ -495,24 +495,30 @@ function processPhoto(input) {
                     // Als Text holen
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
 
-                // --- SPEICHERN ---
-                const activeProj = projectsDB.find(p => p.id === currentProjectId);
-                
-                if(activeProj && activeProj.items[currentPhotoItemIndex]) {
-                    // 1. Daten ändern
-                    activeProj.items[currentPhotoItemIndex].image = dataUrl;
+                    // --- SPEICHERN ---
+                    const activeProj = projectsDB.find(p => p.id === currentProjectId);
                     
-                    // 2. Speichern
-                    saveProjects();
-                    
-                    // 3. WICHTIG: Genau HIER aktualisieren!
-                    // Nur hier ist sicher, dass das Bild schon in der Datenbank liegt.
-                    console.log("Bild gespeichert, aktualisiere Liste..."); // Zur Kontrolle in der Konsole
-                    renderMaterialItems(); 
-                }
+                    if (activeProj && activeProj.items[currentPhotoItemIndex]) {
+                        // 1. Daten ändern
+                        activeProj.items[currentPhotoItemIndex].image = dataUrl;
+                        
+                        // 2. Speichern
+                        saveProjects();
+                        
+                        // 3. WICHTIG: Genau HIER aktualisieren!
+                        // Nur hier ist sicher, dass das Bild schon in der Datenbank liegt.
+                        console.log("Bild gespeichert, aktualisiere Liste..."); // Zur Kontrolle in der Konsole
+                        renderMaterialItems(); 
+                    }
+                };
+
+                img.src = e.target.result;
+            } catch (err) {
+                console.error('Fehler beim Verarbeiten des Fotos:', err);
+                alert('❌ Foto konnte nicht verarbeitet werden. Bitte erneut versuchen.');
             }
-            img.src = e.target.result;
-        }
+        };
+
         reader.readAsDataURL(file);
     }
     // Input leeren
@@ -1646,4 +1652,9 @@ function exportMaterialListPDFWithSignature() {
     // PDF speichern
     pdf.save('Rapport_' + project.name + '.pdf');
     alert("✅ PDF wurde heruntergeladen!");
+    }
+    catch (err) {
+        console.error('Fehler beim PDF Export:', err);
+        alert('❌ PDF Export fehlgeschlagen. Bitte erneut versuchen.');
+    }
 }
