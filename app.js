@@ -946,21 +946,6 @@ function clearSignature() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function saveSignature() {
-    // Bild als Daten-URL erzeugen
-    const dataURL = canvas.toDataURL("image/png");
-    
-    // Hier könntest du das Bild speichern oder anzeigen. 
-    // Wir simulieren einen Download:
-    const link = document.createElement('a');
-    link.download = `rapport_${Date.now()}.png`;
-    link.href = dataURL;
-    link.click();
-    
-    closeSignatureModal();
-    alert("Unterschrift als Bild gespeichert!");
-}
-
 
 // --- WARTUNGS CHECKLISTE ---
 const checklistData = [
@@ -1418,4 +1403,158 @@ if ('serviceWorker' in navigator) {
             .then(reg => console.log('Service Worker registriert!', reg))
             .catch(err => console.log('Service Worker Fehler:', err));
     });
+}
+
+
+// --- PDF EXPORT MODUL ---
+let signatureDataURL = null; // Speichert die Unterschrift
+
+function openSignatureModalForPDF() {
+    signatureDataURL = null; // Unterschrift zurücksetzen
+    openSignatureModal();
+}
+
+function openSignatureModal() {
+    document.getElementById('sig_modal').style.display = 'flex';
+    canvas = document.getElementById('sig_canvas');
+    ctx = canvas.getContext('2d');
+    
+    // Einstellungen für den Stift
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    // Events für Touch (Handy) & Maus (PC)
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('touchstart', startDraw, {passive: false});
+    canvas.addEventListener('touchmove', draw, {passive: false});
+    canvas.addEventListener('touchend', endDraw);
+}
+
+function closeSignatureModal() {
+    document.getElementById('sig_modal').style.display = 'none';
+    canvas = null;
+    ctx = null;
+}
+
+function previewPDFWithSignature() {
+    // Unterschrift als Bild speichern
+    signatureDataURL = document.getElementById('sig_canvas').toDataURL('image/png');
+    
+    if (signatureDataURL === 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACYCAYAAABkW7XSAAAADElEQVR4nGNgGAWjYBQAAAGQAAGpl4+xAAAAAElFTkSuQmCC') {
+        alert("⚠️ Bitte unterschreiben Sie zuerst!");
+        return;
+    }
+    
+    closeSignatureModal();
+    alert("✅ Unterschrift gespeichert! PDF wird erstellt...");
+    
+    // PDF wird automatisch erstellt nach kurzer Verzögerung
+    setTimeout(() => {
+        exportMaterialListPDFWithSignature();
+    }, 300);
+}
+
+function exportMaterialListPDF() {
+    // Ohne Unterschrift direkt exportieren
+    signatureDataURL = null;
+    exportMaterialListPDFWithSignature();
+}
+
+function exportMaterialListPDFWithSignature() {
+    const project = projectsDB.find(p => p.id === currentProjectId);
+    if (!project) {
+        alert("❌ Kein Projekt ausgewählt!");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+    });
+
+    // Einstellungen
+    let yPosition = 20;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 15;
+    const contentWidth = pageWidth - (2 * margin);
+
+    // Titel
+    pdf.setFontSize(20);
+    pdf.setTextColor(0, 86, 179); // Blau
+    pdf.text('SHK-MATE Rapport', margin, yPosition);
+    yPosition += 12;
+
+    // Projektname
+    pdf.setFontSize(14);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(project.name, margin, yPosition);
+    yPosition += 8;
+
+    // Datum
+    pdf.setFontSize(10);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('Erstellt: ' + project.date, margin, yPosition);
+    yPosition += 12;
+
+    // Materialliste Überschrift
+    pdf.setFontSize(12);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('Materialliste:', margin, yPosition);
+    yPosition += 10;
+
+    // Tabelle Header
+    pdf.setFontSize(10);
+    pdf.setFillColor(240, 240, 240);
+    pdf.rect(margin, yPosition - 5, contentWidth, 6, 'F');
+    pdf.text('Anzahl', margin + 2, yPosition);
+    pdf.text('Material', margin + 25, yPosition);
+    yPosition += 8;
+
+    // Tabellendaten
+    project.items.forEach(item => {
+        const amount = item.amount || '1';
+        const text = item.text || 'Ohne Name';
+        
+        pdf.setFontSize(10);
+        pdf.setTextColor(0, 0, 0);
+        
+        // Zellrahmen
+        pdf.setDrawColor(200, 200, 200);
+        pdf.rect(margin, yPosition - 5, contentWidth, 6);
+        
+        pdf.text(amount + 'x', margin + 2, yPosition);
+        
+        // Text umbrechen falls zu lang
+        const splitText = pdf.splitTextToSize(text, contentWidth - 25);
+        pdf.text(splitText, margin + 25, yPosition);
+        
+        yPosition += 6 + (splitText.length - 1) * 4;
+    });
+
+    yPosition += 5;
+
+    // Unterschrift wenn vorhanden
+    if (signatureDataURL) {
+        pdf.setFontSize(12);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Unterschrift:', margin, yPosition);
+        yPosition += 8;
+        
+        try {
+            pdf.addImage(signatureDataURL, 'PNG', margin, yPosition, 60, 30);
+            yPosition += 35;
+        } catch (err) {
+            console.error('Fehler beim Einfügen der Unterschrift:', err);
+        }
+    }
+
+    // PDF speichern
+    pdf.save('Rapport_' + project.name + '.pdf');
+    alert("✅ PDF wurde heruntergeladen!");
 }

@@ -549,7 +549,6 @@ nav {
     /* Orange Akzentfarbe für Überschriften */
     font-weight: bold;
     border-bottom: 2px solid #555;
-    scope: col;
 }
 
 /* Zebra-Streifen: Nur ganz leicht aufhellen statt Weiß */

@@ -10,9 +10,14 @@
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    
+    <input type="file" id="global_camera_input" accept="image/*" capture="environment" style="display:none;" onchange="processPhoto(this)">
 </head>
-
-<input type="file" id="global_camera_input" accept="image/*" capture="environment" style="display:none;" onchange="processPhoto(this)">
 
 <body>
     <!-- Skip Navigation Link (WCAG) -->
@@ -828,28 +833,37 @@
                     onclick="toggleArchiveStatus()">
                     📥 Ins Archiv verschieben
                 </button>
-
                 <button class="delete-btn" onclick="deleteCurrentProject()" style="width:100%;">
                     🗑 Endgültig löschen
                 </button>
-                <!-- <button class="secondary" onclick="openSignatureModal()"
-                    style="margin-top:10px; border:1px solid #ff9900; color:#ff9900;">
-                    ✍️ Rapport unterschreiben lassen
-                </button> -->
+
+                <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="secondary" onclick="exportMaterialListPDF()" style="flex:1; border:1px solid #00c851; color:#00c851;" aria-label="Materialliste als PDF exportieren">
+                        📄 PDF exportieren
+                    </button>
+                    <button class="secondary" onclick="openSignatureModalForPDF()" style="flex:1; border:1px solid #ff9900; color:#ff9900;" aria-label="Rapport mit Unterschrift erstellen">
+                        ✍️ Rapport unterschreiben
+                    </button>
+                </div>
 
                 <div id="sig_modal" role="dialog" aria-labelledby="sig_title" aria-modal="true"
-                    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; flex-direction:column; align-items:center; justify-content:center;">
-                    <h3 id="sig_title" style="color:white; margin-bottom:10px;">Bitte unterschreiben</h3>
-                    <div style="background:white; padding:5px; border-radius:4px;">
-                        <canvas id="sig_canvas" width="300" height="200" role="img" aria-label="Unterschrifts-Canvas"
-                            style="border:1px solid #ccc; touch-action:none;"></canvas>
+                    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; flex-direction:column; align-items:center; justify-content:center; overflow-y:auto;">
+                    <div style="background:#1e1e1e; padding:20px; border-radius:8px; max-width:400px; margin:20px auto;">
+                        <h3 id="sig_title" style="color:white; margin-bottom:15px; text-align:center;">Rapport unterschreiben</h3>
+                        <p style="color:#aaa; font-size:0.9rem; text-align:center; margin-bottom:15px;">Bitte unterschreiben Sie unten:</p>
+                        
+                        <div style="background:white; padding:5px; border-radius:4px; margin-bottom:15px;">
+                            <canvas id="sig_canvas" width="300" height="150" role="img" aria-label="Unterschrifts-Canvas"
+                                style="border:1px solid #ccc; touch-action:none; display:block;"></canvas>
+                        </div>
+                        
+                        <div style="display:flex; gap:10px; margin-bottom:15px;">
+                            <button class="secondary btn-danger" onclick="clearSignature()" style="flex:1;" aria-label="Unterschrift löschen">Löschen</button>
+                            <button onclick="previewPDFWithSignature()" style="flex:1;" aria-label="Mit Unterschrift speichern">✅ Speichern</button>
+                        </div>
+                        
+                        <button class="secondary" onclick="closeSignatureModal()" style="width:100%;">Abbrechen</button>
                     </div>
-                    <div style="display:flex; gap:10px; margin-top:15px; width:300px;">
-                        <button class="secondary btn-danger" onclick="clearSignature()" aria-label="Unterschrift löschen">Neu</button>
-                        <button onclick="saveSignature()" aria-label="Unterschrift speichern">Speichern</button>
-                    </div>
-                    <button class="secondary" onclick="closeSignatureModal()"
-                        style="margin-top:10px; width:300px;">Abbrechen</button>
                 </div>
 
             </div>
@@ -930,11 +944,11 @@
         </button>
     </nav>
 
+    </main>
 
     <script src="app.js"></script>
     <script src="js/fetch.js"></script>
     <script src="js/calc.js"></script>
-    </main>
 </body>
 
 </html>
