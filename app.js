@@ -1718,6 +1718,9 @@ async function exportMaterialListPDFWithSignature() {
                     
                     console.log('PDF erfolgreich gespeichert:', finalFileName);
                     alert('✅ PDF gespeichert: ' + finalFileName);
+                    
+                    // Unterschrift zurücksetzen für nächsten Export
+                    signatureDataURL = null;
                 } catch (err) {
                     console.error('PDF-Fehler:', err);
                     alert('❌ PDF-Fehler: ' + err.message);
