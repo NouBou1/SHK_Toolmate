@@ -342,6 +342,9 @@ function addMaterialItem() {
         saveProjects();
         renderMaterialItems();
 
+        // Unterschrift invalidieren bei neuen Items
+        signatureDataURL = null;
+
         inputName.value = '';
         inputAmount.value = '';
         inputName.focus();
@@ -403,6 +406,9 @@ function deleteMaterialItem(index) {
         projectsDB[projectIndex].items.splice(index, 1);
         saveProjects();
         renderMaterialItems();
+        
+        // Unterschrift invalidieren bei Änderungen
+        signatureDataURL = null;
     }
 }
 
