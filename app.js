@@ -1653,9 +1653,9 @@ async function exportMaterialListPDFWithSignature() {
     const Filesystem = isCap ? window.Capacitor.Plugins?.Filesystem : null;
 
     if (Filesystem) {
-        // Native Android Weg
+        // Native Android Weg mit Auto-Nummerierung bei Duplikaten
         try {
-            const safeName = ('Rapport_' + project.name + '.pdf').replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+            const baseName = ('Rapport_' + project.name + '.pdf').replace(/[^a-zA-Z0-9_\-\.]/g, '_');
             const pdfBlob = pdf.output('blob');
             
             const reader = new FileReader();
@@ -1663,34 +1663,58 @@ async function exportMaterialListPDFWithSignature() {
                 try {
                     const base64data = reader.result.split(',')[1];
                     
-                    console.log('Schreibe PDF in Downloads...');
+                    // Funktion um Duplikate zu vermeiden
+                    const getUniqueFileName = async (baseName) => {
+                        try {
+                            // Erst versuchen, ob Datei schon existiert
+                            await Filesystem.stat({
+                                path: baseName,
+                                directory: 'DOCUMENTS'
+                            });
+                            // Wenn keine Exception → Datei existiert, nummerieren
+                            const nameParts = baseName.split('.');
+                            const extension = nameParts.pop();
+                            const nameWithoutExt = nameParts.join('.');
+                            
+                            let counter = 1;
+                            let newName = `${nameWithoutExt}(${counter}).${extension}`;
+                            
+                            while (true) {
+                                try {
+                                    await Filesystem.stat({
+                                        path: newName,
+                                        directory: 'DOCUMENTS'
+                                    });
+                                    counter++;
+                                    newName = `${nameWithoutExt}(${counter}).${extension}`;
+                                } catch (e) {
+                                    // Datei existiert nicht, diese nehmen wir
+                                    return newName;
+                                }
+                            }
+                        } catch (e) {
+                            // Datei existiert nicht, Original verwenden
+                            return baseName;
+                        }
+                    };
                     
-                    // Schreibe in Dokumente-Verzeichnis (= Downloads auf Android)
-                    const result = await Filesystem.writeFile({
-                        path: safeName,
+                    const finalFileName = await getUniqueFileName(baseName);
+                    
+                    console.log('Schreibe PDF als:', finalFileName);
+                    
+                    // Schreibe in Dokumente-Verzeichnis
+                    await Filesystem.writeFile({
+                        path: finalFileName,
                         data: base64data,
                         directory: 'DOCUMENTS',
                         recursive: true
                     });
                     
-                    console.log('PDF erfolgreich gespeichert:', result);
-                    alert('✅ PDF gespeichert in Dokumente: ' + safeName);
+                    console.log('PDF erfolgreich gespeichert:', finalFileName);
+                    alert('✅ PDF gespeichert: ' + finalFileName);
                 } catch (err) {
-                    console.error('Fehler beim Speichern in DOWNLOADS:', err);
-                    // Fallback: Cache versuchen
-                    try {
-                        const base64data = reader.result.split(',')[1];
-                        await Filesystem.writeFile({
-                            path: safeName,
-                            data: base64data,
-                            directory: 'CACHE',
-                            recursive: true
-                        });
-                        alert('⚠️ PDF in Cache gespeichert (nicht in Downloads): ' + safeName);
-                    } catch (cacheErr) {
-                        console.error('Auch Cache fehlgeschlagen:', cacheErr);
-                        alert('❌ PDF-Fehler: ' + cacheErr.message);
-                    }
+                    console.error('PDF-Fehler:', err);
+                    alert('❌ PDF-Fehler: ' + err.message);
                 }
             };
             reader.readAsDataURL(pdfBlob);
