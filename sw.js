@@ -1,11 +1,14 @@
-const CACHE_NAME = 'shk-mate-v1';
+const CACHE_NAME = 'shk-mate-v3';
 const ASSETS = [
   '/',
   '/index.html',
   '/style.css',
   '/app.js',
+  '/js/calc.js',
+  '/js/fetch.js',
   '/normen.json',
-  '/manifest.json'
+  '/manifest.json',
+  '/icons/shk-toolmate_darkbg.png'
 ];
 
 // 1. Installieren & Cachen
