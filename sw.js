@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shk-mate-v3';
+const CACHE_NAME = 'shk-mate-v4';
 const ASSETS = [
   '/',
   '/index.html',
@@ -13,6 +13,7 @@ const ASSETS = [
 
 // 1. Installieren & Cachen
 self.addEventListener('install', (e) => {
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[Service Worker] Caching all files');
@@ -42,6 +43,6 @@ self.addEventListener('activate', (e) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
