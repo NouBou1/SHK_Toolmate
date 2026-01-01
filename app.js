@@ -42,7 +42,31 @@ function switchTab(viewId, btn) {
 
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
     btn.classList.add('active');
+    btn.focus();
 }
+
+// Add keyboard support for navigation
+document.addEventListener('DOMContentLoaded', function() {
+    const navItems = document.querySelectorAll('.nav-item');
+    
+    navItems.forEach((item, index) => {
+        item.addEventListener('keydown', function(e) {
+            let nextIndex = index;
+            if (e.key === 'ArrowRight') {
+                nextIndex = (index + 1) % navItems.length;
+                e.preventDefault();
+            } else if (e.key === 'ArrowLeft') {
+                nextIndex = (index - 1 + navItems.length) % navItems.length;
+                e.preventDefault();
+            }
+            
+            if (nextIndex !== index) {
+                navItems[nextIndex].focus();
+                navItems[nextIndex].click();
+            }
+        });
+    });
+});
 
 // --- ERGEBNIS ANZEIGEN & TEILEN ---
 function showResult(elementId, text, isError = false) {
@@ -592,7 +616,21 @@ function clearNote() {
 }
 
 // Direkt beim Laden ausführen
-document.addEventListener("DOMContentLoaded", loadQuickNote);
+document.addEventListener('DOMContentLoaded', function() {
+    loadQuickNote();
+    renderCalendar();
+    renderInventory();
+    
+    // Add keyboard support to toggleable headers
+    document.querySelectorAll('[aria-controls]').forEach(button => {
+        button.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+});
 
 
 
@@ -670,15 +708,16 @@ function filterNormen() {
 // Deine bereits vorhandene Toggle-Funktion
 function toggleTable(id) {
     const el = document.getElementById(id);
-    const header = el.previousElementSibling.querySelector('span'); // Den Pfeil finden
-
-    if (el.style.display === 'none') {
-        el.style.display = 'block';
-        if (header) header.innerText = '▲'; // Pfeil nach oben
-    } else {
-        el.style.display = 'none';
-        if (header) header.innerText = '▼'; // Pfeil nach unten
+    const isHidden = el.style.display === 'none';
+    
+    el.style.display = isHidden ? 'block' : 'none';
+    
+    // Update ARIA for accessibility
+    const header = el.previousElementSibling;
+    if (header && header.hasAttribute('aria-controls')) {
+        header.setAttribute('aria-expanded', isHidden.toString());
     }
+}
 }
 
 // WICHTIG: Beim Start einmal ausführen, um die Liste zu füllen

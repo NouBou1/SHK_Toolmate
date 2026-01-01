@@ -15,11 +15,15 @@
 <input type="file" id="global_camera_input" accept="image/*" capture="environment" style="display:none;" onchange="processPhoto(this)">
 
 <body>
+    <!-- Skip Navigation Link (WCAG) -->
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
 
-    <header>
-        <img src="assets\img\Gemini_Generated_Image_2qyqza2qyqza2qyq.png" alt="header logo" class="header_logo">
+    <header role="banner">
+        <img src="assets\img\Gemini_Generated_Image_2qyqza2qyqza2qyq.png" alt="SHK-ToolMate Logo" class="header_logo">
         <h1>SHK-ToolMate</h1>
     </header>
+    
+    <main id="main-content" role="main">
 
     <div class="card">
     
@@ -91,13 +95,12 @@
 
             <div class="card">
                 <h3>🔥 Leistung via Gaszähler (auslitern)</h3>
-                <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Stoppe die Zeit für eine Menge (z.B. 0,01 m³)
-                </p>
+                <p style="font-size:0.8rem; color:#b0b0b0; margin-top:-10px;" id="gas_desc">Stoppe die Zeit für eine Menge (z.B. 0,01 m³)</p>
 
-                <label>Gestoppte Zeit (Sekunden)</label>
-                <input type="number" id="gas_sec" placeholder="z.B. 30">
+                <label for="gas_sec">Gestoppte Zeit (Sekunden)</label>
+                <input type="number" id="gas_sec" placeholder="z.B. 30" aria-describedby="gas_desc">
 
-                <label>Gezählte Menge (am Zähler)</label>
+                <label for="gas_vol">Gezählte Menge (am Zähler)</label>
                 <select id="gas_vol">
                     <option value="0.01">0,01 m³ (10 Liter) - Standard</option>
                     <option value="0.1">0,1 m³ (100 Liter)</option>
@@ -110,9 +113,9 @@
 
             <div class="card">
                 <h3>🔥 Heizlast (Überschlag)</h3>
-                <label>Raumfläche (m²)</label>
+                <label for="hl_flaeche">Raumfläche (m²)</label>
                 <input type="number" id="hl_flaeche" placeholder="z.B. 20">
-                <label>Gebäudestandard</label>
+                <label for="hl_typ">Gebäudestandard</label>
                 <select id="hl_typ">
                     <option value="120">Altbau ungedämmt (120 W/m²)</option>
                     <option value="80">Altbau saniert (80 W/m²)</option>
@@ -125,10 +128,10 @@
 
             <div class="card">
                 <h3>🔴 MAG Vordruck (Heizung)</h3>
-                <label>Statische Höhe (Meter)</label>
+                <label for="mag_hoehe">Statische Höhe (Meter)</label>
                 <input type="number" id="mag_hoehe" placeholder="Höhe bis oberster HK (z.B. 7)">
-                <button onclick="calcMAG()">Berechnen</button>
-                <div id="res_mag" class="result-box"></div>
+                <button onclick="calcMAG()" aria-label="MAG Vordruck berechnen">Berechnen</button>
+                <div id="res_mag" class="result-box" role="status" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -170,49 +173,46 @@
 
             <div class="card">
                 <h3>🔥 Leistung-Check (Ist-Zustand)</h3>
-                <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Berechnet die momentane Leistung aus
-                    Durchfluss &
-                    Delta-T.</p>
+                <p style="font-size:0.8rem; color:#b0b0b0; margin-top:-10px;" id="real_desc">Berechnet die momentane Leistung aus Durchfluss & Delta-T.</p>
 
-                <label>Volumenstrom (l/h)</label>
-                <input type="number" id="real_flow" placeholder="Abgelesen am Tacosetter/WMZ">
+                <label for="real_flow">Volumenstrom (l/h)</label>
+                <input type="number" id="real_flow" placeholder="Abgelesen am Tacosetter/WMZ" aria-describedby="real_desc">
 
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1">
-                        <label>Vorlauf °C</label>
+                        <label for="real_vl">Vorlauf °C</label>
                         <input type="number" id="real_vl" placeholder="VL">
                     </div>
                     <div style="flex:1">
-                        <label>Rücklauf °C</label>
+                        <label for="real_rl">Rücklauf °C</label>
                         <input type="number" id="real_rl" placeholder="RL">
                     </div>
                 </div>
 
                 <button onclick="calcRealPower()">Leistung ermitteln</button>
-                <div id="res_realpower" class="result-box"></div>
+                <div id="res_realpower" class="result-box" role="status" aria-live="polite"></div>
             </div>
 
             <div class="card">
                 <h3>⚖️ Hydraulischer Abgleich</h3>
-                <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Berechnet den Kv-Wert & die Voreinstellung
-                    (Ventil).</p>
+                <p style="font-size:0.8rem; color:#b0b0b0; margin-top:-10px;">Berechnet den Kv-Wert & die Voreinstellung (Ventil).</p>
 
-                <label>Heizlast HK (Watt)</label>
+                <label for="kv_watt">Heizlast HK (Watt)</label>
                 <input type="number" id="kv_watt" placeholder="z.B. 1200">
 
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1">
-                        <label>Spreizung (K)</label>
+                        <label for="kv_dt">Spreizung (K)</label>
                         <input type="number" id="kv_dt" value="15" placeholder="∆T">
                     </div>
                     <div style="flex:1">
-                        <label>Diff.-Druck (mbar)</label>
+                        <label for="kv_dp">Diff.-Druck (mbar)</label>
                         <input type="number" id="kv_dp" value="100" placeholder="Standard: 100">
                     </div>
                 </div>
 
                 <button onclick="calcKvValue()">Einstellung berechnen</button>
-                <div id="res_kv" class="result-box"></div>
+                <div id="res_kv" class="result-box" role="status" aria-live="polite"></div>
                 <div style="margin-top:10px; display:flex; justify-content:center;">
                     <div
                         style="width:40px; height:40px; border:3px solid #555; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#222;">
@@ -223,62 +223,59 @@
 
             <div class="card">
                 <h3>💧 Volumenstrom (Pumpe)</h3>
-                <label>Leistung (kW)</label>
+                <label for="vs_kw">Leistung (kW)</label>
                 <input type="number" id="vs_kw" placeholder="z.B. 15">
-                <label>Spreizung Kelvin (ΔT)</label>
+                <label for="vs_dt">Spreizung Kelvin (ΔT)</label>
                 <input type="number" id="vs_dt" value="15" placeholder="Standard: 15">
                 <button onclick="calcVolumenstrom()">Berechnen</button>
-                <div id="res_volumen" class="result-box"></div>
+                <div id="res_volumen" class="result-box" role="status" aria-live="polite"></div>
             </div>
 
 
             <div class="card">
                 <h3>🚿 Mischwasser-Ertrag</h3>
-                <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Wie viel Badewasser (ca. 38-40°C) ergibt mein
-                    Speicher?</p>
+                <p style="font-size:0.8rem; color:#b0b0b0; margin-top:-10px;">Wie viel Badewasser (ca. 38-40°C) ergibt mein Speicher?</p>
 
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1">
-                        <label>Speicher T (°C)</label>
+                        <label for="mix_t_hot">Speicher T (°C)</label>
                         <input type="number" id="mix_t_hot" value="60">
                     </div>
                     <div style="flex:1">
-                        <label>Speicher Vol. (L)</label>
+                        <label for="mix_vol">Speicher Vol. (L)</label>
                         <input type="number" id="mix_vol" placeholder="z.B. 160">
                     </div>
                 </div>
-                <label>Kaltwasser T (°C)</label>
+                <label for="mix_t_cold">Kaltwasser T (°C)</label>
                 <input type="number" id="mix_t_cold" value="10">
 
                 <button onclick="calcMixWater()">Berechnen</button>
-                <div id="res_mix" class="result-box"></div>
+                <div id="res_mix" class="result-box" role="status" aria-live="polite"></div>
             </div>
 
             <div class="card">
                 <h3>⏱️ Aufheizzeit (Speicher)</h3>
-                <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Wie lange braucht der Speicher von Kalt auf
-                    Warm?
-                </p>
+                <p style="font-size:0.8rem; color:#b0b0b0; margin-top:-10px;">Wie lange braucht der Speicher von Kalt auf Warm?</p>
 
-                <label>Speichervolumen (Liter)</label>
+                <label for="heatup_vol">Speichervolumen (Liter)</label>
                 <input type="number" id="heatup_vol" placeholder="z.B. 200">
 
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1">
-                        <label>Start °C</label>
+                        <label for="heatup_t1">Start °C</label>
                         <input type="number" id="heatup_t1" value="10">
                     </div>
                     <div style="flex:1">
-                        <label>Ziel °C</label>
+                        <label for="heatup_t2">Ziel °C</label>
                         <input type="number" id="heatup_t2" value="60">
                     </div>
                 </div>
 
-                <label>Leistung Wärmeerzeuger (kW)</label>
+                <label for="heatup_kw">Leistung Wärmeerzeuger (kW)</label>
                 <input type="number" id="heatup_kw" placeholder="z.B. 15">
 
                 <button onclick="calcHeatUpTime()">Zeit berechnen</button>
-                <div id="res_heatup" class="result-box"></div>
+                <div id="res_heatup" class="result-box" role="status" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -511,8 +508,8 @@
 
             <div class="card">
                 <h3 onclick="toggleTable('tab_elektro')"
-                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
-                    ⚡ Elektro-Schutzbereiche (Bad) <span>▼</span>
+                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;" role="button" tabindex="0" aria-expanded="false" aria-controls="tab_elektro">
+                    ⚡ Elektro-Schutzbereiche (Bad) <span aria-hidden="true">▼</span>
                 </h3>
                 <div id="tab_elektro" style="display:none; margin-top:10px;">
                     <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">DIN VDE 0100-701</p>
@@ -566,8 +563,8 @@
 
             <div class="card">
                 <h3 onclick="toggleTable('tab_zoll')"
-                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
-                    📏 Zoll ↔ Rohr-Außen <span>▼</span>
+                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;" role="button" tabindex="0" aria-expanded="false" aria-controls="tab_zoll">
+                    📏 Zoll ↔ Rohr-Außen <span aria-hidden="true">▼</span>
                 </h3>
                 <div id="tab_zoll" style="display:none; margin-top:10px;">
                     <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">Für Gebo & Pressfittings</p>
@@ -622,8 +619,8 @@
 
             <div class="card">
                 <h3 onclick="toggleTable('tab_sw')"
-                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
-                    🔧 Schlüsselweiten (SW) <span>▼</span>
+                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;" role="button" tabindex="0" aria-expanded="false" aria-controls="tab_sw">
+                    🔧 Schlüsselweiten (SW) <span aria-hidden="true">▼</span>
                 </h3>
                 <div id="tab_sw" style="display:none; margin-top:10px;">
                     <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">Sechskantmuttern (ISO 4032)</p>
@@ -670,9 +667,10 @@
 
             <div class="card">
                 <h3>📚 Normen & Regelwerke</h3>
-                <input type="text" id="searchBar" onkeyup="filterNormen()"
+                <label for="searchBar">Normen durchsuchen</label>
+                <input type="text" id="searchBar" onkeyup="filterNormen()" aria-label="Normen und Regelwerke durchsuchen"
                     placeholder="Suche (z.B. Gas, Trinkwasser)...">
-                <div id="normList"></div>
+                <div id="normList" role="region" aria-live="polite" aria-label="Suchergebnisse"></div>
             </div>
 
         </div>
@@ -688,17 +686,18 @@
 
         <div class="card">
             <h3>Fehlercode Suche</h3>
-            <p style="color:#aaa; font-size:0.9rem;">(Demo-Funktion: Leitet zu Google weiter)</p>
-            <input type="text" id="error_code" placeholder="z.B. Viessmann F4">
-            <button class="secondary" onclick="searchError()">Auf Google suchen</button>
+            <p style="color:#b0b0b0; font-size:0.9rem;">(Demo-Funktion: Leitet zu Google weiter)</p>
+            <label for="error_code">Fehlercode eingeben</label>
+            <input type="text" id="error_code" placeholder="z.B. Viessmann F4" aria-label="Heizkörper Fehlercode">
+            <button class="secondary" onclick="searchError()" aria-label="Fehler auf Google suchen">Auf Google suchen</button>
         </div>
 
         <div class="card">
             <h3>📐 Digitale Wasserwaage</h3>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Handy flach auflegen (z.B. für Gefälle).</p>
+            <p style="font-size:0.8rem; color:#b0b0b0; margin-top:-10px;">Handy flach auflegen (z.B. für Gefälle).</p>
 
             <div
-                style="position:relative; width:200px; height:200px; background:#333; border-radius:50%; margin:0 auto; border:4px solid #555;">
+                style="position:relative; width:200px; height:200px; background:#333; border-radius:50%; margin:0 auto; border:4px solid #555;" role="img" aria-label="Digitale Wasserwaage Anzeige">
                 <div style="position:absolute; top:50%; left:0; width:100%; height:1px; background:#555;"></div>
                 <div style="position:absolute; left:50%; top:0; width:1px; height:100%; background:#555;"></div>
 
@@ -707,26 +706,28 @@
                 </div>
             </div>
 
-            <div style="text-align:center; margin-top:15px; font-weight:bold;">
+            <div style="text-align:center; margin-top:15px; font-weight:bold;" aria-live="polite">
                 X: <span id="tilt_x">0</span>° | Y: <span id="tilt_y">0</span>°
             </div>
 
-            <button onclick="requestLevelPerm()" style="margin-top:10px;">Sensoren starten</button>
+            <button onclick="requestLevelPerm()" style="margin-top:10px;" aria-label="Handy Sensoren aktivieren">Sensoren starten</button>
         </div>
 
         <div class="card">
             <h3>🛠 Einheiten-Wandler</h3>
-            <label>Wert eingeben</label>
-            <input type="number" id="conv_val" placeholder="0">
+            <label for="conv_val">Wert eingeben</label>
+            <input type="number" id="conv_val" placeholder="0" aria-label="Zahlenwert zum Umrechnen">
             <div style="display:flex; gap:10px;">
-                <select id="conv_from">
+                <label for="conv_from" class="sr-only">Umrechnen von</label>
+                <select id="conv_from" aria-label="Einheit zum Umrechnen von">
                     <option value="bar">Bar</option>
                     <option value="mbar">mbar</option>
                     <option value="pascal">Pascal (Pa)</option>
                     <option value="kw">kW</option>
                 </select>
                 <div style="padding-top:10px;">⮕</div>
-                <select id="conv_to">
+                <label for="conv_to" class="sr-only">Umrechnen nach</label>
+                <select id="conv_to" aria-label="Einheit zum Umrechnen nach">
                     <option value="pascal">Pascal (Pa)</option>
                     <option value="bar">Bar</option>
                     <option value="mbar">mbar</option>
@@ -734,7 +735,7 @@
                 </select>
             </div>
             <button onclick="convertUnits()" style="margin-top:10px;">Umrechnen</button>
-            <div id="res_conv" class="result-box"></div>
+            <div id="res_conv" class="result-box" role="status" aria-live="polite" aria-label="Umrechnung Ergebnis"></div>
         </div>
 
 
@@ -742,14 +743,16 @@
         <div class="card">
             <h3>💧 Wasserhärte (VDI 2035)</h3>
             <div style="display:flex; gap:10px;">
-                <input type="number" id="hard_val" placeholder="Wert">
-                <select id="hard_mode">
+                <label for="hard_val" class="sr-only">Wasserhärte Wert</label>
+                <input type="number" id="hard_val" placeholder="Wert" aria-label="Wasserhärte Messwert">
+                <label for="hard_mode" class="sr-only">Umrechnung</label>
+                <select id="hard_mode" aria-label="Wasserhärte-Umrechnung">
                     <option value="dh_to_mmol">°dH ⮕ mmol/l</option>
                     <option value="mmol_to_dh">mmol/l ⮕ °dH</option>
                 </select>
             </div>
             <button onclick="calcHardness()" style="margin-top:10px;">Umrechnen</button>
-            <div id="res_hard" class="result-box"></div>
+            <div id="res_hard" class="result-box" role="status" aria-live="polite"></div>
         </div>
 
         <div class="card">
@@ -787,10 +790,12 @@
 
                 <div id="new_project_wrapper"
                     style="display:flex; flex-direction:column; gap:10px; margin-bottom:15px; margin-top:15px;">
-                    <input type="text" id="new_project_name" placeholder="Kunde / Baustelle...">
+                    <label for="new_project_name">Projekt Name</label>
+                    <input type="text" id="new_project_name" placeholder="Kunde / Baustelle..." aria-label="Name des neuen Projekts">
                     <div style="display:flex; gap:10px;">
-                        <input type="date" id="new_project_date" style="flex:1;">
-                        <button onclick="addProject()" style="width:auto; padding:0 20px;">Anlegen</button>
+                        <label for="new_project_date" class="sr-only">Projektdatum</label>
+                        <input type="date" id="new_project_date" style="flex:1;" aria-label="Startdatum des Projekts">
+                        <button onclick="addProject()" style="width:auto; padding:0 20px;" aria-label="Projekt anlegen">Anlegen</button>
                     </div>
                 </div>
 
@@ -809,9 +814,11 @@
             <p id="detail_date" style="color:#aaa; font-size:0.8rem; margin-top:-10px; margin-bottom:15px;"></p>
 
             <div class="input-group">
-                <input type="number" id="new_item_amount" placeholder="Anz." class="input-small">
-                <input type="text" id="new_item_name" placeholder="Material (z.B. Bogen HT DN50)">
-                <button onclick="addMaterialItem()" class="btn-add">+</button>
+                <label for="new_item_amount" class="sr-only">Anzahl</label>
+                <input type="number" id="new_item_amount" placeholder="Anz." class="input-small" aria-label="Menge des Materials">
+                <label for="new_item_name" class="sr-only">Material</label>
+                <input type="text" id="new_item_name" placeholder="Material (z.B. Bogen HT DN50)" aria-label="Materialbeschreibung">
+                <button onclick="addMaterialItem()" class="btn-add" aria-label="Material hinzufügen">+</button>
             </div>
             <ul id="material_list_items" class="material-list">
             </ul>
@@ -830,16 +837,16 @@
                     ✍️ Rapport unterschreiben lassen
                 </button> -->
 
-                <div id="sig_modal"
+                <div id="sig_modal" role="dialog" aria-labelledby="sig_title" aria-modal="true"
                     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; flex-direction:column; align-items:center; justify-content:center;">
-                    <h3 style="color:white; margin-bottom:10px;">Bitte unterschreiben</h3>
+                    <h3 id="sig_title" style="color:white; margin-bottom:10px;">Bitte unterschreiben</h3>
                     <div style="background:white; padding:5px; border-radius:4px;">
-                        <canvas id="sig_canvas" width="300" height="200"
+                        <canvas id="sig_canvas" width="300" height="200" role="img" aria-label="Unterschrifts-Canvas"
                             style="border:1px solid #ccc; touch-action:none;"></canvas>
                     </div>
                     <div style="display:flex; gap:10px; margin-top:15px; width:300px;">
-                        <button class="secondary btn-danger" onclick="clearSignature()">Neu</button>
-                        <button onclick="saveSignature()">Speichern</button>
+                        <button class="secondary btn-danger" onclick="clearSignature()" aria-label="Unterschrift löschen">Neu</button>
+                        <button onclick="saveSignature()" aria-label="Unterschrift speichern">Speichern</button>
                     </div>
                     <button class="secondary" onclick="closeSignatureModal()"
                         style="margin-top:10px; width:300px;">Abbrechen</button>
@@ -856,9 +863,11 @@
             <p style="font-size:0.8rem; color:#aaa; margin-top:-10px;">Schnell-Check für Verbrauchsmaterial.</p>
 
             <div class="input-group">
-                <input type="number" id="inv_amount" placeholder="Menge" class="input-small">
-                <input type="text" id="inv_name" placeholder="Artikel (z.B. Silikon grau)">
-                <button onclick="addInventoryItem()" class="btn-add">+</button>
+                <label for="inv_amount" class="sr-only">Menge</label>
+                <input type="number" id="inv_amount" placeholder="Menge" class="input-small" aria-label="Lagermenge">
+                <label for="inv_name" class="sr-only">Artikel</label>
+                <input type="text" id="inv_name" placeholder="Artikel (z.B. Silikon grau)" aria-label="Artikelbeschreibung">
+                <button onclick="addInventoryItem()" class="btn-add" aria-label="Artikel hinzufügen">+</button>
             </div>
 
             <ul id="inventory_list" class="material-list">
@@ -900,24 +909,24 @@
         </button>
     </nav> -->
 
-    <nav>
-        <button class="nav-item active" onclick="switchTab('rechner', this)">
-            <span class="nav-icon">🧮</span>Rechner
+    <nav role="navigation" aria-label="Hauptnavigation">
+        <button class="nav-item active" onclick="switchTab('rechner', this)" aria-label="Zu Rechner Tab">
+            <span class="nav-icon">🧮</span><span>Rechner</span>
         </button>
-        <button class="nav-item" onclick="switchTab('material', this)">
-            <span class="nav-icon">📋</span>Listen
+        <button class="nav-item" onclick="switchTab('material', this)" aria-label="Zu Material Listen Tab">
+            <span class="nav-icon">📋</span><span>Listen</span>
         </button>
-        <button class="nav-item" onclick="switchTab('inventory', this)">
-            <span class="nav-icon">🚐</span>Lager
+        <button class="nav-item" onclick="switchTab('inventory', this)" aria-label="Zu Lager Tab">
+            <span class="nav-icon">🚐</span><span>Lager</span>
         </button>
-        <button class="nav-item" onclick="switchTab('calendar', this)">
-            <span class="nav-icon">📅</span>Plan
+        <button class="nav-item" onclick="switchTab('calendar', this)" aria-label="Zu Kalender Tab">
+            <span class="nav-icon">📅</span><span>Plan</span>
         </button>
-        <button class="nav-item" onclick="switchTab('tools', this)">
-            <span class="nav-icon">🔧</span>Tools
+        <button class="nav-item" onclick="switchTab('tools', this)" aria-label="Zu Tools Tab">
+            <span class="nav-icon">🔧</span><span>Tools</span>
         </button>
-        <button class="nav-item" onclick="switchTab('normen', this)">
-            <span class="nav-icon">📖</span>Normen/Maße
+        <button class="nav-item" onclick="switchTab('normen', this)" aria-label="Zu Normen und Maße Tab">
+            <span class="nav-icon">📖</span><span>Normen/Maße</span>
         </button>
     </nav>
 
@@ -925,6 +934,7 @@
     <script src="app.js"></script>
     <script src="js/fetch.js"></script>
     <script src="js/calc.js"></script>
+    </main>
 </body>
 
 </html>
