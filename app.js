@@ -1723,10 +1723,14 @@ async function exportMaterialListPDFWithSignature() {
                     signatureDataURL = null;
                     console.log('Unterschrift gelöscht');
                     
-                    // Canvas leeren
-                    if (canvas && ctx) {
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        console.log('Canvas geleert');
+                    // Canvas über Modal löschen (falls das Modal offen ist)
+                    const sigCanvas = document.getElementById('sig_canvas');
+                    if (sigCanvas) {
+                        const sigCtx = sigCanvas.getContext('2d');
+                        if (sigCtx) {
+                            sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                            console.log('Canvas über Modal geleert');
+                        }
                     }
                 } catch (err) {
                     console.error('PDF-Fehler:', err);

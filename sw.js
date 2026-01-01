@@ -1,13 +1,13 @@
 
-// Service Worker v7 - Force fresh deploy
-const CACHE_NAME = 'shk-mate-v7';
+// Service Worker v8 - Force fresh deploy
+const CACHE_NAME = 'shk-mate-v8';
 const ASSETS = [
   '/',
   '/index.html',
   '/style.css',
-  '/app.js?v=7',
-  '/js/calc.js?v=7',
-  '/js/fetch.js?v=7',
+  '/app.js?v=8',
+  '/js/calc.js?v=8',
+  '/js/fetch.js?v=8',
   '/normen.json',
   '/manifest.json',
   '/icons/icon.png'
