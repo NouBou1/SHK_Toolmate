@@ -18,11 +18,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    
-    <input type="file" id="global_camera_input" accept="image/*" capture="environment" style="display:none;" onchange="processPhoto(this)">
 </head>
 
 <body>
+    <!-- Hidden File Input for Camera -->
+    <input type="file" id="global_camera_input" accept="image/*" capture="environment" style="display:none;" onchange="processPhoto(this)">
+    
     <!-- Skip Navigation Link (WCAG) -->
     <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
 
