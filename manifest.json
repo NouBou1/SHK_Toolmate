@@ -1,21 +1,25 @@
 {
-  "name": "SHK Profi Mate",
+  "name": "SHK-ToolMate",
   "short_name": "SHK Tool",
-  "start_url": "index.html",
+  "description": "Professionelle Handwerker-App für Material, Fotos und Berichte",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#0056b3",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "icons/icon.png",
+      "src": "/icons/shk-toolmate_darkbg.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon.png",
+      "src": "/icons/shk-toolmate_darkbg.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
