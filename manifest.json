@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "SHK-ToolMate",
   "short_name": "SHK Tool",
   "description": "Professionelle Handwerker-App für Material, Fotos und Berichte",
@@ -16,13 +17,25 @@
       "src": "icons/shk-toolmate_darkbg.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/shk-toolmate_darkbg.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icons/shk-toolmate_darkbg.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/shk-toolmate_darkbg.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "screenshots": [
@@ -30,34 +43,9 @@
       "src": "assets/img/Gemini_Generated_Image_2qyqza2qyqza2qyq.png",
       "sizes": "540x720",
       "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "assets/img/Gemini_Generated_Image_2qyqza2qyqza2qyq.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
+      "form_factor": "narrow",
+      "label": "Startseite"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "Projekt erstellen",
-      "short_name": "Projekt",
-      "description": "Neues Projekt hinzufügen",
-      "url": "/?action=new_project",
-      "icons": [
-        {
-          "src": "icons/shk-toolmate_darkbg.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
-  "prefer_related_applications": false,
-  "scope_extensions": [
-    {
-      "origin": "*"
-    }
-  ]
+  "prefer_related_applications": false
 }
