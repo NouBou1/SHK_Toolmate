@@ -1665,16 +1665,16 @@ async function exportMaterialListPDFWithSignature() {
                     
                     console.log('Schreibe PDF in Downloads...');
                     
-                    // Schreibe in Downloads-Verzeichnis
+                    // Schreibe in Dokumente-Verzeichnis (= Downloads auf Android)
                     const result = await Filesystem.writeFile({
                         path: safeName,
                         data: base64data,
-                        directory: 'DOWNLOADS',
+                        directory: 'DOCUMENTS',
                         recursive: true
                     });
                     
                     console.log('PDF erfolgreich gespeichert:', result);
-                    alert('✅ PDF gespeichert in Downloads: ' + safeName);
+                    alert('✅ PDF gespeichert in Dokumente: ' + safeName);
                 } catch (err) {
                     console.error('Fehler beim Speichern in DOWNLOADS:', err);
                     // Fallback: Cache versuchen
