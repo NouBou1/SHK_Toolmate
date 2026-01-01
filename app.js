@@ -718,7 +718,7 @@ function toggleTable(id) {
         header.setAttribute('aria-expanded', isHidden.toString());
     }
 }
-}
+
 
 // WICHTIG: Beim Start einmal ausführen, um die Liste zu füllen
 document.addEventListener('DOMContentLoaded', () => {
