@@ -1721,6 +1721,13 @@ async function exportMaterialListPDFWithSignature() {
                     
                     // Unterschrift zurücksetzen für nächsten Export
                     signatureDataURL = null;
+                    console.log('Unterschrift gelöscht');
+                    
+                    // Canvas leeren
+                    if (canvas && ctx) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        console.log('Canvas geleert');
+                    }
                 } catch (err) {
                     console.error('PDF-Fehler:', err);
                     alert('❌ PDF-Fehler: ' + err.message);
