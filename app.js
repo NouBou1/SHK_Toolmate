@@ -1373,10 +1373,10 @@ function getSiteWeather() {
 document.addEventListener('DOMContentLoaded', renderCalendar);
 
 // Service Worker registrieren (macht die App offline-fähig)
-// if ('serviceWorker' in navigator) {
-//     window.addEventListener('load', () => {
-//         navigator.serviceWorker.register('sw.js')
-//             .then(reg => console.log('Service Worker registriert!', reg))
-//             .catch(err => console.log('Service Worker Fehler:', err));
-//     });
-// }
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker registriert!', reg))
+            .catch(err => console.log('Service Worker Fehler:', err));
+    });
+}
