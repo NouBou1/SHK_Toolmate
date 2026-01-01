@@ -1,3 +1,4 @@
+// Service Worker v6 - Force fresh deploy
 const CACHE_NAME = 'shk-mate-v6';
 const ASSETS = [
   '/',
