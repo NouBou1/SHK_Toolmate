@@ -1,3 +1,4 @@
+
 // Service Worker v6 - Force fresh deploy
 const CACHE_NAME = 'shk-mate-v6';
 const ASSETS = [
@@ -9,7 +10,7 @@ const ASSETS = [
   '/js/fetch.js?v=6',
   '/normen.json',
   '/manifest.json',
-  '/icons/shk-toolmate_darkbg.png'
+  '/icons/icon.png'
 ];
 
 // 1. Installieren & Cachen

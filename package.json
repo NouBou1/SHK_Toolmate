@@ -1,0 +1,29 @@
+{
+  "name": "shk-mate",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000S\u0000H\u0000K\u0000_\u0000M\u0000a\u0000t\u0000e\u0000\r\u0000 \u0000",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NouBou1/SHK_Mate.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/NouBou1/SHK_Mate/issues"
+  },
+  "homepage": "https://github.com/NouBou1/SHK_Mate#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/cli": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/filesystem": "^8.0.0",
+    "@capacitor/geolocation": "^8.0.0",
+    "@capacitor/share": "^8.0.0"
+  }
+}

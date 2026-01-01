@@ -1548,7 +1548,7 @@ function exportMaterialListPDF() {
     exportMaterialListPDFWithSignature();
 }
 
-function exportMaterialListPDFWithSignature() {
+async function exportMaterialListPDFWithSignature() {
     try {
         const project = projectsDB.find(p => p.id === currentProjectId);
         if (!project) {
@@ -1649,7 +1649,29 @@ function exportMaterialListPDFWithSignature() {
         }
     }
 
-    // PDF speichern
+    const isCap = typeof window !== 'undefined' && window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
+    const Filesystem = isCap ? window.Capacitor.Plugins?.Filesystem : null;
+
+    // Einfacher Weg: PDF als Blob speichern und Browser-Download nutzen
+    try {
+        const pdfBlob = pdf.output('blob');
+        const url = URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'Rapport_' + project.name + '.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        alert('✅ PDF wird heruntergeladen. Schau in deine Downloads!');
+        return;
+    } catch (err) {
+        console.error('PDF-Download fehlgeschlagen:', err);
+        alert('⚠️ Fehler beim PDF-Export: ' + err.message);
+    }
+
+    // Fallback: klassischer Download im Browser
     pdf.save('Rapport_' + project.name + '.pdf');
     alert("✅ PDF wurde heruntergeladen!");
     }
