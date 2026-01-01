@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SHK ToolMate</title>
-    <link rel="icon" type="image/png" href="assets\img\Gemini_Generated_Image_2qyqza2qyqza2qyq.png">
+    <link rel="icon" type="image/png" href="/icons/shk-toolmate_darkbg.png">
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0056b3">
+    <meta name="description" content="Professionelle Handwerker-App für Material, Fotos und Berichte">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SHK Tool">
     
     <!-- PDF Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -24,7 +27,7 @@
     <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
 
     <header role="banner">
-        <img src="assets\img\Gemini_Generated_Image_2qyqza2qyqza2qyq.png" alt="SHK-ToolMate Logo" class="header_logo">
+        <img src="/icons/shk-toolmate_darkbg.png" alt="SHK-ToolMate Logo" class="header_logo">
         <h1>SHK-ToolMate</h1>
     </header>
     
@@ -948,6 +951,15 @@
 
     <script src="app.js"></script>
     <script src="js/fetch.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+    }
+    </script>
+</body>
+</html>
     <script src="js/calc.js"></script>
 </body>
 

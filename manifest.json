@@ -54,5 +54,10 @@
       ]
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "scope_extensions": [
+    {
+      "origin": "*"
+    }
+  ]
 }
