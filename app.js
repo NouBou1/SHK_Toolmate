@@ -212,12 +212,26 @@ function setProjectView(mode) {
     renderProjectList();
 }
 
-// 2. Projekt hinzufügen
+// 2. Projekt hinzufügen mit Input Validierung
 function addProject() {
     const input = document.getElementById('new_project_name');
     const name = input.value.trim();
 
-    if (!name) return;
+    if (!name) {
+        alert('❌ Bitte Projektname eingeben');
+        return;
+    }
+    
+    if (name.length > 50) {
+        alert('❌ Projektname zu lang (max. 50 Zeichen)');
+        return;
+    }
+    
+    // Prüfe auf Duplikate
+    if (projectsDB.some(p => p.name.toLowerCase() === name.toLowerCase() && !p.archived)) {
+        alert('⚠️ Projekt mit diesem Namen existiert bereits!');
+        return;
+    }
 
     const newProject = {
         id: Date.now(),
@@ -403,9 +417,19 @@ function toggleArchiveStatus() {
     }
 }
 
-// 10. Projekt löschen
+// 10. Projekt löschen mit Zwei-Schritt Bestätigung
 function deleteCurrentProject() {
-    if (confirm("Wirklich löschen?")) {
+    const project = projectsDB.find(p => p.id === currentProjectId);
+    if (!project) return;
+    
+    // Zwei-Schritt Bestätigung
+    const firstConfirm = confirm(`🗑️ Projekt \"${project.name}\" wirklich löschen?\\n\\nDies kann nicht rückgängig gemacht werden!`);
+    if (!firstConfirm) return;
+    
+    const secondConfirm = confirm(`⚠️ Letzte Chance! Projekt \"${project.name}\" mit ${project.items.length} Materialien ENDGÜLTIG löschen?`);
+    if (!secondConfirm) return;
+    
+    if (confirm("Wirklich?")) {
         const idx = projectsDB.findIndex(p => p.id === currentProjectId);
         if (idx > -1) {
             projectsDB.splice(idx, 1);
@@ -424,29 +448,52 @@ function triggerPhoto(index) {
     document.getElementById('global_camera_input').click();
 }
 
-// 2. Foto wurde gemacht -> Komprimieren & Speichern
+// 2. Foto wurde gemacht -> Komprimieren & Speichern mit Error Handling
 function processPhoto(input) {
     if (input.files && input.files[0]) {
         const file = input.files[0];
+        
+        // Validierung: Dateigröße
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+            alert(`❌ Datei zu groß (${(file.size / 1024 / 1024).toFixed(1)}MB). Max. 5MB erlaubt.`);
+            input.value = '';
+            return;
+        }
+        
+        // Validierung: Dateityp
+        if (!file.type.startsWith('image/')) {
+            alert('❌ Nur Bilder erlaubt!');
+            input.value = '';
+            return;
+        }
+        
         const reader = new FileReader();
+
+        reader.onerror = function() {
+            alert('❌ Fehler beim Laden des Fotos. Bitte versuchen Sie es erneut.');
+            console.error('FileReader error:', reader.error);
+            input.value = '';
+        };
 
         // Erst wenn die Datei gelesen wurde...
         reader.onload = function(e) {
-            const img = new Image();
-            
-            // Erst wenn das Bild als Objekt bereit ist...
-            img.onload = function() {
-                // --- BILD VERKLEINERN ---
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const MAX_WIDTH = 800;
-                const scaleSize = MAX_WIDTH / img.width;
-                canvas.width = MAX_WIDTH;
-                canvas.height = img.height * scaleSize;
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            try {
+                const img = new Image();
                 
-                // Als Text holen
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                // Erst wenn das Bild als Objekt bereit ist...
+                img.onload = function() {
+                    // --- BILD VERKLEINERN ---
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const MAX_WIDTH = 800;
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // Als Text holen
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
 
                 // --- SPEICHERN ---
                 const activeProj = projectsDB.find(p => p.id === currentProjectId);
@@ -517,9 +564,27 @@ function showBigImage(src) {
     document.body.appendChild(overlay);
 }
 
-// Hilfsfunktion: Speichern
+// Hilfsfunktion: Speichern mit Fehlerbehandlung & Size Check
 function saveProjects() {
-    localStorage.setItem('shk_projects', JSON.stringify(projectsDB));
+    try {
+        const data = JSON.stringify(projectsDB);
+        const sizeInBytes = new Blob([data]).size;
+        const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
+        
+        // Warnung wenn über 4MB
+        if (sizeInMB > 4) {
+            console.warn(`⚠️ localStorage ist ${sizeInMB}MB groß! Speicher wird knapp.`);
+        }
+        
+        localStorage.setItem('shk_projects', data);
+    } catch (err) {
+        if (err.name === 'QuotaExceededError') {
+            alert('❌ Speicher voll! Bitte alte Projekte und Fotos löschen um Platz zu machen.');
+            console.error('localStorage quota exceeded:', err);
+        } else {
+            alert('❌ Fehler beim Speichern: ' + err.message);
+        }
+    }
 }
 
 // Start
@@ -1441,14 +1506,27 @@ function closeSignatureModal() {
 }
 
 function previewPDFWithSignature() {
-    // Unterschrift als Bild speichern
-    signatureDataURL = document.getElementById('sig_canvas').toDataURL('image/png');
+    const canvas = document.getElementById('sig_canvas');
+    const ctx = canvas.getContext('2d');
     
-    if (signatureDataURL === 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACYCAYAAABkW7XSAAAADElEQVR4nGNgGAWjYBQAAAGQAAGpl4+xAAAAAElFTkSuQmCC') {
-        alert("⚠️ Bitte unterschreiben Sie zuerst!");
+    // Prüfe ob Canvas leer ist (alle Pixel transparent)
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    let hasContent = false;
+    
+    for (let i = 3; i < data.length; i += 4) {
+        if (data[i] > 0) { // Alpha-Kanal prüfen
+            hasContent = true;
+            break;
+        }
+    }
+    
+    if (!hasContent) {
+        alert("⚠️ Unterschrift ist leer! Bitte tatsächlich unterschreiben.");
         return;
     }
     
+    signatureDataURL = canvas.toDataURL('image/png');
     closeSignatureModal();
     alert("✅ Unterschrift gespeichert! PDF wird erstellt...");
     
@@ -1465,24 +1543,35 @@ function exportMaterialListPDF() {
 }
 
 function exportMaterialListPDFWithSignature() {
-    const project = projectsDB.find(p => p.id === currentProjectId);
-    if (!project) {
-        alert("❌ Kein Projekt ausgewählt!");
-        return;
-    }
+    try {
+        const project = projectsDB.find(p => p.id === currentProjectId);
+        if (!project) {
+            alert("❌ Kein Projekt ausgewählt!");
+            return;
+        }
+        
+        if (!project.items || project.items.length === 0) {
+            const confirmEmpty = confirm('⚠️ Materialliste ist leer. Trotzdem PDF erstellen?');
+            if (!confirmEmpty) return;
+        }
 
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-    });
+        const { jsPDF } = window.jspdf;
+        if (!jsPDF) {
+            alert("❌ PDF-Bibliothek nicht geladen. Bitte Seite neu laden.");
+            return;
+        }
+        
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
 
-    // Einstellungen
-    let yPosition = 20;
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const margin = 15;
-    const contentWidth = pageWidth - (2 * margin);
+        // Einstellungen
+        let yPosition = 20;
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const margin = 15;
+        const contentWidth = pageWidth - (2 * margin);
 
     // Titel
     pdf.setFontSize(20);
