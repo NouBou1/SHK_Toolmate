@@ -95,27 +95,38 @@ function applyAndroidSafeAreaInsets() {
 }
 
 // --- MOBILE KEYBOARD HANDLING ---
-// Minimale Input-Optimierung: Lass den Browser machen, was er will
+// Input-Optimierung: Stelle sicher dass Inputs wirklich anklickbar sind
 function enableMobileInputOptimization() {
     // Alle Input und Textarea Felder finden
     const inputs = document.querySelectorAll('input, textarea, select');
     
     inputs.forEach(el => {
-        // EINFACH: Nur sicherstellen dass die Felder fokussierbar sind
+        // KRITISCH: Entferne alle Position/Z-Index Einschränkungen
+        el.style.position = 'relative';
+        el.style.zIndex = '100';
+        el.style.pointerEvents = 'auto';
+        el.style.touchAction = 'auto';
+        el.style.cursor = 'text';
+        
+        // Wenn in scroll-container, sicherstelle dass Input ÜBER dem container sitzt
+        const parent = el.parentElement;
+        if (parent && parent.classList.contains('scroll-container')) {
+            parent.style.position = 'relative';
+        }
+        
         el.addEventListener('focus', function(e) {
-            console.log("✅ Focus auf Input:", this.id || this.name);
-            
-            // Entferne jegliche Pointer-Events-Blockade
-            this.style.pointerEvents = 'auto';
-            this.style.cursor = 'text';
+            console.log("✅ FOCUS auf Input:", this.id || this.name);
+            this.style.position = 'relative';
+            this.style.zIndex = '101';
         }, true);
         
         el.addEventListener('blur', function(e) {
-            console.log("❌ Blur von Input:", this.id || this.name);
+            console.log("❌ BLUR von Input:", this.id || this.name);
+            this.style.zIndex = '100';
         }, true);
     });
     
-    console.log("✅ Mobile Input Optimization aktiv (minimal) - " + inputs.length + " Felder");
+    console.log("✅ Mobile Input Optimization AKTIVIERT - " + inputs.length + " Felder mit position:relative + z-index");
 }
 
 // Starte bar initialization wenn DOM ready ist
