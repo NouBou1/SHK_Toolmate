@@ -1,3 +1,25 @@
+// --- CAPACITOR INITIALISIERUNG für Android Status/Navigation Bar ---
+async function initializeAndroidBars() {
+    try {
+        // Versuche Capacitor APIs zu nutzen wenn verfügbar
+        if (typeof CapacitorStatusBar !== 'undefined') {
+            const StatusBar = CapacitorStatusBar;
+            // Statusleiste Konfiguration
+            await StatusBar.setStyle({ style: 'DARK' });
+            await StatusBar.setBackgroundColor({ color: '#0056b3' });
+            await StatusBar.setOverlaysWebView({ overlay: false });
+        }
+        
+        if (typeof CapacitorNavigationBar !== 'undefined') {
+            const NavigationBar = CapacitorNavigationBar;
+            // Navigationsleiste Konfiguration (nur Android)
+            await NavigationBar.setColor({ color: '#1e1e1e' });
+        }
+    } catch(error) {
+        console.log("Status/Navigation Bar Konfiguration nicht verfügbar (Desktop):", error);
+    }
+}
+
 // --- NORMEN DATENBANK (Debug Version) ---
 let normenDB = [];
 
@@ -45,8 +67,11 @@ function switchTab(viewId, btn) {
     btn.focus();
 }
 
-// Add keyboard support for navigation
+// Add keyboard support for navigation & initialize Android bars
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialisiere Android Status/Navigation Bar
+    initializeAndroidBars();
+    
     const navItems = document.querySelectorAll('.nav-item');
     
     navItems.forEach((item, index) => {

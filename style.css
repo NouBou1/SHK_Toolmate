@@ -1,10 +1,15 @@
 :root {
     --primary: #0056b3;
     --accent: #ff9900;
-    --bg: #121212;
-    --surface: #1e1e1e;
-    --text: #e0e0e0;
-    --input-bg: #2c2c2c;
+    --bg: #0a0a0a;
+    --surface: #1a1a1a;
+    --text: #f5f5f5;
+    --text-secondary: #b0b0b0;
+    --input-bg: #242424;
+    --border-color: #333333;
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f97316;
 }
 
 /* Skip Link für Accessibility (WCAG) */
@@ -61,40 +66,56 @@ body {
     color: var(--text);
     margin: 0;
     padding: 0;
-    padding-bottom: 80px;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
     overflow-x: hidden; 
     width: 100vw;
+    line-height: 1.6;
 }
 
 header {
-    background-color: var(--surface);
-    padding: 15px;
+    background: linear-gradient(135deg, var(--surface) 0%, #0d0d0d 100%);
+    padding: calc(18px + env(safe-area-inset-top)) 20px 18px;
     text-align: center;
-    border-bottom: 2px solid var(--primary);
+    border-bottom: 3px solid var(--primary);
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    min-height: 70px;
 }
 
 header h1 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: var(--primary);
     text-transform: uppercase;
-    letter-spacing: 1px;
-    padding-right: 20px;
+    letter-spacing: 2.5px;
+    font-weight: 700;
+}
+
+.header_logo {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .container {
-    padding: 15px;
+    padding: 20px;
     display: none;
     animation: fadeIn 0.3s;
     width: 100%;           /* Nutze immer 100% vom verfügbaren Platz */
     max-width: 600px;      /* Aber werd auf dem PC nicht breiter als 600px */
     margin: 0 auto;        /* Zentriert das Ganze auf dem PC */
-    padding: 10px;         /* Ein bisschen Luft zum Rand am Handy */
-    padding-bottom: 80px;  /* Platz unten lassen für das Menü */
+    padding-bottom: 20px;  /* Kleine Polsterung am Ende */
+    background-color: var(--surface);
+    min-height: 100vh;
 }
 
 .container.active {
@@ -114,59 +135,79 @@ header h1 {
 .card {
     width: 100%;
     background-color: var(--surface);
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.card:not(:last-child) {
+    margin-bottom: 16px;
+}
+
+.card:active {
+    transform: translateY(1px);
 }
 
 .card h3 {
     margin-top: 0;
     color: var(--accent);
-    border-bottom: 1px solid #333;
-    padding-bottom: 8px;
-    margin-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-    color: #d0d0d0;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 input,
 select {
     width: 100%;
-    padding: 12px;
-    /* margin-bottom: 15px; */
+    padding: 13px 14px;
+    margin-bottom: 12px;
     background-color: var(--input-bg);
-    border: 1px solid #444;
-    border-radius: 8px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
     color: white;
     font-size: 1rem;
     box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 input:focus,
 select:focus {
-    outline: 2px solid var(--primary);
-    border-color: transparent;
-    box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.2);
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.15);
 }
 
 button {
     width: 100%;
-    padding: 15px;
-    background-color: var(--primary);
+    padding: 14px 16px;
+    background: linear-gradient(135deg, var(--primary) 0%, #003d82 100%);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: transform 0.1s;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.25);
+    margin-bottom: 10px;
 }
 
 button:focus {
@@ -175,12 +216,13 @@ button:focus {
 }
 
 button:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
+    box-shadow: 0 2px 6px rgba(0, 86, 179, 0.3);
 }
 
 button.secondary {
-    background-color: #444;
-    margin-top: 10px;
+    background: linear-gradient(135deg, #444 0%, #2d2d2d 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .result-box {
@@ -247,6 +289,7 @@ nav {
     align-items: center;    /* Vertikal zentrieren */
     z-index: 1000;          /* Immer ganz oben sichtbar */
     box-shadow: 0 -2px 10px rgba(0,0,0,0.5); /* Leichter Schatten nach oben */
+    padding-bottom: max(0px, env(safe-area-inset-bottom)); /* Berücksichtige Android Navigationsleiste */
 }
 
 .nav-item {
