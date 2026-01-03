@@ -156,8 +156,6 @@ header h1 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     border: 1px solid var(--border-color);
     transition: box-shadow 0.2s, transform 0.2s;
-    position: relative;
-    z-index: 10;
 }
 
 .card:not(:last-child) {

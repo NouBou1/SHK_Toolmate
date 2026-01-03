@@ -158,29 +158,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialisiere Android Status/Navigation Bar
     initializeAndroidBars();
     
-    // Fix für mobile Tastatur: Verhindere Layout-Jumping
-    let originalViewportHeight = window.innerHeight;
-    
-    // Wenn Input fokussiert wird
+    // Fix für mobile Tastatur: Sanftes Scrolling zu Inputs
     document.addEventListener('focusin', function(e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
-            // Speichere ursprüngliche Höhe
-            originalViewportHeight = window.innerHeight;
-            
-            // Scroll zum Input nach kurzer Verzögerung
+            // Scroll zum Input nach kurzer Verzögerung (nur wenn nötig)
             setTimeout(() => {
-                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 300);
-        }
-    });
-    
-    // Wenn Input verliert Focus
-    document.addEventListener('focusout', function(e) {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
-            // Scroll zurück zur ursprünglichen Position
-            setTimeout(() => {
-                window.scrollTo(0, 0);
-            }, 100);
+                // Prüfe ob Input außerhalb des sichtbaren Bereichs ist
+                const rect = e.target.getBoundingClientRect();
+                const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+                
+                if (!isVisible) {
+                    e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 200);
         }
     });
     
