@@ -151,6 +151,13 @@ function switchTab(viewId, btn) {
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
     btn.classList.add('active');
     btn.focus();
+    
+    // Auto-scroll nach oben wenn Tab wechselt
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+    });
 }
 
 // Add keyboard support for navigation & initialize Android bars
