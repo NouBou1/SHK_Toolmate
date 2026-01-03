@@ -69,11 +69,12 @@ body {
     margin: 0;
     padding: 0;
     /* JavaScript setzt padding dynamisch */
-    overflow-x: hidden; 
+    overflow: hidden;
     width: 100%;
     max-width: 100vw;
     line-height: 1.6;
     min-height: 100vh;
+    overscroll-behavior: none;
 }
 
 header {
@@ -129,6 +130,9 @@ header h1 {
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    overflow-anchor: none;
+    scroll-padding-top: 20px;
+    overscroll-behavior: contain;
     z-index: 50;
 }
 
