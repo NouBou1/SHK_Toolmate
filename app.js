@@ -158,22 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialisiere Android Status/Navigation Bar
     initializeAndroidBars();
     
-    // Fix für mobile Tastatur: Sanftes Scrolling zu Inputs
-    document.addEventListener('focusin', function(e) {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
-            // Scroll zum Input nach kurzer Verzögerung (nur wenn nötig)
-            setTimeout(() => {
-                // Prüfe ob Input außerhalb des sichtbaren Bereichs ist
-                const rect = e.target.getBoundingClientRect();
-                const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
-                
-                if (!isVisible) {
-                    e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 200);
-        }
-    });
-    
     const navItems = document.querySelectorAll('.nav-item');
     
     navItems.forEach((item, index) => {
