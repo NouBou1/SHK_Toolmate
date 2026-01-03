@@ -95,57 +95,27 @@ function applyAndroidSafeAreaInsets() {
 }
 
 // --- MOBILE KEYBOARD HANDLING ---
-// Optimiere Input-Verhalten für Mobile: Scrolle automatisch zum fokussierten Element
+// Minimale Input-Optimierung: Lass den Browser machen, was er will
 function enableMobileInputOptimization() {
     // Alle Input und Textarea Felder finden
     const inputs = document.querySelectorAll('input, textarea, select');
     
     inputs.forEach(el => {
-        // Focus Event: Scrolle zum Element
+        // EINFACH: Nur sicherstellen dass die Felder fokussierbar sind
         el.addEventListener('focus', function(e) {
-            console.log("🎯 Focus auf Input:", this.id || this.name);
+            console.log("✅ Focus auf Input:", this.id || this.name);
             
-            // SOFORT scrollIntoView() OHNE Verzögerung
-            // Der Browser muss sofort reagieren, bevor Tastatur öffnet
-            try {
-                this.scrollIntoView({ 
-                    behavior: 'auto',  // Nicht 'smooth' - muss SOFORT passieren
-                    block: 'center'    // Zentriere im sichtbaren Bereich
-                });
-            } catch (err) {
-                console.warn("scrollIntoView fehler:", err);
-            }
-        }, true); // Capturing phase für Maximum-Priorität
+            // Entferne jegliche Pointer-Events-Blockade
+            this.style.pointerEvents = 'auto';
+            this.style.cursor = 'text';
+        }, true);
         
-        // Zusätzlich: Wenn dieses Input in einem scrollbaren Container ist,
-        // stelle sicher dass das Input sichtbar bleibt
-        el.addEventListener('focus', function(e) {
-            const container = this.closest('.container');
-            if (container) {
-                // Warte bis Tastatur offen ist, dann nochmal scroll
-                setTimeout(() => {
-                    try {
-                        // Berechne Position relative zum Container
-                        const rect = this.getBoundingClientRect();
-                        const containerRect = container.getBoundingClientRect();
-                        
-                        // Wenn das Input unten ist oder oben nicht sichtbar:
-                        if (rect.bottom > containerRect.bottom || rect.top < containerRect.top) {
-                            // Scrolle es nach oben mit Puffer
-                            const offsetTop = this.offsetTop;
-                            const scrollTarget = offsetTop - 60 - 40; // 60px header + 40px puffer
-                            container.scrollTop = Math.max(0, scrollTarget);
-                            console.log("⌨️ Nachträglicher Scroll zu:", offsetTop, "Target:", scrollTarget);
-                        }
-                    } catch (err) {
-                        console.warn("Nachträglicher Scroll fehler:", err);
-                    }
-                }, 200); // Nach Tastatur-Animation (ca. 150-300ms)
-            }
-        }, false); // Bubbling phase für Nachbereitung
+        el.addEventListener('blur', function(e) {
+            console.log("❌ Blur von Input:", this.id || this.name);
+        }, true);
     });
     
-    console.log("✅ Mobile Input Optimization aktiv - " + inputs.length + " Felder optimiert");
+    console.log("✅ Mobile Input Optimization aktiv (minimal) - " + inputs.length + " Felder");
 }
 
 // Starte bar initialization wenn DOM ready ist

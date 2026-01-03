@@ -132,9 +132,7 @@ header h1 {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     z-index: 50;
-    /* Fix für Keyboard: wird via JavaScript dynamisch angepasst */
-    /* WICHTIG: Padding-bottom damit Input-Felder nicht hinter Tastatur verschwinden */
-    padding-bottom: max(20px, 100px);
+    /* Keine aggressive padding-bottom - verursacht Probleme mit Tastatur */
 }
 
 .container.active {
@@ -203,26 +201,21 @@ select {
     border: 1.5px solid var(--border-color);
     border-radius: 10px;
     color: white;
-    font-size: 1rem;
+    font-size: 16px;
     box-sizing: border-box;
     transition: border-color 0.15s ease;
-    touch-action: manipulation;
+    touch-action: auto;
     -webkit-tap-highlight-color: rgba(0, 86, 179, 0.2);
-    /* Mobile Fixes */
+    /* Mobile Fixes - minimal */
     -webkit-appearance: none;
-    -webkit-user-select: text;
     -webkit-text-size-adjust: 100%;
-    /* Verhindere Auto-Zoom auf iOS */
 }
 
 input[type="number"],
 input[type="text"],
 textarea {
-    /* Stelle sicher, dass Inputs nicht zu klein werden (verhindert Zoom) */
-    font-size: max(16px, 1rem);
-    /* Verhindere dass Inputs überlappen/versteckt werden */
-    scroll-margin: 20px;
-    scroll-margin-top: 10px;
+    /* Mindestens 16px um iOS Auto-Zoom zu verhindern */
+    font-size: 16px;
 }
 
 input:focus,
@@ -230,8 +223,6 @@ select:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.15);
-    /* Vermeide zu aggressiven Zoom */
-    font-size: max(16px, 1rem);
 }
 
 button {
@@ -553,23 +544,18 @@ nav {
     border-radius: 4px;
     padding: 10px;
     font-family: monospace;
-    font-size: max(16px, 1rem);
+    font-size: 16px;
     min-height: 100px;
     background: #2b2b2b;
     color: #e0e0e0;
     resize: vertical;
     outline: none;
     -webkit-appearance: none;
-    -webkit-text-size-adjust: 100%;
-    /* Mobile Keyboard Handling */
 }
-
-
 
 #quick_note:focus {
     border-color: #f39c12;
     box-shadow: 0 0 5px rgba(243, 156, 18, 0.3);
-    font-size: max(16px, 1rem);
 }
 
 /* Das "Gespeichert" Badge */
