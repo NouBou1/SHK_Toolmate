@@ -81,19 +81,6 @@ function applyAndroidSafeAreaInsets() {
         });
     }
 }
-        nav.style.paddingBottom = Math.max(0, navBarHeight) + 'px';
-    }
-    
-    // Debug Log (auf Produktiv ausschalten)
-    if (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')) {
-        console.log("🎯 Android Safe Area:", {
-            "viewport": viewportHeight + "px",
-            "screen": screenHeight + "px",
-            "statusBar": statusBarHeight + "px",
-            "navBar": navBarHeight + "px"
-        });
-    }
-}
 
 // Starte bar initialization wenn DOM ready ist
 if (document.readyState === 'loading') {
