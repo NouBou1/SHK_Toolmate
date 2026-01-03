@@ -31,21 +31,58 @@ async function initializeAndroidBars() {
         // Wende Safe Area Insets an
         applyAndroidSafeAreaInsets();
         
-        // Re-apply bei Orientierungswechsel
+        // Re-apply bei Orientierungswechsel (nicht bei jedem resize wegen Keyboard!)
         window.addEventListener('orientationchange', () => {
             setTimeout(applyAndroidSafeAreaInsets, 100);
         });
         
-        // Fallback: auch bei resize
-        window.addEventListener('resize', () => {
-            setTimeout(applyAndroidSafeAreaInsets, 100);
-        });
+        // WICHTIG: visualViewport nutzen statt resize für Keyboard-Handling
+        // Das verhindert Layout-Jumps wenn die Tastatur öffnet
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                // Hier NICHT applyAndroidSafeAreaInsets aufrufen!
+                // Das würde das Layout zucken lassen
+                handleVirtualKeyboardResize();
+            });
+        }
         
     } catch(error) {
         console.log("Capacitor Init Error (OK für Desktop):", error.message);
         // Auf Desktop trotzdem safe areas anwenden
         applyAndroidSafeAreaInsets();
     }
+}
+
+// Speichere die letzte bekannte Viewport-Höhe um Keyboard-Öffnung zu erkennen
+let lastViewportHeight = window.innerHeight;
+
+// Handle Virtual Keyboard Show/Hide ohne Layout-Jump
+function handleVirtualKeyboardResize() {
+    const currentHeight = window.innerHeight;
+    const keyboardHeight = lastViewportHeight - currentHeight;
+    
+    // Nur wenn die Höhe DEUTLICH schrumpft (> 100px) = Tastatur öffnet sich
+    if (Math.abs(keyboardHeight) > 100) {
+        // Passe den Container Bottom an für die Tastatur
+        const containers = document.querySelectorAll('.container');
+        containers.forEach(container => {
+            if (container.classList.contains('active')) {
+                // Reduziere die bottom-Distanz zur Navigation
+                const navHeight = 60; // Unsere App-Navigation
+                container.style.bottom = Math.max(navHeight, navHeight + keyboardHeight) + 'px';
+                console.log("⌨️ Keyboard erkannt, Container angepasst. Keyboard-Höhe:", keyboardHeight);
+            }
+        });
+    } else if (Math.abs(keyboardHeight) <= 100 && keyboardHeight < 0) {
+        // Tastatur wird geschlossen - stelle alles zurück
+        const containers = document.querySelectorAll('.container');
+        containers.forEach(container => {
+            container.style.bottom = '60px';
+        });
+        console.log("✅ Keyboard geschlossen, Container zurückgesetzt");
+    }
+    
+    lastViewportHeight = currentHeight;
 }
 
 // Manuelle Berechnung und Anwendung der Safe Area Insets
