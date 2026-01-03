@@ -69,7 +69,7 @@ body {
     margin: 0;
     padding: 0;
     /* JavaScript setzt padding dynamisch */
-    overflow: hidden;
+    /* overflow: hidden entfernt - ermöglicht Scroll bei geöffneter Tastatur */
     width: 100%;
     max-width: 100vw;
     line-height: 1.6;
@@ -132,6 +132,7 @@ header h1 {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     z-index: 50;
+    /* Fix für Keyboard: wird via JavaScript dynamisch angepasst */
 }
 
 .container.active {
@@ -205,6 +206,18 @@ select {
     transition: border-color 0.15s ease;
     touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(0, 86, 179, 0.2);
+    /* Mobile Fixes */
+    -webkit-appearance: none;
+    -webkit-user-select: text;
+    -webkit-text-size-adjust: 100%;
+    /* Verhindere Auto-Zoom auf iOS */
+}
+
+input[type="number"],
+input[type="text"],
+textarea {
+    /* Stelle sicher, dass Inputs nicht zu klein werden (verhindert Zoom) */
+    font-size: max(16px, 1rem);
 }
 
 input:focus,
@@ -212,6 +225,8 @@ select:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.15);
+    /* Vermeide zu aggressiven Zoom */
+    font-size: max(16px, 1rem);
 }
 
 button {
@@ -533,12 +548,15 @@ nav {
     border-radius: 4px;
     padding: 10px;
     font-family: monospace;
-    font-size: 1rem;
+    font-size: max(16px, 1rem);
     min-height: 100px;
     background: #2b2b2b;
     color: #e0e0e0;
     resize: vertical;
     outline: none;
+    -webkit-appearance: none;
+    -webkit-text-size-adjust: 100%;
+    /* Mobile Keyboard Handling */
 }
 
 
@@ -546,6 +564,7 @@ nav {
 #quick_note:focus {
     border-color: #f39c12;
     box-shadow: 0 0 5px rgba(243, 156, 18, 0.3);
+    font-size: max(16px, 1rem);
 }
 
 /* Das "Gespeichert" Badge */

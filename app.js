@@ -99,11 +99,57 @@ function applyAndroidSafeAreaInsets() {
     }
 }
 
+// --- MOBILE KEYBOARD HANDLING ---
+// Optimiere Input-Verhalten für Mobile: Scrolle automatisch zum fokussierten Element
+function enableMobileInputOptimization() {
+    // Alle Input und Textarea Felder finden
+    const inputs = document.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach(el => {
+        // Focus Event: Scrolle zum Element + verzögere um Keyboard zu ermöglichen
+        el.addEventListener('focus', function(e) {
+            // Gib dem Browser Zeit für die Tastatur
+            setTimeout(() => {
+                // Scrolle das Element in die Mitte des sichtbaren Bereichs
+                const rect = this.getBoundingClientRect();
+                const container = this.closest('.container') || window;
+                
+                if (container !== window && container.scrollTop !== undefined) {
+                    // Scrolle im Container
+                    const scrollTarget = this.offsetTop - container.offsetHeight / 3;
+                    container.scrollTop = Math.max(0, scrollTarget);
+                } else {
+                    // Fallback: Nutze Element.scrollIntoView()
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                console.log("⌨️ Scrolle zu Input:", this.id || this.name);
+            }, 150);
+            
+            // Verhindere automatisches Zoom beim Focus (iOS)
+            this.style.fontSize = '16px'; // iOS zoomed nicht bei mindestens 16px
+        }, true);
+        
+        // Blur Event: Stelle Schrift wieder normal ein wenn nicht benötigt
+        el.addEventListener('blur', function() {
+            if (window.innerWidth < 768) {
+                // Nur auf Mobile zurücksetzen
+                this.style.fontSize = '1rem';
+            }
+        });
+    });
+    
+    console.log("✅ Mobile Input Optimization aktiv - " + inputs.length + " Felder optimiert");
+}
+
 // Starte bar initialization wenn DOM ready ist
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeAndroidBars);
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeAndroidBars();
+        enableMobileInputOptimization(); // NEU: Mobile Input Optimierung
+    });
 } else {
     initializeAndroidBars();
+    enableMobileInputOptimization(); // NEU: Mobile Input Optimierung
 }
 
 // --- NORMEN DATENBANK (Debug Version) ---
