@@ -82,15 +82,17 @@ header {
     padding-top: calc(18px + var(--status-bar-height, 25px));
     text-align: center;
     border-bottom: 3px solid var(--primary);
-    position: relative;
-    z-index: 100;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 15px;
     min-height: 70px;
-    /* Nicht sticky damit es unter der Statusleiste bleibt */
 }
 
 header h1 {
@@ -114,27 +116,26 @@ header h1 {
     padding: 20px;
     display: none;
     animation: fadeIn 0.3s;
-    width: 100%;           /* Nutze immer 100% vom verfügbaren Platz */
-    max-width: 600px;      /* Aber werd auf dem PC nicht breiter als 600px */
-    margin: 0 auto;        /* Zentriert das Ganze auf dem PC */
-    padding-bottom: 20px;  /* Kleine Polsterung am Ende */
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 20px;
     background-color: var(--surface);
-    min-height: 100vh;
     /* Jeder Container ist sein eigener Scroll-Container */
     position: fixed;
-    top: 0;
+    top: calc(70px + var(--status-bar-height, 25px)); /* Unter Header */
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 60px; /* Über Navigation */
     overflow-y: auto;
     overflow-x: hidden;
+    z-index: 50;
 }
 
 .container.active {
     display: block;
 }
-    display: block;
-}
+
 
 @keyframes fadeIn {
     from {
