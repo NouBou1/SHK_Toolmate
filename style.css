@@ -130,8 +130,6 @@ header h1 {
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    overflow-anchor: none;
-    scroll-padding-top: 20px;
     overscroll-behavior: contain;
     z-index: 50;
 }
