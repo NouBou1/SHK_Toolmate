@@ -4,22 +4,26 @@ async function initializeAndroidBars() {
         // Nutze dynamische imports für Capacitor
         const { StatusBar } = await import('@capacitor/status-bar');
         
-        // Nur Statusleiste konfigurieren - das ist am wichtigsten
+        // Statusleiste Konfiguration
         try {
             await StatusBar.setStyle({ style: 'DARK' });
             await StatusBar.setBackgroundColor({ color: '#0a0a0a' });
             // overlaysWebView FALSE = WICHTIG! Die WebView wird unter der Statusleiste gerendert
             await StatusBar.setOverlaysWebView({ overlay: false });
-            console.log("✅ StatusBar: overlaysWebView=false gesetzt");
+            console.log("✅ StatusBar: overlaysWebView=false, color=#0a0a0a");
         } catch(e) {
             console.log("StatusBar API nicht verfügbar (OK für Desktop):", e.message);
         }
         
-        // Optional: NavigationBar (nicht alle Android Versionen unterstützen das)
+        // Navigationsleiste Konfiguration
         try {
             const { NavigationBar } = await import('@capacitor/navigation-bar');
             await NavigationBar.setColor({ color: '#0a0a0a' });
-            console.log("✅ NavigationBar Farbe gesetzt");
+            // Auch overlaysWebView für NavigationBar FALSE setzen wenn verfügbar
+            if (typeof NavigationBar.setOverlaysWebView !== 'undefined') {
+                await NavigationBar.setOverlaysWebView({ overlay: false });
+            }
+            console.log("✅ NavigationBar: color=#0a0a0a");
         } catch(e) {
             console.log("NavigationBar API nicht verfügbar (OK):", e.message);
         }
@@ -50,34 +54,40 @@ function applyAndroidSafeAreaInsets() {
     const viewportHeight = window.innerHeight;
     const screenHeight = window.screen.height;
     
-    // Berechne die System UI Höhen
+    // Berechne die System UI Höhen basierend auf dem Unterschied
     const statusBarHeight = 25; // Android Standard
-    const navBarHeight = screenHeight - viewportHeight - statusBarHeight; // Was übrig bleibt
+    const navBarHeight = Math.max(48, screenHeight - viewportHeight - statusBarHeight);
     
-    // Setze CSS custom properties für flexible Nutzung
+    // Setze CSS custom properties
     document.documentElement.style.setProperty('--status-bar-height', statusBarHeight + 'px');
-    document.documentElement.style.setProperty('--nav-bar-height', Math.max(0, navBarHeight) + 'px');
+    document.documentElement.style.setProperty('--nav-bar-height', navBarHeight + 'px');
     
-    // Wende auf body an
+    // WICHTIG: Wende auf body an mit genug Padding
     const body = document.querySelector('body');
     if (body) {
         body.style.paddingTop = statusBarHeight + 'px';
-        body.style.paddingBottom = (60 + Math.max(0, navBarHeight)) + 'px'; // 60px nav + bottom safe area
+        // Mindestens 70px für die App-Navigation + die System Navigationsleiste
+        const bottomPadding = Math.max(70, 60 + navBarHeight);
+        body.style.paddingBottom = bottomPadding + 'px';
+        console.log("📱 Body padding applied: top=" + statusBarHeight + "px, bottom=" + bottomPadding + "px");
     }
     
-    // Wende auf nav an
+    // Wende auf nav an - padding-bottom für die System Navigationsleiste
     const nav = document.querySelector('nav');
     if (nav) {
-        nav.style.paddingBottom = Math.max(0, navBarHeight) + 'px';
+        nav.style.paddingBottom = navBarHeight + 'px';
+        nav.style.minHeight = (60 + navBarHeight) + 'px';
+        console.log("🗂️ Nav height adjusted: " + (60 + navBarHeight) + "px (60px + " + navBarHeight + "px nav bar)");
     }
     
-    // Debug Log (auf Produktiv ausschalten)
+    // Debug Log
     if (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')) {
-        console.log("🎯 Android Safe Area:", {
+        console.log("🎯 Android Safe Area Berechnung:", {
             "viewport": viewportHeight + "px",
             "screen": screenHeight + "px",
             "statusBar": statusBarHeight + "px",
-            "navBar": navBarHeight + "px"
+            "navBar": navBarHeight + "px",
+            "totalBottomPadding": Math.max(70, 60 + navBarHeight) + "px"
         });
     }
 }

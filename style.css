@@ -285,15 +285,15 @@ nav {
     left: 0;
     right: 0;
     width: 100%;            /* Volle Breite */
-    height: 60px;           /* Feste Höhe */
+    min-height: 60px;       /* Mindesthöhe für App-Navigation */
     background-color: #1e1e1e; /* Dunkler Hintergrund */
     border-top: 1px solid #333;
     display: flex;          /* Die Magie: Nebeneinander anordnen */
     justify-content: space-around; /* Platz gleichmäßig verteilen */
     align-items: center;    /* Vertikal zentrieren */
-    z-index: 1000;          /* Immer ganz oben sichtbar */
+    z-index: 1000;          /* Immer ganz oben sichtbar - ÜBER der Android Nav Bar */
     box-shadow: 0 -2px 10px rgba(0,0,0,0.5); /* Leichter Schatten nach oben */
-    padding-bottom: var(--safe-area-bottom);
+    /* padding-bottom wird vom JavaScript dynamisch gesetzt basierend auf Android Navigationsleiste */
 }
 
 .nav-item {
