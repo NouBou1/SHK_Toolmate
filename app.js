@@ -72,6 +72,13 @@ function applyAndroidSafeAreaInsets() {
         console.log("📱 Body padding applied: top=" + statusBarHeight + "px, bottom=" + bottomPadding + "px");
     }
     
+    // Wende auf header an - extra padding-top für die System Statusleiste
+    const header = document.querySelector('header');
+    if (header) {
+        header.style.paddingTop = (18 + statusBarHeight) + 'px';
+        console.log("🔝 Header padding-top adjusted: " + (18 + statusBarHeight) + "px (18px + " + statusBarHeight + "px status bar)");
+    }
+    
     // Wende auf nav an - padding-bottom für die System Navigationsleiste
     const nav = document.querySelector('nav');
     if (nav) {
