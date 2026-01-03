@@ -922,20 +922,6 @@ p[style*="color:#aaa"],
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 
-.header_logo {
-    height: 60px;
-    border-radius: 30px;
-    margin-left: 10px;
-    box-shadow: #0056b3 0px 0px 20px;
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-}
-
 /* --- INVENTAR LISTE (Mobile Optimiert) --- */
 .inventory-list {
     list-style: none;
