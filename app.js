@@ -31,58 +31,16 @@ async function initializeAndroidBars() {
         // Wende Safe Area Insets an
         applyAndroidSafeAreaInsets();
         
-        // Re-apply bei Orientierungswechsel (nicht bei jedem resize wegen Keyboard!)
+        // Re-apply bei Orientierungswechsel (NUR bei Orientierungswechsel, nicht bei Keyboard!)
         window.addEventListener('orientationchange', () => {
             setTimeout(applyAndroidSafeAreaInsets, 100);
         });
-        
-        // WICHTIG: visualViewport nutzen statt resize für Keyboard-Handling
-        // Das verhindert Layout-Jumps wenn die Tastatur öffnet
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', () => {
-                // Hier NICHT applyAndroidSafeAreaInsets aufrufen!
-                // Das würde das Layout zucken lassen
-                handleVirtualKeyboardResize();
-            });
-        }
         
     } catch(error) {
         console.log("Capacitor Init Error (OK für Desktop):", error.message);
         // Auf Desktop trotzdem safe areas anwenden
         applyAndroidSafeAreaInsets();
     }
-}
-
-// Speichere die letzte bekannte Viewport-Höhe um Keyboard-Öffnung zu erkennen
-let lastViewportHeight = window.innerHeight;
-
-// Handle Virtual Keyboard Show/Hide ohne Layout-Jump
-function handleVirtualKeyboardResize() {
-    const currentHeight = window.innerHeight;
-    const keyboardHeight = lastViewportHeight - currentHeight;
-    
-    // Nur wenn die Höhe DEUTLICH schrumpft (> 100px) = Tastatur öffnet sich
-    if (Math.abs(keyboardHeight) > 100) {
-        // Passe den Container Bottom an für die Tastatur
-        const containers = document.querySelectorAll('.container');
-        containers.forEach(container => {
-            if (container.classList.contains('active')) {
-                // Reduziere die bottom-Distanz zur Navigation
-                const navHeight = 60; // Unsere App-Navigation
-                container.style.bottom = Math.max(navHeight, navHeight + keyboardHeight) + 'px';
-                console.log("⌨️ Keyboard erkannt, Container angepasst. Keyboard-Höhe:", keyboardHeight);
-            }
-        });
-    } else if (Math.abs(keyboardHeight) <= 100 && keyboardHeight < 0) {
-        // Tastatur wird geschlossen - stelle alles zurück
-        const containers = document.querySelectorAll('.container');
-        containers.forEach(container => {
-            container.style.bottom = '60px';
-        });
-        console.log("✅ Keyboard geschlossen, Container zurückgesetzt");
-    }
-    
-    lastViewportHeight = currentHeight;
 }
 
 // Manuelle Berechnung und Anwendung der Safe Area Insets
@@ -143,53 +101,48 @@ function enableMobileInputOptimization() {
     const inputs = document.querySelectorAll('input, textarea, select');
     
     inputs.forEach(el => {
-        // Focus Event: Scrolle SOFORT zum Element VOR der Tastatur öffnet
+        // Focus Event: Scrolle zum Element
         el.addEventListener('focus', function(e) {
-            const rect = this.getBoundingClientRect();
-            const container = this.closest('.container');
+            console.log("🎯 Focus auf Input:", this.id || this.name);
             
-            if (container) {
-                // WICHTIG: Nutze scrollIntoView() SOFORT (nicht verzögert!)
-                // Das muss passieren BEVOR die virtuelle Tastatur öffnet
-                
-                // Prüfe ob das Element sichtbar ist
-                const containerRect = container.getBoundingClientRect();
-                const isVisible = (
-                    rect.top >= containerRect.top &&
-                    rect.bottom <= containerRect.bottom
-                );
-                
-                if (!isVisible) {
-                    // Element ist nicht sichtbar - scrolle sofort
-                    this.scrollIntoView({ 
-                        behavior: 'auto',  // 'auto' nicht 'smooth' - muss schnell gehen!
-                        block: 'center'    // Zentriere im Container
-                    });
-                    console.log("⌨️ Input in nicht-sichtbarem Bereich, scrolle zu:", this.id || this.name);
-                }
-                
-                // FALLBACK: Auch manuell scrollen im Container
-                setTimeout(() => {
-                    const offsetTop = this.offsetTop;
-                    const containerHeight = container.clientHeight;
-                    const elementHeight = this.offsetHeight;
-                    
-                    // Berechne wo das Element hingehört (mit genug Platz oben für Tastatur)
-                    const targetScroll = offsetTop - (containerHeight / 2) + (elementHeight / 2);
-                    
-                    if (container.scrollTop !== targetScroll) {
-                        container.scrollTop = Math.max(0, targetScroll);
-                        console.log("⌨️ Container manuell zu Position gescrollt:", Math.max(0, targetScroll));
-                    }
-                }, 50); // Kurze Verzögerung für Rendering
-            } else {
-                // Kein Container - nutze Default scrollIntoView
+            // SOFORT scrollIntoView() OHNE Verzögerung
+            // Der Browser muss sofort reagieren, bevor Tastatur öffnet
+            try {
                 this.scrollIntoView({ 
-                    behavior: 'auto',
-                    block: 'center' 
+                    behavior: 'auto',  // Nicht 'smooth' - muss SOFORT passieren
+                    block: 'center'    // Zentriere im sichtbaren Bereich
                 });
+            } catch (err) {
+                console.warn("scrollIntoView fehler:", err);
             }
-        }, true); // Use capturing phase für frühen Zugriff
+        }, true); // Capturing phase für Maximum-Priorität
+        
+        // Zusätzlich: Wenn dieses Input in einem scrollbaren Container ist,
+        // stelle sicher dass das Input sichtbar bleibt
+        el.addEventListener('focus', function(e) {
+            const container = this.closest('.container');
+            if (container) {
+                // Warte bis Tastatur offen ist, dann nochmal scroll
+                setTimeout(() => {
+                    try {
+                        // Berechne Position relative zum Container
+                        const rect = this.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        
+                        // Wenn das Input unten ist oder oben nicht sichtbar:
+                        if (rect.bottom > containerRect.bottom || rect.top < containerRect.top) {
+                            // Scrolle es nach oben mit Puffer
+                            const offsetTop = this.offsetTop;
+                            const scrollTarget = offsetTop - 60 - 40; // 60px header + 40px puffer
+                            container.scrollTop = Math.max(0, scrollTarget);
+                            console.log("⌨️ Nachträglicher Scroll zu:", offsetTop, "Target:", scrollTarget);
+                        }
+                    } catch (err) {
+                        console.warn("Nachträglicher Scroll fehler:", err);
+                    }
+                }, 200); // Nach Tastatur-Animation (ca. 150-300ms)
+            }
+        }, false); // Bubbling phase für Nachbereitung
     });
     
     console.log("✅ Mobile Input Optimization aktiv - " + inputs.length + " Felder optimiert");
