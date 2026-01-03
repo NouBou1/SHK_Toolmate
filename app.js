@@ -143,36 +143,53 @@ function enableMobileInputOptimization() {
     const inputs = document.querySelectorAll('input, textarea, select');
     
     inputs.forEach(el => {
-        // Focus Event: Scrolle zum Element + verzögere um Keyboard zu ermöglichen
+        // Focus Event: Scrolle SOFORT zum Element VOR der Tastatur öffnet
         el.addEventListener('focus', function(e) {
-            // Gib dem Browser Zeit für die Tastatur
-            setTimeout(() => {
-                // Scrolle das Element in die Mitte des sichtbaren Bereichs
-                const rect = this.getBoundingClientRect();
-                const container = this.closest('.container') || window;
-                
-                if (container !== window && container.scrollTop !== undefined) {
-                    // Scrolle im Container
-                    const scrollTarget = this.offsetTop - container.offsetHeight / 3;
-                    container.scrollTop = Math.max(0, scrollTarget);
-                } else {
-                    // Fallback: Nutze Element.scrollIntoView()
-                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                console.log("⌨️ Scrolle zu Input:", this.id || this.name);
-            }, 150);
+            const rect = this.getBoundingClientRect();
+            const container = this.closest('.container');
             
-            // Verhindere automatisches Zoom beim Focus (iOS)
-            this.style.fontSize = '16px'; // iOS zoomed nicht bei mindestens 16px
-        }, true);
-        
-        // Blur Event: Stelle Schrift wieder normal ein wenn nicht benötigt
-        el.addEventListener('blur', function() {
-            if (window.innerWidth < 768) {
-                // Nur auf Mobile zurücksetzen
-                this.style.fontSize = '1rem';
+            if (container) {
+                // WICHTIG: Nutze scrollIntoView() SOFORT (nicht verzögert!)
+                // Das muss passieren BEVOR die virtuelle Tastatur öffnet
+                
+                // Prüfe ob das Element sichtbar ist
+                const containerRect = container.getBoundingClientRect();
+                const isVisible = (
+                    rect.top >= containerRect.top &&
+                    rect.bottom <= containerRect.bottom
+                );
+                
+                if (!isVisible) {
+                    // Element ist nicht sichtbar - scrolle sofort
+                    this.scrollIntoView({ 
+                        behavior: 'auto',  // 'auto' nicht 'smooth' - muss schnell gehen!
+                        block: 'center'    // Zentriere im Container
+                    });
+                    console.log("⌨️ Input in nicht-sichtbarem Bereich, scrolle zu:", this.id || this.name);
+                }
+                
+                // FALLBACK: Auch manuell scrollen im Container
+                setTimeout(() => {
+                    const offsetTop = this.offsetTop;
+                    const containerHeight = container.clientHeight;
+                    const elementHeight = this.offsetHeight;
+                    
+                    // Berechne wo das Element hingehört (mit genug Platz oben für Tastatur)
+                    const targetScroll = offsetTop - (containerHeight / 2) + (elementHeight / 2);
+                    
+                    if (container.scrollTop !== targetScroll) {
+                        container.scrollTop = Math.max(0, targetScroll);
+                        console.log("⌨️ Container manuell zu Position gescrollt:", Math.max(0, targetScroll));
+                    }
+                }, 50); // Kurze Verzögerung für Rendering
+            } else {
+                // Kein Container - nutze Default scrollIntoView
+                this.scrollIntoView({ 
+                    behavior: 'auto',
+                    block: 'center' 
+                });
             }
-        });
+        }, true); // Use capturing phase für frühen Zugriff
     });
     
     console.log("✅ Mobile Input Optimization aktiv - " + inputs.length + " Felder optimiert");

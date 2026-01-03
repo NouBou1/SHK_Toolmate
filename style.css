@@ -133,6 +133,8 @@ header h1 {
     overscroll-behavior: contain;
     z-index: 50;
     /* Fix für Keyboard: wird via JavaScript dynamisch angepasst */
+    /* WICHTIG: Padding-bottom damit Input-Felder nicht hinter Tastatur verschwinden */
+    padding-bottom: max(20px, 100px);
 }
 
 .container.active {
@@ -218,6 +220,9 @@ input[type="text"],
 textarea {
     /* Stelle sicher, dass Inputs nicht zu klein werden (verhindert Zoom) */
     font-size: max(16px, 1rem);
+    /* Verhindere dass Inputs überlappen/versteckt werden */
+    scroll-margin: 20px;
+    scroll-margin-top: 10px;
 }
 
 input:focus,
