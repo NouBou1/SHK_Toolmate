@@ -1,23 +1,105 @@
 // --- CAPACITOR INITIALISIERUNG für Android Status/Navigation Bar ---
 async function initializeAndroidBars() {
     try {
-        // Versuche Capacitor APIs zu nutzen wenn verfügbar
-        if (typeof CapacitorStatusBar !== 'undefined') {
-            const StatusBar = CapacitorStatusBar;
-            // Statusleiste Konfiguration
+        // Nutze dynamische imports für Capacitor
+        const { StatusBar } = await import('@capacitor/status-bar');
+        
+        // Nur Statusleiste konfigurieren - das ist am wichtigsten
+        try {
             await StatusBar.setStyle({ style: 'DARK' });
-            await StatusBar.setBackgroundColor({ color: '#0056b3' });
+            await StatusBar.setBackgroundColor({ color: '#0a0a0a' });
+            // overlaysWebView FALSE = WICHTIG! Die WebView wird unter der Statusleiste gerendert
             await StatusBar.setOverlaysWebView({ overlay: false });
+            console.log("✅ StatusBar: overlaysWebView=false gesetzt");
+        } catch(e) {
+            console.log("StatusBar API nicht verfügbar (OK für Desktop):", e.message);
         }
         
-        if (typeof CapacitorNavigationBar !== 'undefined') {
-            const NavigationBar = CapacitorNavigationBar;
-            // Navigationsleiste Konfiguration (nur Android)
-            await NavigationBar.setColor({ color: '#1e1e1e' });
+        // Optional: NavigationBar (nicht alle Android Versionen unterstützen das)
+        try {
+            const { NavigationBar } = await import('@capacitor/navigation-bar');
+            await NavigationBar.setColor({ color: '#0a0a0a' });
+            console.log("✅ NavigationBar Farbe gesetzt");
+        } catch(e) {
+            console.log("NavigationBar API nicht verfügbar (OK):", e.message);
         }
+        
+        // Wende Safe Area Insets an
+        applyAndroidSafeAreaInsets();
+        
+        // Re-apply bei Orientierungswechsel
+        window.addEventListener('orientationchange', () => {
+            setTimeout(applyAndroidSafeAreaInsets, 100);
+        });
+        
+        // Fallback: auch bei resize
+        window.addEventListener('resize', () => {
+            setTimeout(applyAndroidSafeAreaInsets, 100);
+        });
+        
     } catch(error) {
-        console.log("Status/Navigation Bar Konfiguration nicht verfügbar (Desktop):", error);
+        console.log("Capacitor Init Error (OK für Desktop):", error.message);
+        // Auf Desktop trotzdem safe areas anwenden
+        applyAndroidSafeAreaInsets();
     }
+}
+
+// Manuelle Berechnung und Anwendung der Safe Area Insets
+function applyAndroidSafeAreaInsets() {
+    // Hole actual viewport Höhe
+    const viewportHeight = window.innerHeight;
+    const screenHeight = window.screen.height;
+    
+    // Berechne die System UI Höhen
+    const statusBarHeight = 25; // Android Standard
+    const navBarHeight = screenHeight - viewportHeight - statusBarHeight; // Was übrig bleibt
+    
+    // Setze CSS custom properties für flexible Nutzung
+    document.documentElement.style.setProperty('--status-bar-height', statusBarHeight + 'px');
+    document.documentElement.style.setProperty('--nav-bar-height', Math.max(0, navBarHeight) + 'px');
+    
+    // Wende auf body an
+    const body = document.querySelector('body');
+    if (body) {
+        body.style.paddingTop = statusBarHeight + 'px';
+        body.style.paddingBottom = (60 + Math.max(0, navBarHeight)) + 'px'; // 60px nav + bottom safe area
+    }
+    
+    // Wende auf nav an
+    const nav = document.querySelector('nav');
+    if (nav) {
+        nav.style.paddingBottom = Math.max(0, navBarHeight) + 'px';
+    }
+    
+    // Debug Log (auf Produktiv ausschalten)
+    if (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')) {
+        console.log("🎯 Android Safe Area:", {
+            "viewport": viewportHeight + "px",
+            "screen": screenHeight + "px",
+            "statusBar": statusBarHeight + "px",
+            "navBar": navBarHeight + "px"
+        });
+    }
+}
+        nav.style.paddingBottom = Math.max(0, navBarHeight) + 'px';
+    }
+    
+    // Debug Log (auf Produktiv ausschalten)
+    if (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')) {
+        console.log("🎯 Android Safe Area:", {
+            "viewport": viewportHeight + "px",
+            "screen": screenHeight + "px",
+            "statusBar": statusBarHeight + "px",
+            "navBar": navBarHeight + "px"
+        });
+    }
+}
+
+// Starte bar initialization wenn DOM ready ist
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeAndroidBars);
+} else {
+    initializeAndroidBars();
 }
 
 // --- NORMEN DATENBANK (Debug Version) ---
