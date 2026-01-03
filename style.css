@@ -128,6 +128,7 @@ header h1 {
     bottom: 60px; /* Über Navigation */
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     z-index: 50;
 }
 
@@ -200,6 +201,8 @@ select {
     font-size: 1rem;
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 input:focus,
