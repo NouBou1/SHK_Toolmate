@@ -120,9 +120,19 @@ header h1 {
     padding-bottom: 20px;  /* Kleine Polsterung am Ende */
     background-color: var(--surface);
     min-height: 100vh;
+    /* Jeder Container ist sein eigener Scroll-Container */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .container.active {
+    display: block;
+}
     display: block;
 }
 
