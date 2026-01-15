@@ -36,6 +36,11 @@ async function initializeAndroidBars() {
             setTimeout(applyAndroidSafeAreaInsets, 100);
         });
         
+        // Fallback: bei Größenänderungen (z.B. Tastatur) Safe-Area neu anwenden
+        window.addEventListener('resize', () => {
+            setTimeout(applyAndroidSafeAreaInsets, 100);
+        });
+        
     } catch(error) {
         console.log("Capacitor Init Error (OK für Desktop):", error.message);
         // Auf Desktop trotzdem safe areas anwenden
@@ -94,50 +99,30 @@ function applyAndroidSafeAreaInsets() {
     }
 }
 
-// --- MOBILE KEYBOARD HANDLING ---
-// Input-Optimierung: Stelle sicher dass Inputs wirklich anklickbar sind
-function enableMobileInputOptimization() {
-    // Alle Input und Textarea Felder finden
-    const inputs = document.querySelectorAll('input, textarea, select');
-    
-    inputs.forEach(el => {
-        // KRITISCH: Entferne alle Position/Z-Index Einschränkungen
-        el.style.position = 'relative';
-        el.style.zIndex = '100';
-        el.style.pointerEvents = 'auto';
-        el.style.touchAction = 'auto';
-        el.style.cursor = 'text';
-        
-        // Wenn in scroll-container, sicherstelle dass Input ÜBER dem container sitzt
-        const parent = el.parentElement;
-        if (parent && parent.classList.contains('scroll-container')) {
-            parent.style.position = 'relative';
+// --- KEYBOARD HANDLING - Ultra-minimal ---
+function setupKeyboardHandling() {
+    // Nur das absolut notwendige: Input fokussiert → scroll ihn in Sicht
+    document.addEventListener('focusin', (e) => {
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+            console.log("🎯 Input focused: " + (e.target.id || e.target.tagName));
+            setTimeout(() => {
+                e.target.scrollIntoView({ behavior: 'auto', block: 'center' });
+            }, 100);
         }
-        
-        el.addEventListener('focus', function(e) {
-            console.log("✅ FOCUS auf Input:", this.id || this.name);
-            this.style.position = 'relative';
-            this.style.zIndex = '101';
-        }, true);
-        
-        el.addEventListener('blur', function(e) {
-            console.log("❌ BLUR von Input:", this.id || this.name);
-            this.style.zIndex = '100';
-        }, true);
     });
     
-    console.log("✅ Mobile Input Optimization AKTIVIERT - " + inputs.length + " Felder mit position:relative + z-index");
+    console.log("✅ Keyboard handling: scrollIntoView only");
 }
 
 // Starte bar initialization wenn DOM ready ist
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
         initializeAndroidBars();
-        enableMobileInputOptimization(); // NEU: Mobile Input Optimierung
+        setupKeyboardHandling();
     });
 } else {
     initializeAndroidBars();
-    enableMobileInputOptimization(); // NEU: Mobile Input Optimierung
+    setupKeyboardHandling();
 }
 
 // --- NORMEN DATENBANK (Debug Version) ---
@@ -1610,9 +1595,52 @@ function getSiteWeather() {
     }, { timeout: 10000 }); // Nach 10 Sek abbrechen
 }
 
+// --- AUTO-SCROLL FÜR EINGABEFELDER WENN TASTATUR ERSCHEINT ---
+function setupInputAutoScroll() {
+    // Alle input und textarea Felder
+    const inputs = document.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach(input => {
+        // Verhindere doppelte Event-Listener
+        if (input.dataset.autoScrollEnabled) return;
+        input.dataset.autoScrollEnabled = 'true';
+        
+        input.addEventListener('focus', (e) => {
+            setTimeout(() => {
+                const element = e.target;
+                const container = element.closest('.container') || document.querySelector('main');
+                
+                if (container) {
+                    // Scrolle das Eingabefeld in die Mitte des sichtbaren Bereichs
+                    element.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'nearest'
+                    });
+                }
+            }, 300); // Verzögerung damit Tastatur Zeit hat zu erscheinen
+        });
+    });
+}
+
+// Event Delegation für dynamisch hinzugefügte Felder
+document.addEventListener('focus', (e) => {
+    if ((e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') 
+        && !e.target.dataset.autoScrollEnabled) {
+        setTimeout(() => {
+            e.target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'nearest'
+            });
+        }, 300);
+    }
+}, true);
+
 // Sobald die Seite geladen ist:
     window.addEventListener('load', () => {
         getSiteWeather();
+        setupInputAutoScroll();
     });
 
 // Initialer Render Kalender

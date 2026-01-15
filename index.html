@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>SHK ToolMate</title>
     <link rel="icon" type="image/png" href="icons/icon.png">
     <link rel="stylesheet" href="style.css">
@@ -34,66 +34,41 @@
     
     <main id="main-content" role="main">
 
-    <div class="card">
-    
-
-
-        <div class="weather-card">
-            <div class="weather-header">
-                <h3>Wetter</h3>
-                <span id="weather_desc" class="weather-status">Lade...</span>
-            </div>
-
-            <div class="weather-body">
-                <div class="temp-box">
-                    <span id="weather_temp" class="big-temp">--°C</span>
-                </div>
-
-                <div class="wind-box">
-                    <span id="weather_wind">💨 -- km/h</span>
-                </div>
-            </div>
-
-            <div id="weather_warning" class="warning-box" style="display: none;">
-            </div>
-        </div>
-
-
-        <!-- <div id="weather-box" style="padding: 10px; border-radius: 8px; margin-bottom: 20px;">
-            <h3>Baustellen-Wetter</h3>
-
-            <div style="font-size: 1.2rem;">
-                <span id="weather_icon"></span>
-                <span id="weather_temp">--</span>
-            </div>
-            <div id="weather_desc">Lade Daten...</div>
-            <div id="weather_wind"></div>
-
-            <div id="weather_warning"
-                style="display: none; background: #ffeeba; color: #856404; padding: 8px; margin-top: 5px; border-radius: 4px; font-weight: bold;">
-            </div>
-        </div>
-
-        <button onclick="getSiteWeather()" style="margin-top:10px;">Standort aktualisieren</button>
-        <div id="weather_warning" class="result-box"
-            style="display:none; margin-top:10px; border-color:#ff9900; background:rgba(255,153,0,0.1);"></div>
-    </div> -->
-
-        <div class="card note-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
-                <h3>📝 Schnell-Notiz</h3>
-                <span id="note_status" class="save-badge">✔ Gespeichert</span>
-            </div>
-
-            <textarea id="quick_note" placeholder="Maße, Notizen, Nummern..." oninput="autoSaveNote()"></textarea>
-
-            <div style="display:flex; justify-content:flex-end; margin-top:10px; gap: 8px;">
-                <button class="secondary small-btn" onclick="copyNote()">Kopieren</button>
-                <button class="secondary small-btn btn-danger" onclick="clearNote()">Löschen</button>
-            </div>
-        </div>
-
         <div id="view-rechner" class="container active">
+
+            <div class="weather-card">
+                <div class="weather-header">
+                    <h3>Wetter</h3>
+                    <span id="weather_desc" class="weather-status">Lade...</span>
+                </div>
+
+                <div class="weather-body">
+                    <div class="temp-box">
+                        <span id="weather_temp" class="big-temp">--°C</span>
+                    </div>
+
+                    <div class="wind-box">
+                        <span id="weather_wind">💨 -- km/h</span>
+                    </div>
+                </div>
+
+                <div id="weather_warning" class="warning-box" style="display: none;">
+                </div>
+            </div>
+
+            <div class="card note-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                    <h3>📝 Schnell-Notiz</h3>
+                    <span id="note_status" class="save-badge">✔ Gespeichert</span>
+                </div>
+
+                <textarea id="quick_note" placeholder="Maße, Notizen, Nummern..." oninput="autoSaveNote()"></textarea>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:10px; gap: 8px;">
+                    <button class="secondary small-btn" onclick="copyNote()">Kopieren</button>
+                    <button class="secondary small-btn btn-danger" onclick="clearNote()">Löschen</button>
+                </div>
+            </div>
 
             <div style="margin-bottom: 15px;">
                 <input type="text" id="calcSearchInput" onkeyup="filterCalculators()"
@@ -949,15 +924,23 @@
 
     </main>
 
-    <script src="app.js?v=6"></script>
-    <script src="js/fetch.js?v=6"></script>
-    <script src="js/calc.js?v=6"></script>
+    <script src="app.js?v=23"></script>
+    <script src="js/fetch.js?v=23"></script>
+    <script src="js/calc.js?v=23"></script>
     
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Registration - TEMP DISABLED FOR DEBUGGING -->
     <script>
+        // Unregister all Service Workers to clear cache
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js?v=6').catch(err => console.log('SW registration failed:', err));
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                registrations.forEach(reg => {
+                    reg.unregister().then(() => console.log("✅ Service Worker unregistered"));
+                });
+            });
+            // Temporarily disabled - re-enable after testing
+            // navigator.serviceWorker.register('/sw.js?v=7').catch(err => console.log('SW registration failed:', err));
         }
+        console.log("⚠️ Service Worker deaktiviert für Debugging - bitte neu laden (Ctrl+Shift+R)");
     </script>
 </body>
 

@@ -68,13 +68,25 @@ body {
     color: var(--text);
     margin: 0;
     padding: 0;
-    /* JavaScript setzt padding dynamisch */
-    /* overflow: hidden entfernt - ermöglicht Scroll bei geöffneter Tastatur */
+    /* Zurück zu overflow: hidden - wichtig für fixed containers */
+    overflow: hidden;
     width: 100%;
     max-width: 100vw;
     line-height: 1.6;
-    min-height: 100vh;
+    min-height: 100dvh;
     overscroll-behavior: none;
+}
+
+main {
+    position: fixed;
+    top: calc(65px + var(--status-bar-height, 25px));
+    left: 0;
+    right: 0;
+    bottom: 60px; /* Platz für Navigation */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 0 120px 0;
 }
 
 header {
@@ -121,18 +133,16 @@ header h1 {
     max-width: 600px;
     margin: 0 auto;
     background-color: var(--surface);
-    /* Jeder Container ist sein eigener Scroll-Container */
+    /* Fixed positioning - Standard */
     position: fixed;
-    top: calc(65px + var(--status-bar-height, 25px)); /* Unter Header */
+    top: calc(65px + var(--status-bar-height, 25px));
     left: 0;
     right: 0;
-    bottom: 60px; /* Über Navigation */
+    bottom: 60px;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
     z-index: 50;
-    /* Keine aggressive padding-bottom - verursacht Probleme mit Tastatur */
 }
 
 .container.active {
@@ -166,7 +176,9 @@ header h1 {
 }
 
 .card:active {
-    transform: translateY(1px);
+    /* Entfernt das Zucken beim Touch */
+    transform: none;
+    opacity: 0.98;
 }
 
 .card h3 {
@@ -209,6 +221,10 @@ select {
     /* Mobile Fixes - minimal */
     -webkit-appearance: none;
     -webkit-text-size-adjust: 100%;
+    /* WICHTIG: Pointer-Events auf auto - damit Inputs anwählbar sind */
+    pointer-events: auto;
+    position: relative;
+    z-index: 1;
 }
 
 input[type="number"],
@@ -536,6 +552,9 @@ nav {
     /* Oranger Akzent bleibt */
     /* Hintergrund passend zum Rest der App nehmen wir automatisch vom .card Style, 
        aber wir stellen sicher, dass Text hell ist */
+    margin: 0 auto 15px auto;
+    max-width: 600px;
+    display: block;
 }
 
 #quick_note {
@@ -823,7 +842,8 @@ p[style*="color:#aaa"],
     color: white;
     padding: 20px;
     border-radius: 15px;
-    margin: 20px;
+    margin: 0 auto 15px auto;
+    max-width: 600px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     font-family: sans-serif;
 }
@@ -919,7 +939,7 @@ p[style*="color:#aaa"],
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100dvh;
     background: rgba(0, 0, 0, 0.95); /* Fast schwarz, transparent */
     z-index: 2000; /* Ganz oben */
     display: flex;
