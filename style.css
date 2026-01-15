@@ -133,13 +133,13 @@ header h1 {
     max-width: 600px;
     margin: 0 auto;
     background-color: var(--surface);
-    /* Fixed positioning - Standard */
-    position: fixed;
-    top: calc(65px + var(--status-bar-height, 25px));
-    left: 0;
-    right: 0;
-    bottom: 60px;
-    overflow-y: auto;
+    /* Relative positioning statt fixed - Container sind jetzt in main */
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    overflow-y: visible;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     z-index: 50;

@@ -170,6 +170,11 @@ function switchTab(viewId, btn) {
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
     btn.classList.add('active');
     btn.focus();
+    
+    // Wenn zu Material-Tab gewechselt wird, Liste aktualisieren
+    if (viewId === 'material') {
+        renderProjectList();
+    }
 }
 
 // Add keyboard support for navigation & initialize Android bars
