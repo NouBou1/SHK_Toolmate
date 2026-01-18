@@ -177,10 +177,105 @@ function switchTab(viewId, btn) {
     }
 }
 
+// Calculator Category System
+function initCalculatorCategories() {
+    const categories = [
+        { id: 'alle', name: '📋 Alle', icon: '📋' },
+        { id: 'heizung', name: '🔥 Heizung', icon: '🔥' },
+        { id: 'wasser', name: '💧 Wasser', icon: '💧' },
+        { id: 'lueftung', name: '💨 Lüftung', icon: '💨' },
+        { id: 'misc', name: '⚙️ Sonstiges', icon: '⚙️' }
+    ];
+
+    // Mapping: Rechner-Titel → Kategorie
+    const calcMapping = {
+        'Gaszähler': 'heizung',
+        'Heizlast': 'heizung',
+        'MAG': 'heizung',
+        'HK-Leistung': 'heizung',
+        'Leistung-Check': 'heizung',
+        'Hydraulischer Abgleich': 'heizung',
+        'Pumpe': 'heizung',
+        'Kesselleistung': 'heizung',
+        'Spreizung': 'heizung',
+        'Mischwasser': 'wasser',
+        'Aufheizzeit': 'wasser',
+        'Zirkulation': 'wasser',
+        'Strömungsgeschwindigkeit': 'wasser',
+        'Rohr-Inhalt': 'wasser',
+        'Abwasser': 'wasser',
+        'Kondensat': 'wasser',
+        'Tank': 'wasser',
+        'Lüftung': 'lueftung',
+        'Kernbohrung': 'misc',
+        'Schellen': 'misc',
+        'Etagen': 'misc'
+    };
+
+    // Alle Rechner-Cards finden (aber NICHT die note-card!)
+    const allCards = Array.from(document.querySelectorAll('#view-rechner .card:not(.note-card)'));
+    
+    // Kategorien zu Cards zuweisen
+    allCards.forEach(card => {
+        const h3 = card.querySelector('h3');
+        if (!h3) return;
+        
+        const title = h3.textContent;
+        let category = 'misc';
+        
+        // Finde passende Kategorie
+        for (const [keyword, cat] of Object.entries(calcMapping)) {
+            if (title.includes(keyword)) {
+                category = cat;
+                break;
+            }
+        }
+        
+        card.setAttribute('data-calc-category', category);
+    });
+
+    // Kategorie-Buttons erstellen
+    const container = document.getElementById('calc-categories');
+    if (!container) return;
+
+    categories.forEach((cat, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'calc-cat-btn' + (index === 0 ? ' active' : '');
+        btn.textContent = cat.name;
+        btn.onclick = () => filterByCategory(cat.id, btn);
+        container.appendChild(btn);
+    });
+}
+
+function filterByCategory(categoryId, button) {
+    // Alle Buttons deaktivieren
+    document.querySelectorAll('.calc-cat-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Aktiven Button markieren
+    button.classList.add('active');
+    
+    // Cards filtern
+    const allCards = document.querySelectorAll('#view-rechner .card');
+    allCards.forEach(card => {
+        const cardCategory = card.getAttribute('data-calc-category');
+        
+        if (categoryId === 'alle' || cardCategory === categoryId) {
+            card.classList.remove('u-hidden');
+        } else {
+            card.classList.add('u-hidden');
+        }
+    });
+}
+
 // Add keyboard support for navigation & initialize Android bars
 document.addEventListener('DOMContentLoaded', function() {
     // Initialisiere Android Status/Navigation Bar
     initializeAndroidBars();
+    
+    // Initialisiere Calculator Kategorien
+    initCalculatorCategories();
     
     const navItems = document.querySelectorAll('.nav-item');
     
