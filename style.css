@@ -1,12 +1,12 @@
 :root {
     --primary: #0056b3;
     --accent: #ff9900;
-    --bg: #0a0a0a;
-    --surface: #1a1a1a;
+    --bg: #4b4545;
+    --surface: #4b4545;
     --text: #f5f5f5;
     --text-secondary: #b0b0b0;
     --input-bg: #242424;
-    --border-color: #333333;
+    --border-color: #796767;
     --success: #10b981;
     --error: #ef4444;
     --warning: #f97316;
