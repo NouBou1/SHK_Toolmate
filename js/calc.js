@@ -539,7 +539,7 @@ function calcRealPower() {
     // P (Watt) = Flow(l/h) * 1.163 * K
     const watt = flow * 1.163 * dt;
     const kw = watt / 1000;
-s
+
     showResult('res_realpower',
         `Spreizung: ${dt.toFixed(1)} K\n` +
         `Leistung: ${kw.toFixed(2)} kW\n` +
