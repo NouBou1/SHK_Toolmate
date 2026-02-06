@@ -7,3 +7,6 @@ package-lock.json
 *.log
 dist/
 build/
+*.keystore
+*.jks
+keystore.properties

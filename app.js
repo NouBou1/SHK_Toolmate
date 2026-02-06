@@ -259,6 +259,11 @@ function filterByCategory(categoryId, button) {
     // Cards filtern
     const allCards = document.querySelectorAll('#view-rechner .card');
     allCards.forEach(card => {
+        if (card.classList.contains('note-card')) {
+            card.classList.remove('u-hidden');
+            return;
+        }
+
         const cardCategory = card.getAttribute('data-calc-category');
         
         if (categoryId === 'alle' || cardCategory === categoryId) {
@@ -1068,18 +1073,26 @@ function filterCalculators() {
 
 function initFavorites() {
     const container = document.getElementById('view-rechner');
-    const cards = container.getElementsByClassName('card');
+    if (!container) return;
+
+    const cards = Array.from(container.querySelectorAll('.card:not(.note-card)'));
 
     // Gespeicherte Favoriten laden
     const favs = JSON.parse(localStorage.getItem('shk_favs')) || [];
 
     // Durch alle Karten gehen
-    Array.from(cards).forEach((card, index) => {
+    cards.forEach((card, index) => {
         const titleEl = card.querySelector('h3');
         if (!titleEl) return;
 
         // Eindeutige ID für die Karte erzeugen (anhand des Titels)
         const cardId = titleEl.innerText.trim();
+
+        // Speichere Original-Reihenfolge
+        if (!card.dataset.originalIndex) {
+            card.dataset.originalIndex = String(index);
+        }
+        card.dataset.cardId = cardId;
 
         // Sternchen erstellen
         const star = document.createElement('span');
@@ -1091,8 +1104,6 @@ function initFavorites() {
         if (favs.includes(cardId)) {
             star.innerText = '⭐'; // Voll
             card.classList.add('is-favorite');
-            // Karte nach oben schieben
-            container.insertBefore(card, container.children[1]); // Index 1 wegen Suchleiste!
         } else {
             star.innerText = '☆'; // Leer
         }
@@ -1105,31 +1116,68 @@ function initFavorites() {
 
         titleEl.appendChild(star);
     });
+
+    reorderFavoriteCards(favs);
 }
 
 function toggleFavorite(card, id, starEl) {
     let favs = JSON.parse(localStorage.getItem('shk_favs')) || [];
-    const container = document.getElementById('view-rechner');
 
     if (favs.includes(id)) {
         // Löschen
         favs = favs.filter(f => f !== id);
         starEl.innerText = '☆';
         card.classList.remove('is-favorite');
-        // Optional: Wieder nach unten sortieren (komplex, lassen wir erstmal)
     } else {
         // Hinzufügen
         favs.push(id);
         starEl.innerText = '⭐';
         card.classList.add('is-favorite');
-        // Sofort nach oben schieben (unter die Suchleiste)
-        container.insertBefore(card, container.children[1]);
 
         // Kleines Feedback
         alert("Zu Favoriten hinzugefügt! (Erscheint jetzt immer oben)");
     }
 
     localStorage.setItem('shk_favs', JSON.stringify(favs));
+    reorderFavoriteCards(favs);
+}
+
+function reorderFavoriteCards(favs) {
+    const container = document.getElementById('view-rechner');
+    if (!container) return;
+
+    const cards = Array.from(container.querySelectorAll('.card:not(.note-card)'));
+    if (!cards.length) return;
+
+    const sorted = cards.slice().sort((a, b) => {
+        const aId = a.dataset.cardId || '';
+        const bId = b.dataset.cardId || '';
+        const aFav = favs.includes(aId) ? 1 : 0;
+        const bFav = favs.includes(bId) ? 1 : 0;
+
+        if (aFav !== bFav) return bFav - aFav;
+
+        const aIndex = Number(a.dataset.originalIndex || 0);
+        const bIndex = Number(b.dataset.originalIndex || 0);
+        return aIndex - bIndex;
+    });
+
+    const searchInput = document.getElementById('calcSearchInput');
+    let insertAfter = searchInput ? searchInput.parentElement : null;
+
+    if (!insertAfter) {
+        insertAfter = container.querySelector('#calc-categories') || container.firstElementChild;
+    }
+
+    if (!insertAfter) {
+        sorted.forEach(card => container.appendChild(card));
+        return;
+    }
+
+    sorted.forEach(card => {
+        container.insertBefore(card, insertAfter.nextSibling);
+        insertAfter = card;
+    });
 }
 
 // System starten (kurze Verzögerung, damit HTML sicher da ist)
