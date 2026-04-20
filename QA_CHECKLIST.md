@@ -71,13 +71,6 @@
 - [x] Notiz löschen
 - [x] Persistierung in localStorage
 
-### Wetter-Funktion
-- [x] Standort abfragen
-- [x] Wetter-API abrufen
-- [x] Temperatur anzeigen
-- [x] Wind-Geschwindigkeit anzeigen
-- [x] Fehlerbehandlung bei GPS-Fehler
-
 ### Kalender
 - [x] Kalender anzeigen
 - [x] Projekte im Kalender markieren

@@ -69,7 +69,6 @@ Diese App erfasst folgende Daten:
   - Fotos
   - Unterschriften
   - Schnellnotizen
-  - Wetter-Standort (nur für Wetterabfrage)
 
 - **Nicht erfasst:**
   - Persönliche Daten
@@ -92,7 +91,7 @@ Sie haben das Recht auf:
 Diese App verwendet **keine Cookies**.
 
 ## 6. Externe Dienste
-- **Wetter-API:** Open-Meteo.com (ohne Tracking)
+- **PDF-Export:** jsPDF von jsdelivr (ohne Tracking, nur bei Nutzung des Exports)
 
 ## 7. Kontakt
 [Email Adresse]

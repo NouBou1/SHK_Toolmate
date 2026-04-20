@@ -7,7 +7,6 @@ const ASSETS = [
   '/style.css',
   '/app.js?v=8',
   '/js/calc.js?v=8',
-  '/js/fetch.js?v=8',
   '/normen.json',
   '/manifest.json',
   '/icons/icon.png'

@@ -14,10 +14,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SHK Tool">
     
-    <!-- PDF Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <!-- PDF libraries are loaded on demand after user consent (see app.js) -->
 </head>
 
 <body>
@@ -35,26 +32,6 @@
     <main id="main-content" role="main">
 
         <div id="view-rechner" class="container active">
-
-            <div class="weather-card">
-                <div class="weather-header">
-                    <h3>Wetter</h3>
-                    <span id="weather_desc" class="weather-status">Lade...</span>
-                </div>
-
-                <div class="weather-body">
-                    <div class="temp-box">
-                        <span id="weather_temp" class="big-temp">--°C</span>
-                    </div>
-
-                    <div class="wind-box">
-                        <span id="weather_wind">💨 -- km/h</span>
-                    </div>
-                </div>
-
-                <div id="weather_warning" class="warning-box" style="display: none;">
-                </div>
-            </div>
 
             <div id="calc-categories" class="calc-categories u-mb-15"></div>
 
@@ -930,7 +907,6 @@
     </main>
 
     <script src="app.js?v=23"></script>
-    <script src="js/fetch.js?v=23"></script>
     <script src="js/calc.js?v=23"></script>
     
     <!-- Service Worker Registration - TEMP DISABLED FOR DEBUGGING -->

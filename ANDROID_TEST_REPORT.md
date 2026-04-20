@@ -47,9 +47,8 @@
 ### 6. Capacitor Sync
 - ✅ `npx capacitor copy` erfolgreich
 - ✅ `npx capacitor sync android` erfolgreich
-- ✅ 4 Capacitor Plugins vorhanden:
+- ✅ 3 Capacitor Plugins vorhanden:
   - @capacitor/filesystem@8.0.0
-  - @capacitor/geolocation@8.0.0
   - @capacitor/share@8.0.0
   - @capacitor/status-bar@8.0.0
 

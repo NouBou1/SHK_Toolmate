@@ -1639,108 +1639,38 @@ function addProject() {
 }
 
 
-// --- WETTER API (Open-Meteo) für SHK-MATE ---
+const EXTERNAL_OPT_IN_KEYS = {
+    pdf: 'shk_external_pdf_opt_in'
+};
 
-/**
- * Übersetzt die WMO-Wettercodes von Open-Meteo in Text & Icons
- * Quelle: https://open-meteo.com/en/docs
- */
-function getWeatherDescription(code) {
-    const codes = {
-        0: { text: "Klarer Himmel", icon: "☀️" },
-        1: { text: "Leicht bewölkt", icon: "🌤️" },
-        2: { text: "Bewölkt", icon: "⛅" },
-        3: { text: "Bedeckt", icon: "☁️" },
-        45: { text: "Nebel", icon: "🌫️" },
-        48: { text: "Nebel", icon: "🌫️" },
-        51: { text: "Leichter Niesel", icon: "💧" },
-        53: { text: "Nieselregen", icon: "💧" },
-        61: { text: "Leichter Regen", icon: "🌧️" },
-        63: { text: "Regen", icon: "🌧️" },
-        71: { text: "Leichter Schnee", icon: "❄️" },
-        73: { text: "Schnee", icon: "❄️" },
-        95: { text: "Gewitter", icon: "⚡" },
-        96: { text: "Gewitter & Hagel", icon: "⛈️" }
-    };
-    return codes[code] || { text: "Unbekannt", icon: "❓" };
-}
+const EXTERNAL_LIB_URLS = {
+    jsPdf: 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'
+};
 
-function getSiteWeather() {
-    const descEl = document.getElementById('weather_desc');
-    const tempEl = document.getElementById('weather_temp');
-    const windEl = document.getElementById('weather_wind');
-    const warnBox = document.getElementById('weather_warning');
-    
-    // UI zurücksetzen
-    if(warnBox) warnBox.style.display = 'none';
-
-    if (!navigator.geolocation) {
-        descEl.innerText = "GPS nicht unterstützt.";
-        return;
-    }
-
-    descEl.innerText = "Orte Satelliten...";
-
-    navigator.geolocation.getCurrentPosition(position => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        
-        // API Abruf
-        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
-            .then(response => {
-                if (!response.ok) throw new Error("Wetterdaten nicht verfügbar");
-                return response.json();
-            })
-            .then(data => {
-                const w = data.current_weather;
-                const weatherInfo = getWeatherDescription(w.weathercode);
-                
-                // 1. Grundwerte setzen
-                tempEl.innerText = `${w.temperature}°C`;
-                windEl.innerText = `💨 ${w.windspeed} km/h`;
-                descEl.innerText = `${weatherInfo.icon} ${weatherInfo.text}`;
-                
-                // 2. SHK-spezifische Prüfungen (Warnungen)
-                let warnings = [];
-
-                // Kleber/Chemie
-                if(w.temperature < 5) {
-                    warnings.push("❄️ <b>< 5°C:</b> Vorsicht bei Klebern & Silikon.");
-                }
-                // Frostschutz
-                if(w.temperature < 0) {
-                    warnings.push("🧊 <b>FROST:</b> Leitungen entleeren/schützen!");
-                }
-                // Dacharbeiten
-                if(w.windspeed > 35) {
-                    warnings.push("💨 <b>Wind > 35km/h:</b> Keine Dacharbeiten!");
-                }
-                // Regen bei Außenarbeiten
-                if(w.weathercode >= 51 && w.weathercode <= 67) {
-                    warnings.push("🌧️ <b>Nässe:</b> Außenisolierung schützen.");
-                }
-
-                // Warnbox anzeigen oder verstecken
-                if(warnings.length > 0 && warnBox) {
-                    warnBox.style.display = 'block';
-                    warnBox.innerHTML = warnings.join('<br>');
-                    warnBox.classList.add('fade-in'); // Optional für Animation
-                }
-            })
-            .catch(err => {
-                descEl.innerText = "Wetter-Fehler.";
-                console.error(err);
-            });
-    }, (error) => {
-        // Fehlerbehandlung für GPS
-        console.warn(error);
-        if(error.code === 1) {
-            descEl.innerText = "GPS verweigert.";
-            // Hier könnte man später ein Eingabefeld für PLZ einblenden
-        } else {
-            descEl.innerText = "GPS Zeitüberschreitung.";
+function loadExternalScriptOnce(scriptId, src) {
+    return new Promise((resolve, reject) => {
+        const existing = document.getElementById(scriptId);
+        if (existing) {
+            if (existing.dataset.loaded === 'true') {
+                resolve();
+                return;
+            }
+            existing.addEventListener('load', () => resolve());
+            existing.addEventListener('error', () => reject(new Error('Script load failed')));
+            return;
         }
-    }, { timeout: 10000 }); // Nach 10 Sek abbrechen
+
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.src = src;
+        script.async = true;
+        script.onload = () => {
+            script.dataset.loaded = 'true';
+            resolve();
+        };
+        script.onerror = () => reject(new Error('Script load failed'));
+        document.head.appendChild(script);
+    });
 }
 
 // --- AUTO-SCROLL FÜR EINGABEFELDER WENN TASTATUR ERSCHEINT ---
@@ -1787,7 +1717,6 @@ document.addEventListener('focus', (e) => {
 
 // Sobald die Seite geladen ist:
     window.addEventListener('load', () => {
-        getSiteWeather();
         setupInputAutoScroll();
     });
 
@@ -1801,6 +1730,28 @@ if ('serviceWorker' in navigator) {
             .then(reg => console.log('Service Worker registriert!', reg))
             .catch(err => console.log('Service Worker Fehler:', err));
     });
+}
+
+
+async function ensurePdfLibsLoaded() {
+    if (window.jspdf && window.jspdf.jsPDF) return true;
+
+    if (localStorage.getItem(EXTERNAL_OPT_IN_KEYS.pdf) !== 'true') {
+        const ok = confirm(
+            'PDF-Export laedt jsPDF von jsdelivr (Drittanbieter). Dabei wird deine IP an den Dienst uebertragen. Fortfahren?'
+        );
+        if (!ok) return false;
+        localStorage.setItem(EXTERNAL_OPT_IN_KEYS.pdf, 'true');
+    }
+
+    try {
+        await loadExternalScriptOnce('jspdf-lib', EXTERNAL_LIB_URLS.jsPdf);
+        return !!(window.jspdf && window.jspdf.jsPDF);
+    } catch (err) {
+        console.error('jsPDF konnte nicht geladen werden:', err);
+        alert('❌ PDF-Bibliothek konnte nicht geladen werden. Bitte spaeter erneut versuchen.');
+        return false;
+    }
 }
 
 
@@ -1877,6 +1828,9 @@ function exportMaterialListPDF() {
 
 async function exportMaterialListPDFWithSignature() {
     try {
+        const libsReady = await ensurePdfLibsLoaded();
+        if (!libsReady) return;
+
         const project = projectsDB.find(p => p.id === currentProjectId);
         if (!project) {
             alert("❌ Kein Projekt ausgewählt!");
@@ -1888,7 +1842,7 @@ async function exportMaterialListPDFWithSignature() {
             if (!confirmEmpty) return;
         }
 
-        const { jsPDF } = window.jspdf;
+        const { jsPDF } = window.jspdf || {};
         if (!jsPDF) {
             alert("❌ PDF-Bibliothek nicht geladen. Bitte Seite neu laden.");
             return;

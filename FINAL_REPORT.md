@@ -44,10 +44,6 @@
    - Zeigt Projektname & Item-Anzahl
    - Auffordernder Tone für Bestätigung
 
-7. ✅ **Wetter API Timeout** (bereits implementiert)
-   - 10 Sekunden Timeout
-   - Fallback auf Error-Message
-
 ---
 
 ## 🧪 GETESTETE SZENARIEN
@@ -70,8 +66,6 @@
 ✅ Foto >5MB → Rejection mit Message
 ✅ Unterschrift leer → Canvas Check
 ✅ PDF-Bibliothek nicht geladen → Error
-✅ Kein Internet (Wetter) → Fallback
-✅ GPS verweigert → Alternative Anzeige
 ```
 
 ### Edge Cases
@@ -167,7 +161,6 @@
 - Projekt-Archivierung
 - Foto-Verwaltung (Capture/Upload)
 - Schnell-Notiz (Auto-Save)
-- Wetter-Integration (Open-Meteo)
 - Kalender-System
 - Unterschrift-Erfassung
 - PDF-Export (mit/ohne Unterschrift)

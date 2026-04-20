@@ -38,19 +38,15 @@
 - **Problem:** `isoDate` wird gespeichert, aber `addProject()` Funktion ist nicht konsistent
 - **Lösung:** Daten-Validierung vor Save
 
-### 7. **Wetter-API: Kein Timeout / Fallback**
-- **Problem:** Wenn API nicht erreichbar → "Lade..." hängt für immer
-- **Lösung:** 5 Sekunden Timeout + Fehlerbehandlung
-
-### 8. **Duplikate in Materialliste möglich**
+### 7. **Duplikate in Materialliste möglich**
 - **Problem:** Nutzer kann gleiche Materialien mehrfach hinzufügen
 - **Lösung:** Deduplizierung oder Warnung
 
-### 9. **Keine Undo/Redo Funktionalität**
+### 8. **Keine Undo/Redo Funktionalität**
 - **Problem:** Versehentlich gelöschte Projekte/Materialien sind weg
 - **Lösung:** Soft-Delete oder Papierkorb implementieren
 
-### 10. **Performance: Bei vielen Projekten wird App langsam**
+### 9. **Performance: Bei vielen Projekten wird App langsam**
 - **Problem:** renderProjectList() rendert alle Projekte jedes Mal neu
 - **Lösung:** Virtualisierung oder Pagination
 
@@ -58,19 +54,19 @@
 
 ## 🟢 KLEINERE ISSUES (Nice to Have)
 
-### 11. **Fehlende Konfirmations-Dialoge**
+### 10. **Fehlende Konfirmations-Dialoge**
 - Projekt löschen: Hätte zweiten Bestätigungs-Button
 - Material löschen: Zu leicht zu klicken
 
-### 12. **Mobile Responsiveness Probleme**
+### 11. **Mobile Responsiveness Probleme**
 - PDF-Modal responsive Größe anpassen
 - Signature Canvas zu klein auf kleinen Screens
 
-### 13. **Accessibility Gaps**
+### 12. **Accessibility Gaps**
 - Einige Input-Felder fehlen Labels
 - Tab-Order nicht optimal
 
-### 14. **Daten-Sicherheit**
+### 13. **Daten-Sicherheit**
 - localStorage ist unverschlüsselt (User-Daten sichtbar)
 - Kein Passwort-Schutz
 
@@ -82,7 +78,6 @@
 ✓ PWA funktioniert offline  
 ✓ Unterschrift-Erfassung funktioniert  
 ✓ PDF-Export generiert valides PDF  
-✓ Wetter-API Integration funktioniert  
 ✓ Bilder werden komprimiert  
 
 ---
@@ -122,6 +117,5 @@
 3. ⚡ Unterschrift-Validierung
 4. ⚡ PDF Export Error Handling
 5. ⚡ Input-Länge Limits
-6. ⚡ Wetter API Timeout
-7. ⚡ Bestätigungs-Dialoge für Deletions
-8. ⚡ Mobile Responsiveness fixes
+6. ⚡ Bestätigungs-Dialoge für Deletions
+7. ⚡ Mobile Responsiveness fixes
