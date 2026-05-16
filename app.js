@@ -125,43 +125,6 @@ if (document.readyState === 'loading') {
     setupKeyboardHandling();
 }
 
-// --- NORMEN DATENBANK (Debug Version) ---
-let normenDB = [];
-
-console.log("Starte Laden der Normen..."); // Taucht in der Konsole auf
-
-fetch('normen.json')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("HTTP Fehler! Status: " + response.status);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Daten erfolgreich geladen:", data); // Zeigt die Daten in der Konsole
-        normenDB = data;
-
-        // Sicherheits-Check: Gibt es die Funktion renderNormen überhaupt?
-        if (typeof renderNormen === "function") {
-            renderNormen(normenDB);
-        } else {
-            console.error("Fehler: Funktion 'renderNormen' nicht gefunden!");
-        }
-    })
-    .catch(error => {
-        console.error("KRITISCHER FEHLER:", error);
-        // Zeigt den Fehler direkt auf dem Bildschirm an:
-        const listEl = document.getElementById('normList');
-        if (listEl) {
-            listEl.innerHTML = `<div style="color:red; border:1px solid red; padding:10px;">
-                <strong>Fehler beim Laden:</strong><br>${error.message}<br>
-                <em>(Schau in die F12 Konsole für Details)</em>
-            </div>`;
-        }
-    });
-
-
-
 // --- NAVIGATION LOGIC ---
 function switchTab(viewId, btn) {
     document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
@@ -946,77 +909,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-/* --- DATEN: Wichtige SHK Normen --- */
-const normenData = [
-    { kuerzel: "TRGI 2018", titel: "Technische Regeln für Gasinstallationen", tags: "gas leitung sicherheit" },
-    { kuerzel: "DIN 1988", titel: "Technische Regeln für Trinkwasser-Installationen", tags: "trinkwasser hygiene spülung" },
-    { kuerzel: "DIN EN 1717", titel: "Schutz des Trinkwassers vor Verunreinigungen", tags: "trinkwasser rückflussverhinderer" },
-    { kuerzel: "DIN 18380", titel: "VOB/C Heizanlagen und zentrale Wassererwärmung", tags: "heizung vob installation" },
-    { kuerzel: "TRWI", titel: "Technische Regeln für Wasserinstallationen", tags: "wasser allgemein" },
-    { kuerzel: "DIN EN 12056", titel: "Schwerkraftentwässerungsanlagen innerhalb von Gebäuden", tags: "abwasser entwässerung" }
-];
-
-/* --- FUNKTION: Normen Liste initialisieren --- */
-/* --- ANZEIGE FUNKTION (Passend zu deiner JSON) --- */
-function renderNormen(list) {
-    // 1. Das Ziel-Element im HTML suchen
-    const container = document.getElementById('normList');
-
-    // Sicherheits-Check: Gibt es das Element überhaupt?
-    if (!container) {
-        console.error("Fehler: HTML-Element mit ID 'normList' nicht gefunden!");
-        return;
-    }
-
-    // 2. Liste leeren (damit nichts doppelt kommt)
-    container.innerHTML = '';
-
-    // 3. Wenn Liste leer ist, Meldung zeigen
-    if (!list || list.length === 0) {
-        container.innerHTML = '<p style="color:#aaa; padding:10px;">Keine Norm gefunden.</p>';
-        return;
-    }
-
-    // 4. Für jeden Eintrag (item) eine Box bauen
-    list.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'norm-item';
-
-        // Style direkt hier setzen, damit man es sicher sieht
-        div.style.padding = "12px";
-        div.style.borderBottom = "1px solid #444";
-        div.style.marginBottom = "5px";
-
-        // Hier füllen wir die Daten ein (Code, Title, Text aus deiner Konsole)
-        // Wir nutzen "|| ''", falls mal ein Text fehlt, damit kein "undefined" kommt
-        div.innerHTML = `
-            <div style="color: #ff9900; font-weight: bold; margin-bottom:4px;">${item.code || 'Code fehlt'}</div>
-            <div style="font-weight: bold; font-size: 1.1rem; margin-bottom:4px; color: white;">${item.title || 'Titel fehlt'}</div>
-            <div style="color: #ccc; font-size: 0.9rem; line-height: 1.4;">${item.text || ''}</div>
-        `;
-
-        container.appendChild(div);
-    });
-}
-
-/* --- SUCHE FUNKTION --- */
-function filterNormen() {
-    const searchInput = document.getElementById('searchBar');
-    if (!searchInput) return;
-
-    const term = searchInput.value.toLowerCase();
-
-    // Wir filtern basierend auf den echten Daten-Namen
-    const filtered = normenDB.filter(n =>
-        (n.code && n.code.toLowerCase().includes(term)) ||
-        (n.title && n.title.toLowerCase().includes(term)) ||
-        (n.text && n.text.toLowerCase().includes(term))
-    );
-
-    renderNormen(filtered);
-}
-
-
 // Deine bereits vorhandene Toggle-Funktion
 function toggleTable(id) {
     const el = document.getElementById(id);
@@ -1030,16 +922,6 @@ function toggleTable(id) {
         header.setAttribute('aria-expanded', isHidden.toString());
     }
 }
-
-
-// WICHTIG: Beim Start einmal ausführen, um die Liste zu füllen
-document.addEventListener('DOMContentLoaded', () => {
-    renderNormen();
-});
-
-
-
-
 // --- RECHNER FILTER FUNKTION ---
 function filterCalculators() {
     // 1. Suchbegriff holen

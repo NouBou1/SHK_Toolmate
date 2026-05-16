@@ -468,179 +468,6 @@
             </div>
         </div>
 
-        <div id="view-normen" class="container">
-
-
-            <div class="card">
-                <h3 onclick="toggleTable('tab_elektro')"
-                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;" role="button" tabindex="0" aria-expanded="false" aria-controls="tab_elektro">
-                    ⚡ Elektro-Schutzbereiche (Bad) <span aria-hidden="true">▼</span>
-                </h3>
-                <div id="tab_elektro" style="display:none; margin-top:10px;">
-                    <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">DIN VDE 0100-701</p>
-
-                    <div class="zone-visual">
-                        <div class="zone z0">
-                            <span>Zone 0</span>
-                            <small>Wanne/Dusche</small>
-                        </div>
-                        <div class="zone z1">
-                            <span>Zone 1</span>
-                            <small>Über Wanne</small>
-                        </div>
-                        <div class="zone z2">
-                            <span>Zone 2</span>
-                            <small>60cm Radius</small>
-                        </div>
-                    </div>
-
-                    <table class="tech-table">
-                        <thead>
-                            <tr>
-                                <th>Zone</th>
-                                <th>Erlaubt</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Bereich 0</strong><br>(Innenraum Wanne/Dusche)</td>
-                                <td>Nur 12V Schutzkleinspannung (IPX7). Keine 230V!</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Bereich 1</strong><br>(Oberhalb Wanne bis 2,25m)</td>
-                                <td>Nur fest installierte WW-Erwärmer, Abluftgeräte. Leuchten nur mit
-                                    Schutzkleinspannung.
-                                    (IPX4)</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Bereich 2</strong><br>(60cm Radius um Bereich 1)</td>
-                                <td>Anschlussdosen für Leuchten, Waschmaschinenanschluss möglich (IPX4). <strong>Keine
-                                        Steckdosen!</strong></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Rest</strong></td>
-                                <td>Steckdosen erlaubt, aber müssen über <strong>FI-Schalter</strong> (RCD) laufen.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 onclick="toggleTable('tab_zoll')"
-                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;" role="button" tabindex="0" aria-expanded="false" aria-controls="tab_zoll">
-                    📏 Zoll ↔ Rohr-Außen <span aria-hidden="true">▼</span>
-                </h3>
-                <div id="tab_zoll" style="display:none; margin-top:10px;">
-                    <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">Für Gebo & Pressfittings</p>
-                    <table class="tech-table">
-                        <thead>
-                            <tr>
-                                <th>Zoll (")</th>
-                                <th>DN</th>
-                                <th>Außen (mm)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>3/8"</td>
-                                <td>10</td>
-                                <td>17,2 mm</td>
-                            </tr>
-                            <tr>
-                                <td>1/2"</td>
-                                <td>15</td>
-                                <td>21,3 mm</td>
-                            </tr>
-                            <tr>
-                                <td>3/4"</td>
-                                <td>20</td>
-                                <td>26,9 mm</td>
-                            </tr>
-                            <tr>
-                                <td>1"</td>
-                                <td>25</td>
-                                <td>33,7 mm</td>
-                            </tr>
-                            <tr>
-                                <td>1 1/4"</td>
-                                <td>32</td>
-                                <td>42,4 mm</td>
-                            </tr>
-                            <tr>
-                                <td>1 1/2"</td>
-                                <td>40</td>
-                                <td>48,3 mm</td>
-                            </tr>
-                            <tr>
-                                <td>2"</td>
-                                <td>50</td>
-                                <td>60,3 mm</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 onclick="toggleTable('tab_sw')"
-                    style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;" role="button" tabindex="0" aria-expanded="false" aria-controls="tab_sw">
-                    🔧 Schlüsselweiten (SW) <span aria-hidden="true">▼</span>
-                </h3>
-                <div id="tab_sw" style="display:none; margin-top:10px;">
-                    <p style="color:#aaa; font-size:0.8rem; margin-bottom:5px;">Sechskantmuttern (ISO 4032)</p>
-                    <table class="tech-table">
-                        <thead>
-                            <tr>
-                                <th>Gewinde</th>
-                                <th>SW (mm)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>M 6</td>
-                                <td>10 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 8</td>
-                                <td>13 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 10</td>
-                                <td>17 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 12</td>
-                                <td>19 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 16</td>
-                                <td>24 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 20</td>
-                                <td>30 mm</td>
-                            </tr>
-                            <tr>
-                                <td>M 24</td>
-                                <td>36 mm</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>📚 Normen & Regelwerke</h3>
-                <label for="searchBar">Normen durchsuchen</label>
-                <input type="text" id="searchBar" onkeyup="filterNormen()" aria-label="Normen und Regelwerke durchsuchen"
-                    placeholder="Suche (z.B. Gas, Trinkwasser)...">
-                <div id="normList" role="region" aria-live="polite" aria-label="Suchergebnisse"></div>
-            </div>
-
-        </div>
-
-
     </div>
 
     </div>
@@ -872,9 +699,6 @@
         <button class="nav-item active" onclick="switchTab('rechner', this)">
             <span class="nav-icon">🧮</span>Rechner
         </button>
-        <button class="nav-item" onclick="switchTab('normen', this)">
-            <span class="nav-icon">📖</span>Normen/Maße
-        </button>
         <button class="nav-item" onclick="switchTab('tools', this)">
             <span class="nav-icon">🔧</span>Tools
         </button>
@@ -898,9 +722,6 @@
         </button>
         <button class="nav-item" onclick="switchTab('tools', this)" aria-label="Zu Tools Tab">
             <span class="nav-icon">🔧</span><span>Tools</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('normen', this)" aria-label="Zu Normen und Maße Tab">
-            <span class="nav-icon">📖</span><span>Normen/Maße</span>
         </button>
     </nav>
 
