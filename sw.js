@@ -1,12 +1,12 @@
 
-// Service Worker v9 - Force fresh deploy
-const CACHE_NAME = 'shk-mate-v9';
+// Service Worker v10 - aligned with current app assets
+const CACHE_NAME = 'shk-mate-v10';
 const ASSETS = [
   '/',
   '/index.html',
   '/style.css',
-  '/app.js?v=8',
-  '/js/calc.js?v=8',
+  '/app.js?v=23',
+  '/js/calc.js?v=23',
   '/manifest.json',
   '/icons/icon.png'
 ];

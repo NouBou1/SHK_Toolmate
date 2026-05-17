@@ -1608,7 +1608,7 @@ document.addEventListener('DOMContentLoaded', renderCalendar);
 // Service Worker registrieren (macht die App offline-fähig)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=6')
+        navigator.serviceWorker.register('/sw.js?v=10')
             .then(reg => console.log('Service Worker registriert!', reg))
             .catch(err => console.log('Service Worker Fehler:', err));
     });

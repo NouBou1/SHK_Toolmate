@@ -734,20 +734,6 @@
     <script src="app.js?v=23"></script>
     <script src="js/calc.js?v=23"></script>
     
-    <!-- Service Worker Registration - TEMP DISABLED FOR DEBUGGING -->
-    <script>
-        // Unregister all Service Workers to clear cache
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                registrations.forEach(reg => {
-                    reg.unregister().then(() => console.log("✅ Service Worker unregistered"));
-                });
-            });
-            // Temporarily disabled - re-enable after testing
-            // navigator.serviceWorker.register('/sw.js?v=7').catch(err => console.log('SW registration failed:', err));
-        }
-        console.log("⚠️ Service Worker deaktiviert für Debugging - bitte neu laden (Ctrl+Shift+R)");
-    </script>
 </body>
 
 </html>
