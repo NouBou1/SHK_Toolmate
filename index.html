@@ -13,6 +13,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SHK Tool">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     
     <!-- PDF libraries are loaded on demand after user consent (see app.js) -->
 </head>
@@ -709,19 +713,19 @@
 
     <nav role="navigation" aria-label="Hauptnavigation">
         <button class="nav-item active" onclick="switchTab('rechner', this)" aria-label="Zu Rechner Tab">
-            <span class="nav-icon">🧮</span><span>Rechner</span>
+            <span class="material-symbols-outlined nav-icon">calculate</span><span class="nav-text">Rechner</span>
         </button>
         <button class="nav-item" onclick="switchTab('material', this)" aria-label="Zu Material Listen Tab">
-            <span class="nav-icon">📋</span><span>Listen</span>
+            <span class="material-symbols-outlined nav-icon">format_list_bulleted</span><span class="nav-text">Listen</span>
         </button>
         <button class="nav-item" onclick="switchTab('inventory', this)" aria-label="Zu Lager Tab">
-            <span class="nav-icon">🚐</span><span>Lager</span>
+            <span class="material-symbols-outlined nav-icon">inventory_2</span><span class="nav-text">Lager</span>
         </button>
         <button class="nav-item" onclick="switchTab('calendar', this)" aria-label="Zu Kalender Tab">
-            <span class="nav-icon">📅</span><span>Plan</span>
+            <span class="material-symbols-outlined nav-icon">calendar_month</span><span class="nav-text">Plan</span>
         </button>
         <button class="nav-item" onclick="switchTab('tools', this)" aria-label="Zu Tools Tab">
-            <span class="nav-icon">🔧</span><span>Tools</span>
+            <span class="material-symbols-outlined nav-icon">handyman</span><span class="nav-text">Tools</span>
         </button>
     </nav>
 

@@ -143,11 +143,11 @@ function switchTab(viewId, btn) {
 // Calculator Category System
 function initCalculatorCategories() {
     const categories = [
-        { id: 'alle', name: '📋 Alle', icon: '📋' },
-        { id: 'heizung', name: '🔥 Heizung', icon: '🔥' },
-        { id: 'wasser', name: '💧 Wasser', icon: '💧' },
-        { id: 'lueftung', name: '💨 Lüftung', icon: '💨' },
-        { id: 'misc', name: '⚙️ Sonstiges', icon: '⚙️' }
+        { id: 'alle', name: 'Alle', dotClass: 'chip-dot-alle' },
+        { id: 'heizung', name: 'Heizung', dotClass: 'chip-dot-heizung' },
+        { id: 'wasser', name: 'Wasser', dotClass: 'chip-dot-wasser' },
+        { id: 'lueftung', name: 'Lueftung', dotClass: 'chip-dot-lueftung' },
+        { id: 'misc', name: 'Sonstiges', dotClass: 'chip-dot-misc' }
     ];
 
     // Mapping: Rechner-Titel → Kategorie
@@ -204,7 +204,7 @@ function initCalculatorCategories() {
     categories.forEach((cat, index) => {
         const btn = document.createElement('button');
         btn.className = 'calc-cat-btn' + (index === 0 ? ' active' : '');
-        btn.textContent = cat.name;
+        btn.innerHTML = `<span class="chip-dot ${cat.dotClass}"></span><span>${cat.name}</span>`;
         btn.onclick = () => filterByCategory(cat.id, btn);
         container.appendChild(btn);
     });
