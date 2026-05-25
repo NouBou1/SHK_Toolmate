@@ -1051,15 +1051,15 @@ p[style*="color:#aaa"],
     flex: 0 0 auto;
     width: auto !important;
     min-width: 0;
-    padding: 6px 12px;
+    padding: 7px 14px;
     background-color: #1b1b1d;
     border: 1px solid var(--border-color);
     border-radius: 10px;
     color: var(--text-secondary);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     text-align: center;
     display: inline-flex;
     align-items: center;
@@ -1071,22 +1071,15 @@ p[style*="color:#aaa"],
     line-height: 1.2;
 }
 
-.chip-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
+.calc-cat-btn svg {
+    flex-shrink: 0;
+    display: block;
 }
-
-.chip-dot-alle { background: #8ea9e0; }
-.chip-dot-heizung { background: #fe9400; }
-.chip-dot-wasser { background: #4b8eff; }
-.chip-dot-lueftung { background: #74d1ff; }
-.chip-dot-misc { background: #8b90a0; }
 
 .calc-cat-btn:hover {
     background-color: #353437;
     border-color: var(--primary);
+    transform: translateY(-1px);
 }
 
 .calc-cat-btn.active {
@@ -1094,4 +1087,5 @@ p[style*="color:#aaa"],
     color: #002e69;
     border-color: var(--primary);
     font-weight: 600;
+    box-shadow: 0 2px 8px rgba(119, 176, 255, 0.3);
 }
