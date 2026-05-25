@@ -731,8 +731,44 @@
 
     </main>
 
-    <script src="app.js?v=23"></script>
-    <script src="js/calc.js?v=23"></script>
+    <!-- ============================================ -->
+    <!-- JAVASCRIPT MODULE STRUKTUR                    -->
+    <!-- ============================================ -->
+    <!-- Module werden in dieser Reihenfolge geladen: -->
+    <!-- 1. Core-Module (Android, Navigation, Utils)  -->
+    <!-- 2. Feature-Module (Projects, Photos, etc.)   -->
+    <!-- 3. Tool-Module (Converters)                  -->
+    <!-- 4. Calculator-Module (calc.js)               -->
+    <!-- 5. App-Initialisierung (app.js)              -->
+    <!-- ============================================ -->
+
+    <!-- CORE MODULES -->
+    <script src="js/core/android-init.js?v=24"></script>
+    <script src="js/core/navigation.js?v=24"></script>
+    <script src="js/core/utils.js?v=24"></script>
+
+    <!-- FEATURE MODULES -->
+    <script src="js/modules/projects.js?v=24"></script>
+    <script src="js/modules/photos.js?v=24"></script>
+    <script src="js/modules/notes.js?v=24"></script>
+    <script src="js/modules/favorites.js?v=24"></script>
+    <script src="js/modules/level.js?v=24"></script>
+    <script src="js/modules/checklist.js?v=24"></script>
+    <script src="js/modules/inventory.js?v=24"></script>
+    <script src="js/modules/calendar.js?v=24"></script>
+    <script src="js/modules/pdf-export.js?v=24"></script>
+
+    <!-- TOOL MODULES -->
+    <script src="js/tools/converters.js?v=24"></script>
+
+    <!-- CALCULATOR MODULE -->
+    <script src="js/calc.js?v=24"></script>
+
+    <!-- AUTO-START SCRIPTS -->
+    <script src="js/core/android-init-global.js?v=24"></script>
+
+    <!-- APP INITIALIZATION (muss als letztes geladen werden) -->
+    <script src="app.js?v=24"></script>
     
 </body>
 

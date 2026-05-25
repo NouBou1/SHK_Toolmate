@@ -1,0 +1,63 @@
+// Schnell-Notiz Modul
+// Auto-Save, Copy & Clear Funktionen
+
+let saveTimeout;
+
+function loadQuickNote() {
+    const noteField = document.getElementById('quick_note');
+    if (!noteField) return;
+
+    const saved = localStorage.getItem('shk_quick_note');
+    if (saved) {
+        noteField.value = saved;
+    }
+}
+
+function autoSaveNote() {
+    const noteField = document.getElementById('quick_note');
+    const statusSpan = document.getElementById('note_status');
+
+    saveNoteToStorage(noteField.value);
+    showSaveStatus(statusSpan);
+}
+
+function saveNoteToStorage(value) {
+    localStorage.setItem('shk_quick_note', value);
+}
+
+function showSaveStatus(statusSpan) {
+    if (!statusSpan) return;
+    
+    statusSpan.style.opacity = '1';
+    clearTimeout(saveTimeout);
+    
+    saveTimeout = setTimeout(() => {
+        statusSpan.style.opacity = '0';
+    }, 1500);
+}
+
+function copyNote() {
+    const noteField = document.getElementById('quick_note');
+    if (!noteField || !noteField.value) return;
+
+    copyToClipboard(noteField.value);
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert("📋 Notiz in Zwischenablage kopiert!");
+    }).catch(err => {
+        console.error('Fehler beim Kopieren:', err);
+        alert("❌ Fehler beim Kopieren.");
+    });
+}
+
+function clearNote() {
+    const noteField = document.getElementById('quick_note');
+    if (!noteField || noteField.value === '') return;
+
+    if (confirm('Notiz wirklich löschen?')) {
+        noteField.value = '';
+        localStorage.removeItem('shk_quick_note');
+    }
+}
