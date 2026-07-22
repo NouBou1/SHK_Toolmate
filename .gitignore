@@ -10,3 +10,8 @@ build/
 *.keystore
 *.jks
 keystore.properties
+
+# Debug-Logs & Backups (nie committen)
+logcat*.txt
+*.backup
+*.bak
