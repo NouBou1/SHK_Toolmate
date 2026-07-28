@@ -101,7 +101,7 @@ function previewPDFWithSignature() {
     
     signatureDataURL = canvas.toDataURL('image/png');
     closeSignatureModal();
-    alert("✅ Unterschrift gespeichert! PDF wird erstellt...");
+    alert("[OK] Unterschrift gespeichert! PDF wird erstellt...");
     
     setTimeout(() => {
         exportMaterialListPDFWithSignature();
@@ -118,7 +118,7 @@ function validateSignature() {
         if (data[i] > 0) return true;
     }
     
-    alert("⚠️ Unterschrift ist leer! Bitte tatsächlich unterschreiben.");
+    alert("[WARNUNG] Unterschrift ist leer! Bitte tatsächlich unterschreiben.");
     return false;
 }
 
@@ -150,12 +150,12 @@ function getCurrentProject() {
     const project = projectsDB.find(p => p.id === currentProjectId);
     
     if (!project) {
-        alert("❌ Kein Projekt ausgewählt!");
+        alert("[FEHLER] Kein Projekt ausgewählt!");
         return null;
     }
     
     if (!project.items || project.items.length === 0) {
-        const confirmEmpty = confirm('⚠️ Materialliste ist leer. Trotzdem PDF erstellen?');
+        const confirmEmpty = confirm('[WARNUNG] Materialliste ist leer. Trotzdem PDF erstellen?');
         if (!confirmEmpty) return null;
     }
     
@@ -165,7 +165,7 @@ function getCurrentProject() {
 async function createPDF(project) {
     const { jsPDF } = window.jspdf || {};
     if (!jsPDF) {
-        alert("❌ PDF-Bibliothek nicht geladen. Bitte Seite neu laden.");
+        alert("[FEHLER] PDF-Bibliothek nicht geladen. Bitte Seite neu laden.");
         return null;
     }
     
@@ -294,16 +294,16 @@ async function saveNativePDF(pdf, projectName, Filesystem) {
                     recursive: true
                 });
                 
-                alert('✅ PDF gespeichert: ' + finalFileName);
+                alert('[OK] PDF gespeichert: ' + finalFileName);
             } catch (err) {
                 console.error('PDF-Fehler:', err);
-                alert('❌ PDF-Fehler: ' + err.message);
+                alert('[FEHLER] PDF-Fehler: ' + err.message);
             }
         };
         reader.readAsDataURL(pdfBlob);
     } catch (err) {
         console.error('PDF-Fehler:', err);
-        alert('❌ PDF-Fehler: ' + err.message);
+        alert('[FEHLER] PDF-Fehler: ' + err.message);
     }
 }
 
@@ -342,9 +342,9 @@ async function incrementFileName(baseName, Filesystem) {
 function saveBrowserPDF(pdf, projectName) {
     try {
         pdf.save('Rapport_' + projectName + '.pdf');
-        alert('✅ PDF wurde heruntergeladen.');
+        alert('[OK] PDF wurde heruntergeladen.');
     } catch (err) {
-        alert('❌ PDF-Export fehlgeschlagen: ' + err.message);
+        alert('[FEHLER] PDF-Export fehlgeschlagen: ' + err.message);
     }
 }
 
@@ -361,7 +361,7 @@ function resetSignature() {
 
 function handlePDFError(err) {
     console.error('Fehler beim PDF Export:', err);
-    alert('❌ PDF Export fehlgeschlagen. Bitte erneut versuchen.');
+    alert('[FEHLER] PDF Export fehlgeschlagen. Bitte erneut versuchen.');
 }
 
 async function ensurePdfLibsLoaded() {
@@ -380,7 +380,7 @@ async function ensurePdfLibsLoaded() {
         return !!(window.jspdf && window.jspdf.jsPDF);
     } catch (err) {
         console.error('jsPDF konnte nicht geladen werden:', err);
-        alert('❌ PDF-Bibliothek konnte nicht geladen werden. Bitte spaeter erneut versuchen.');
+        alert('[FEHLER] PDF-Bibliothek konnte nicht geladen werden. Bitte spaeter erneut versuchen.');
         return false;
     }
 }

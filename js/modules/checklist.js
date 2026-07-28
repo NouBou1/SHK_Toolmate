@@ -49,7 +49,7 @@ function createChecklistItem(task, index, isDone) {
     div.onclick = () => toggleCheck(index);
 
     div.innerHTML = `
-        <span style="font-size:1.5rem; margin-right:10px;">${isDone ? '✅' : '⬜'}</span>
+        <span style="font-size:1.5rem; margin-right:10px;">${isDone ? '[X]' : '[ ]'}</span>
         <span style="${isDone ? 'text-decoration:line-through; color:#777;' : ''}">${task}</span>
     `;
     

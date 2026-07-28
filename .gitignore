@@ -1,17 +1,30 @@
+# Dependencies
 node_modules/
-android/
+
+# Build outputs (können neu generiert werden)
+android/app/build/
+android/.gradle/
+android/build/
 www/
+
+# Lokale Konfiguration
 capacitor.config.json
-package-lock.json
+
+# System-Dateien
 .DS_Store
 *.log
 dist/
-build/
+
+# Keystores (NIEMALS committen - Sicherheit!)
 *.keystore
 *.jks
 keystore.properties
 
-# Debug-Logs & Backups (nie committen)
+# Debug-Logs & Backups
 logcat*.txt
 *.backup
 *.bak
+
+# IDE
+.idea/
+.vscode/

@@ -19,7 +19,7 @@ async function configureStatusBar(StatusBar) {
         await StatusBar.setStyle({ style: 'DARK' });
         await StatusBar.setBackgroundColor({ color: '#0a0a0a' });
         await StatusBar.setOverlaysWebView({ overlay: false });
-        console.log("✅ StatusBar: overlaysWebView=false, color=#0a0a0a");
+        console.log("[OK] StatusBar: overlaysWebView=false, color=#0a0a0a");
     } catch(e) {
         console.log("StatusBar API nicht verfügbar (OK für Desktop):", e.message);
     }
@@ -32,7 +32,7 @@ async function configureNavigationBar() {
         if (typeof NavigationBar.setOverlaysWebView !== 'undefined') {
             await NavigationBar.setOverlaysWebView({ overlay: false });
         }
-        console.log("✅ NavigationBar: color=#0a0a0a");
+        console.log("[OK] NavigationBar: color=#0a0a0a");
     } catch(e) {
         console.log("NavigationBar API nicht verfügbar (OK):", e.message);
     }
@@ -72,7 +72,7 @@ function applyBodyPadding(statusBarHeight, navBarHeight) {
         body.style.paddingTop = statusBarHeight + 'px';
         const bottomPadding = Math.max(70, 60 + navBarHeight);
         body.style.paddingBottom = bottomPadding + 'px';
-        console.log("📱 Body padding applied: top=" + statusBarHeight + "px, bottom=" + bottomPadding + "px");
+        console.log("[DEBUG] Body padding applied: top=" + statusBarHeight + "px, bottom=" + bottomPadding + "px");
     }
 }
 
@@ -80,7 +80,7 @@ function applyHeaderPadding(statusBarHeight) {
     const header = document.querySelector('header');
     if (header) {
         header.style.paddingTop = (18 + statusBarHeight) + 'px';
-        console.log("🔝 Header padding-top adjusted: " + (18 + statusBarHeight) + "px");
+        console.log("[DEBUG] Header padding-top adjusted: " + (18 + statusBarHeight) + "px");
     }
 }
 
@@ -89,13 +89,13 @@ function applyNavPadding(navBarHeight) {
     if (nav) {
         nav.style.paddingBottom = navBarHeight + 'px';
         nav.style.minHeight = (60 + navBarHeight) + 'px';
-        console.log("🗂️ Nav height adjusted: " + (60 + navBarHeight) + "px");
+        console.log("[DEBUG] Nav height adjusted: " + (60 + navBarHeight) + "px");
     }
 }
 
 function logDebugInfo(viewportHeight, screenHeight, statusBarHeight, navBarHeight) {
     if (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')) {
-        console.log("🎯 Android Safe Area Berechnung:", {
+        console.log("[DEBUG] Android Safe Area Berechnung:", {
             "viewport": viewportHeight + "px",
             "screen": screenHeight + "px",
             "statusBar": statusBarHeight + "px",
@@ -108,14 +108,14 @@ function logDebugInfo(viewportHeight, screenHeight, statusBarHeight, navBarHeigh
 function setupKeyboardHandling() {
     document.addEventListener('focusin', (e) => {
         if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
-            console.log("🎯 Input focused: " + (e.target.id || e.target.tagName));
+            console.log("[DEBUG] Input focused: " + (e.target.id || e.target.tagName));
             setTimeout(() => {
                 e.target.scrollIntoView({ behavior: 'auto', block: 'center' });
             }, 100);
         }
     });
     
-    console.log("✅ Keyboard handling: scrollIntoView only");
+    console.log("[OK] Keyboard handling: scrollIntoView only");
 }
 
 function setupInputAutoScroll() {

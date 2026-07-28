@@ -26,12 +26,12 @@ function validateFile(file) {
     const maxSize = 5 * 1024 * 1024; // 5MB
     
     if (file.size > maxSize) {
-        alert(`❌ Datei zu groß (${(file.size / 1024 / 1024).toFixed(1)}MB). Max. 5MB erlaubt.`);
+        alert(`[FEHLER] Datei zu groß (${(file.size / 1024 / 1024).toFixed(1)}MB). Max. 5MB erlaubt.`);
         return false;
     }
     
     if (!file.type.startsWith('image/')) {
-        alert('❌ Nur Bilder erlaubt!');
+        alert('[FEHLER] Nur Bilder erlaubt!');
         return false;
     }
     
@@ -42,7 +42,7 @@ function readAndCompressFile(file, input) {
     const reader = new FileReader();
 
     reader.onerror = function() {
-        alert('❌ Fehler beim Laden des Fotos. Bitte versuchen Sie es erneut.');
+        alert('[FEHLER] Fehler beim Laden des Fotos. Bitte versuchen Sie es erneut.');
         console.error('FileReader error:', reader.error);
         input.value = '';
     };
@@ -85,7 +85,7 @@ function createCompressedImage(img) {
 
 function handleCompressionError(err, input) {
     console.error('Fehler beim Verarbeiten des Fotos:', err);
-    alert('❌ Foto konnte nicht verarbeitet werden. Bitte erneut versuchen.');
+    alert('[FEHLER] Foto konnte nicht verarbeitet werden. Bitte erneut versuchen.');
     input.value = '';
 }
 

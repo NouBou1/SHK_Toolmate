@@ -1,8 +1,8 @@
-# 🔒 SECURITY & DATENSCHUTZ Guide
+# SECURITY & DATENSCHUTZ Guide
 
 ## Sicherheits-Status der App
 
-### ✅ Implementiert
+### Implementiert
 
 1. **HTTPS-Ready**
    - App funktioniert nur über HTTPS
@@ -29,7 +29,7 @@
    - Warnung bei >4MB
    - Automatische Cleanup-Mechanismen
 
-### ⚠️ Zu beachten
+### Zu beachten
 
 1. **localStorage ist unverschlüsselt**
    ```

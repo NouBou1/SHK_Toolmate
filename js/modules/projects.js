@@ -1,7 +1,47 @@
-// Material Liste & Projekt Management
+// ==========================================
+// SHK-MATE - Material & Projekt Management
+// ==========================================
 // Verwaltung von Baustellen, Material und Archiv
+// Mit sicherer LocalStorage-Verwendung
 
-let projectsDB = JSON.parse(localStorage.getItem('shk_projects')) || [];
+/**
+ * Lädt Projekte aus LocalStorage mit Fehlerbehandlung
+ * @returns {Array} Array von Projekt-Objekten
+ */
+function loadProjectsFromStorage() {
+    try {
+        const data = localStorage.getItem('shk_projects');
+        if (!data) return [];
+        
+        const projects = JSON.parse(data);
+        
+        // Validierung: Muss ein Array sein
+        if (!Array.isArray(projects)) {
+            console.error('Invalid projects data format - expected array');
+            return [];
+        }
+        
+        return projects;
+    } catch (error) {
+        console.error('Error loading projects from localStorage:', error);
+        
+        // Bei Parsing-Fehler: Backup erstellen und neu starten
+        const corruptedData = localStorage.getItem('shk_projects');
+        if (corruptedData) {
+            const backupKey = 'shk_projects_backup_' + Date.now();
+            try {
+                localStorage.setItem(backupKey, corruptedData);
+                console.log('Corrupted data backed up to:', backupKey);
+            } catch (e) {
+                console.error('Could not create backup:', e);
+            }
+        }
+        
+        return [];
+    }
+}
+
+let projectsDB = loadProjectsFromStorage();
 let currentProjectId = null;
 let currentViewMode = 'active';
 
@@ -51,17 +91,17 @@ function addProject() {
 
 function validateProjectName(name) {
     if (!name) {
-        alert('❌ Bitte Projektname eingeben');
+        alert('[FEHLER] Bitte Projektname eingeben');
         return false;
     }
     
     if (name.length > 50) {
-        alert('❌ Projektname zu lang (max. 50 Zeichen)');
+        alert('[FEHLER] Projektname zu lang (max. 50 Zeichen)');
         return false;
     }
     
     if (projectsDB.some(p => p.name.toLowerCase() === name.toLowerCase() && !p.archived)) {
-        alert('⚠️ Projekt mit diesem Namen existiert bereits!');
+        alert('[WARNUNG] Projekt mit diesem Namen existiert bereits!');
         return false;
     }
     
@@ -292,12 +332,12 @@ function deleteCurrentProject() {
 
 function confirmDeletion(project) {
     const firstConfirm = confirm(
-        `🗑️ Projekt \"${project.name}\" wirklich löschen?\\n\\nDies kann nicht rückgängig gemacht werden!`
+        `[LÖSCHEN] Projekt \"${project.name}\" wirklich löschen?\n\nDies kann nicht rückgängig gemacht werden!`
     );
     if (!firstConfirm) return false;
     
     const secondConfirm = confirm(
-        `⚠️ Letzte Chance! Projekt \"${project.name}\" mit ${project.items.length} Materialien ENDGÜLTIG löschen?`
+        `[WARNUNG] Letzte Chance! Projekt \"${project.name}\" mit ${project.items.length} Materialien ENDGÜLTIG löschen?`
     );
     if (!secondConfirm) return false;
     
@@ -332,7 +372,7 @@ function buildClipboardText(project) {
 
 function copyText(text) {
     navigator.clipboard.writeText(text).then(() => {
-        alert("✅ Liste kopiert! Jetzt in WhatsApp einfügen.");
+        alert("[OK] Liste kopiert! Jetzt in WhatsApp einfügen.");
     }).catch(err => {
         console.error('Fehler beim Kopieren:', err);
         alert("Fehler beim Kopieren.");
@@ -354,15 +394,15 @@ function checkStorageSize(data) {
     const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
     
     if (sizeInMB > 4) {
-        console.warn(`⚠️ localStorage ist ${sizeInMB}MB groß! Speicher wird knapp.`);
+        console.warn(`[WARNUNG] localStorage ist ${sizeInMB}MB groß! Speicher wird knapp.`);
     }
 }
 
 function handleSaveError(err) {
     if (err.name === 'QuotaExceededError') {
-        alert('❌ Speicher voll! Bitte alte Projekte und Fotos löschen um Platz zu machen.');
+        alert('[FEHLER] Speicher voll! Bitte alte Projekte und Fotos löschen um Platz zu machen.');
         console.error('localStorage quota exceeded:', err);
     } else {
-        alert('❌ Fehler beim Speichern: ' + err.message);
+        alert('[FEHLER] Fehler beim Speichern: ' + err.message);
     }
 }

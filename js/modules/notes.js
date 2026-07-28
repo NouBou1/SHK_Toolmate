@@ -45,10 +45,10 @@ function copyNote() {
 
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        alert("📋 Notiz in Zwischenablage kopiert!");
+        alert("[OK] Notiz in Zwischenablage kopiert!");
     }).catch(err => {
         console.error('Fehler beim Kopieren:', err);
-        alert("❌ Fehler beim Kopieren.");
+        alert("[FEHLER] Fehler beim Kopieren.");
     });
 }
 

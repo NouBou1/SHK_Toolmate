@@ -24,7 +24,7 @@ function setContent(el, text, isError) {
     const htmlText = text.replace(/\n/g, '<br>');
 
     if (isError) {
-        el.innerHTML = `<strong>⚠️ Fehler:</strong><br>${htmlText}`;
+        el.innerHTML = `<strong>[FEHLER]</strong><br>${htmlText}`;
     } else {
         el.setAttribute('data-result-text', text);
         el.innerHTML = createResultHTML(htmlText);
@@ -76,7 +76,7 @@ function copyToClipboard(text, btn) {
 
 function showCopyConfirmation(btn) {
     const originalText = btn.innerHTML;
-    btn.innerHTML = "✅ Kopiert!";
+    btn.innerHTML = "[OK] Kopiert!";
     setTimeout(() => btn.innerHTML = originalText, 2000);
 }
 

@@ -1,13 +1,13 @@
-# 📱 SHK-ToolMate Installation & Deployment Guide
+# SHK-ToolMate Installation & Deployment Guide
 
 ## Installation im App Store
 
 ### Vorraussetzungen
-- ✅ WCAG 2.1 Level AA Compliance
-- ✅ PWA (Progressive Web App) Support
-- ✅ Offline-Funktionalität
-- ✅ Responsives Design
-- ✅ Fehlerbehandlung implementiert
+- WCAG 2.1 Level AA Compliance
+- PWA (Progressive Web App) Support
+- Offline-Funktionalität
+- Responsives Design
+- Fehlerbehandlung implementiert
 
 ### Schritt 1: Web App vorbereiten
 

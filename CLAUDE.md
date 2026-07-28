@@ -139,7 +139,7 @@ npx cap sync android
 
 ## Security & Keystores
 
-⚠️ **Keystores are credentials** — handle with care:
+**WICHTIG: Keystores are credentials** — handle with care:
 - `shk-mate.jks` — Java Keystore (older format)
 - `shkMate-release.keystore` — Release keystore (current)
 - Both files should **NOT** be committed to public repos

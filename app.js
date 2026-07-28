@@ -12,11 +12,11 @@
 // Die Initialisierung erfolgt nach dem DOMContentLoaded Event.
 // ==========================================
 
-console.log("🚀 SHK-MATE wird initialisiert...");
+console.log("SHK-MATE wird initialisiert...");
 
 // Hauptinitialisierung der App
 function initializeApp() {
-    console.log("📦 App-Initialisierung gestartet");
+    console.log("App-Initialisierung gestartet");
     
     // Core-Module initialisieren
     initializeCoreModules();
@@ -24,7 +24,7 @@ function initializeApp() {
     // Feature-Module initialisieren
     initializeFeatureModules();
     
-    console.log("✅ App erfolgreich initialisiert");
+    console.log("App erfolgreich initialisiert");
 }
 
 function initializeCoreModules() {
@@ -72,8 +72,8 @@ function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js?v=10')
-                .then(reg => console.log('✅ Service Worker registriert!', reg))
-                .catch(err => console.log('❌ Service Worker Fehler:', err));
+                .then(reg => console.log('[OK] Service Worker registriert!', reg))
+                .catch(err => console.log('[FEHLER] Service Worker:', err));
         });
     }
 }

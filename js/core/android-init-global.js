@@ -27,4 +27,4 @@ window.addEventListener('load', () => {
     }
 });
 
-console.log("✅ Android Init Auto-Start geladen");
+console.log("[OK] Android Init Auto-Start geladen");
