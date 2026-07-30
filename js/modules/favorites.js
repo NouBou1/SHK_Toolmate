@@ -13,6 +13,10 @@ function initFavorites() {
     });
 
     reorderFavoriteCards(favs);
+
+    if (typeof applyInitialCategory === 'function') {
+        applyInitialCategory();
+    }
 }
 
 function loadFavorites() {
@@ -71,6 +75,10 @@ function toggleFavorite(card, id, starEl) {
 
     saveFavorites(favs);
     reorderFavoriteCards(favs);
+
+    if (typeof refreshFavoriteFilter === 'function') {
+        refreshFavoriteFilter();
+    }
 }
 
 function removeFavorite(favs, id, starEl, card) {

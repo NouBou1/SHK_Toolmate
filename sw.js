@@ -1,13 +1,13 @@
 
-// Service Worker v14 - aligned with current app assets
-const CACHE_NAME = 'shk-mate-v14';
+// Service Worker v15 - aligned with current app assets
+const CACHE_NAME = 'shk-mate-v15';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=28',
-  './app.js?v=28',
-  './js/calc.js?v=28',
-  './js/core/navigation.js?v=28',
+  './style.css?v=29',
+  './app.js?v=29',
+  './js/calc.js?v=29',
+  './js/core/navigation.js?v=29',
   './manifest.json',
   './icons/icon.png',
   './icons/categories/alle.svg',

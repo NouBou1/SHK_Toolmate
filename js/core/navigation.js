@@ -42,6 +42,7 @@ function initCalculatorCategories() {
 
 function getCategories() {
     return [
+        { id: 'favoriten', name: 'Favoriten' },
         { id: 'alle', name: 'Alle' },
         { id: 'heizung', name: 'Heizung' },
         { id: 'wasser', name: 'Wasser' },
@@ -101,8 +102,8 @@ function renderCategoryButtons(categories) {
     const container = document.getElementById('calc-categories');
     if (!container) return;
 
-    categories.forEach((cat, index) => {
-        const btn = createCategoryButton(cat, index === 0);
+    categories.forEach(cat => {
+        const btn = createCategoryButton(cat, cat.id === 'alle');
         container.appendChild(btn);
     });
 }
@@ -130,22 +131,71 @@ function updateActiveCategoryButton(button) {
 }
 
 function filterCards(categoryId) {
+    const favs = categoryId === 'favoriten' ? getFavoriteIds() : null;
     const allCards = document.querySelectorAll('#view-rechner .card');
+    let visible = 0;
+
     allCards.forEach(card => {
         if (card.classList.contains('note-card')) {
             card.classList.remove('u-hidden');
             return;
         }
 
-        const cardCategory = card.getAttribute('data-calc-category');
-        const shouldShow = categoryId === 'alle' || cardCategory === categoryId;
-        
+        const shouldShow = favs
+            ? favs.includes(card.dataset.cardId)
+            : categoryId === 'alle' || card.getAttribute('data-calc-category') === categoryId;
+
         if (shouldShow) {
             card.classList.remove('u-hidden');
+            visible++;
         } else {
             card.classList.add('u-hidden');
         }
     });
+
+    updateEmptyFavoritesHint(categoryId === 'favoriten' && visible === 0);
+}
+
+function getFavoriteIds() {
+    if (typeof loadFavorites === 'function') return loadFavorites();
+    try {
+        return JSON.parse(localStorage.getItem('shk_favs')) || [];
+    } catch {
+        return [];
+    }
+}
+
+function updateEmptyFavoritesHint(show) {
+    const container = document.getElementById('view-rechner');
+    if (!container) return;
+
+    let hint = document.getElementById('fav-empty-hint');
+    if (!show) {
+        hint?.remove();
+        return;
+    }
+    if (hint) return;
+
+    hint = document.createElement('p');
+    hint.id = 'fav-empty-hint';
+    hint.className = 'fav-empty-hint';
+    hint.innerText = 'Noch keine Favoriten. Tippe den Stern neben einem Rechner an, um ihn hier abzulegen.';
+    const categories = document.getElementById('calc-categories');
+    categories?.parentElement?.insertBefore(hint, categories.nextSibling);
+}
+
+function applyInitialCategory() {
+    const favs = getFavoriteIds();
+    if (!favs.length) return;
+
+    const btn = document.querySelector('.calc-cat-btn[data-cat="favoriten"]');
+    if (!btn) return;
+    filterByCategory('favoriten', btn);
+}
+
+function refreshFavoriteFilter() {
+    const active = document.querySelector('.calc-cat-btn.active');
+    if (active?.dataset.cat === 'favoriten') filterCards('favoriten');
 }
 
 function setupNavigationKeyboard() {

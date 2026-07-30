@@ -1071,6 +1071,7 @@ p[style*="color:#aaa"],
     line-height: 1.2;
 }
 
+.calc-cat-btn[data-cat="favoriten"]::before,
 .calc-cat-btn[data-cat="alle"]::before,
 .calc-cat-btn[data-cat="heizung"]::before,
 .calc-cat-btn[data-cat="wasser"]::before,
@@ -1086,8 +1087,24 @@ p[style*="color:#aaa"],
     background-size: contain;
 }
 
+.calc-cat-btn[data-cat="favoriten"]::before {
+    background-image: url("icons/categories/favoriten.svg");
+}
+
 .calc-cat-btn[data-cat="alle"]::before {
     background-image: url("icons/categories/alle.svg");
+}
+
+.fav-empty-hint {
+    margin: 4px 0 12px;
+    padding: 14px 16px;
+    background-color: var(--surface);
+    border: 1px dashed var(--border-color);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
 }
 
 .calc-cat-btn[data-cat="heizung"]::before {
