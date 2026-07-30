@@ -10,11 +10,6 @@
     --success: #22C55E;
     --error: #EF4444;
     --warning: #f97316;
-    /* Safe Area: kommt vom Browser, nicht aus einer Berechnung.
-       Voraussetzung ist viewport-fit=cover im Viewport-Meta-Tag.
-       Liefert 0, wenn das WebView nicht unter die Systemleisten reicht
-       (Desktop-Browser, Android mit overlaysWebView=false) und sonst den
-       echten Wert (Gestenleiste, iOS Home-Indicator). */
     --status-bar-height: env(safe-area-inset-top, 0px);
     --nav-bar-height: env(safe-area-inset-bottom, 0px);
 }
@@ -92,7 +87,7 @@ main {
     top: calc(65px + var(--status-bar-height, 25px));
     left: 0;
     right: 0;
-    bottom: calc(60px + var(--nav-bar-height)); /* Platz für Navigation + Systemleiste */
+    bottom: calc(60px + var(--nav-bar-height)); /* Platz für Navigation */
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -348,8 +343,6 @@ nav {
     align-items: center;    /* Vertikal zentrieren */
     z-index: 1000;          /* Immer ganz oben sichtbar - ÜBER der Android Nav Bar */
     box-shadow: 0 -2px 10px rgba(0,0,0,0.5); /* Leichter Schatten nach oben */
-    /* Platz fuer die Systemleiste, sofern das WebView darunter reicht.
-       Ist sonst 0 - kein Aufblasen der Leiste mehr. */
     padding-bottom: var(--nav-bar-height);
 }
 
@@ -1078,9 +1071,6 @@ p[style*="color:#aaa"],
     line-height: 1.2;
 }
 
-/* Kategorie-Icons: als eigene SVG-Dateien unter icons/categories/.
-   Nur Kategorien mit vorhandener Datei bekommen ein ::before -- eine
-   spaetere Kategorie ohne Icon erzeugt so keinen leeren Platzhalter. */
 .calc-cat-btn[data-cat="alle"]::before,
 .calc-cat-btn[data-cat="heizung"]::before,
 .calc-cat-btn[data-cat="wasser"]::before,

@@ -111,8 +111,6 @@ function createCategoryButton(cat, isActive) {
     const btn = document.createElement('button');
     btn.className = 'calc-cat-btn' + (isActive ? ' active' : '');
 
-    // Das Icon liefert das CSS ueber .calc-cat-btn[data-cat="..."]::before
-    // aus icons/categories/<id>.svg
     btn.dataset.cat = cat.id;
     btn.innerHTML = `<span>${cat.name}</span>`;
     btn.onclick = () => filterByCategory(cat.id, btn);

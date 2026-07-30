@@ -1,13 +1,5 @@
 // Android/Capacitor Initialisierung - Status/Navigation Bar
 // Keyboard Handling
-//
-// Die Safe-Area-Abstaende werden NICHT hier berechnet, sondern kommen im
-// CSS aus env(safe-area-inset-*). Der Browser kennt die echten Werte; eine
-// Berechnung aus screen.height minus innerHeight liefert im Browser die
-// Hoehe des Browser-Chrome statt der Systemleiste und war damit deutlich
-// zu gross. Zusammen mit setOverlaysWebView({ overlay: false }) - Android
-// zieht den Platz dann bereits selbst ab - wurde der Abstand doppelt
-// gerechnet.
 
 async function initializeAndroidBars() {
     try {
