@@ -1071,9 +1071,42 @@ p[style*="color:#aaa"],
     line-height: 1.2;
 }
 
-.calc-cat-btn svg {
+/* Kategorie-Icons: als eigene SVG-Dateien unter icons/categories/.
+   Nur Kategorien mit vorhandener Datei bekommen ein ::before -- eine
+   spaetere Kategorie ohne Icon erzeugt so keinen leeren Platzhalter. */
+.calc-cat-btn[data-cat="alle"]::before,
+.calc-cat-btn[data-cat="heizung"]::before,
+.calc-cat-btn[data-cat="wasser"]::before,
+.calc-cat-btn[data-cat="lueftung"]::before,
+.calc-cat-btn[data-cat="misc"]::before {
+    content: "";
     flex-shrink: 0;
     display: block;
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.calc-cat-btn[data-cat="alle"]::before {
+    background-image: url("icons/categories/alle.svg");
+}
+
+.calc-cat-btn[data-cat="heizung"]::before {
+    background-image: url("icons/categories/heizung.svg");
+}
+
+.calc-cat-btn[data-cat="wasser"]::before {
+    background-image: url("icons/categories/wasser.svg");
+}
+
+.calc-cat-btn[data-cat="lueftung"]::before {
+    background-image: url("icons/categories/lueftung.svg");
+}
+
+.calc-cat-btn[data-cat="misc"]::before {
+    background-image: url("icons/categories/misc.svg");
 }
 
 .calc-cat-btn:hover {

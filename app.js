@@ -71,7 +71,9 @@ function initializeFeatureModules() {
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js?v=10')
+            // Relativer Pfad: funktioniert auch, wenn die App in einem
+            // Unterordner liegt (z.B. domain.de/shkmate/)
+            navigator.serviceWorker.register('sw.js?v=12')
                 .then(reg => console.log('[OK] Service Worker registriert!', reg))
                 .catch(err => console.log('[FEHLER] Service Worker:', err));
         });

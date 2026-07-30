@@ -1,10 +1,10 @@
 {
-  "id": "/",
+  "id": "./",
   "name": "SHK-ToolMate",
   "short_name": "SHK Tool",
   "description": "Professionelle Handwerker-App für Material, Fotos und Berichte",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#0056b3",
