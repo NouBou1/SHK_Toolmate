@@ -28,3 +28,6 @@ logcat*.txt
 # IDE
 .idea/
 .vscode/
+
+# Claude Code Projektkontext (nur lokal)
+CLAUDE.md
