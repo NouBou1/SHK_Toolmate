@@ -1,16 +1,21 @@
 // Android/Capacitor Initialisierung - Status/Navigation Bar
-// Verwaltung von Safe Area Insets und Keyboard Handling
+// Keyboard Handling
+//
+// Die Safe-Area-Abstaende werden NICHT hier berechnet, sondern kommen im
+// CSS aus env(safe-area-inset-*). Der Browser kennt die echten Werte; eine
+// Berechnung aus screen.height minus innerHeight liefert im Browser die
+// Hoehe des Browser-Chrome statt der Systemleiste und war damit deutlich
+// zu gross. Zusammen mit setOverlaysWebView({ overlay: false }) - Android
+// zieht den Platz dann bereits selbst ab - wurde der Abstand doppelt
+// gerechnet.
 
 async function initializeAndroidBars() {
     try {
         const { StatusBar } = await import('@capacitor/status-bar');
         await configureStatusBar(StatusBar);
         await configureNavigationBar();
-        applyAndroidSafeAreaInsets();
-        setupEventListeners();
     } catch(error) {
         console.log("Capacitor Init Error (OK für Desktop):", error.message);
-        applyAndroidSafeAreaInsets();
     }
 }
 
@@ -35,73 +40,6 @@ async function configureNavigationBar() {
         console.log("[OK] NavigationBar: color=#0a0a0a");
     } catch(e) {
         console.log("NavigationBar API nicht verfügbar (OK):", e.message);
-    }
-}
-
-function setupEventListeners() {
-    window.addEventListener('orientationchange', () => {
-        setTimeout(applyAndroidSafeAreaInsets, 100);
-    });
-    
-    window.addEventListener('resize', () => {
-        setTimeout(applyAndroidSafeAreaInsets, 100);
-    });
-}
-
-function applyAndroidSafeAreaInsets() {
-    const viewportHeight = window.innerHeight;
-    const screenHeight = window.screen.height;
-    const statusBarHeight = 25;
-    const navBarHeight = Math.max(48, screenHeight - viewportHeight - statusBarHeight);
-    
-    setCSSProperties(statusBarHeight, navBarHeight);
-    applyBodyPadding(statusBarHeight, navBarHeight);
-    applyHeaderPadding(statusBarHeight);
-    applyNavPadding(navBarHeight);
-    logDebugInfo(viewportHeight, screenHeight, statusBarHeight, navBarHeight);
-}
-
-function setCSSProperties(statusBarHeight, navBarHeight) {
-    document.documentElement.style.setProperty('--status-bar-height', statusBarHeight + 'px');
-    document.documentElement.style.setProperty('--nav-bar-height', navBarHeight + 'px');
-}
-
-function applyBodyPadding(statusBarHeight, navBarHeight) {
-    const body = document.querySelector('body');
-    if (body) {
-        body.style.paddingTop = statusBarHeight + 'px';
-        const bottomPadding = Math.max(70, 60 + navBarHeight);
-        body.style.paddingBottom = bottomPadding + 'px';
-        console.log("[DEBUG] Body padding applied: top=" + statusBarHeight + "px, bottom=" + bottomPadding + "px");
-    }
-}
-
-function applyHeaderPadding(statusBarHeight) {
-    const header = document.querySelector('header');
-    if (header) {
-        header.style.paddingTop = (18 + statusBarHeight) + 'px';
-        console.log("[DEBUG] Header padding-top adjusted: " + (18 + statusBarHeight) + "px");
-    }
-}
-
-function applyNavPadding(navBarHeight) {
-    const nav = document.querySelector('nav');
-    if (nav) {
-        nav.style.paddingBottom = navBarHeight + 'px';
-        nav.style.minHeight = (60 + navBarHeight) + 'px';
-        console.log("[DEBUG] Nav height adjusted: " + (60 + navBarHeight) + "px");
-    }
-}
-
-function logDebugInfo(viewportHeight, screenHeight, statusBarHeight, navBarHeight) {
-    if (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')) {
-        console.log("[DEBUG] Android Safe Area Berechnung:", {
-            "viewport": viewportHeight + "px",
-            "screen": screenHeight + "px",
-            "statusBar": statusBarHeight + "px",
-            "navBar": navBarHeight + "px",
-            "totalBottomPadding": Math.max(70, 60 + navBarHeight) + "px"
-        });
     }
 }
 

@@ -73,7 +73,7 @@ function registerServiceWorker() {
         window.addEventListener('load', () => {
             // Relativer Pfad: funktioniert auch, wenn die App in einem
             // Unterordner liegt (z.B. domain.de/shkmate/)
-            navigator.serviceWorker.register('sw.js?v=12')
+            navigator.serviceWorker.register('sw.js?v=13')
                 .then(reg => console.log('[OK] Service Worker registriert!', reg))
                 .catch(err => console.log('[FEHLER] Service Worker:', err));
         });
