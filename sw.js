@@ -1,15 +1,15 @@
 
-// Service Worker v13 - aligned with current app assets
+// Service Worker v14 - aligned with current app assets
 // Alle Pfade relativ zur Service-Worker-URL, damit die App auch in einem
 // Unterordner (z.B. domain.de/shkmate/) funktioniert.
-const CACHE_NAME = 'shk-mate-v13';
+const CACHE_NAME = 'shk-mate-v14';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=27',
-  './app.js?v=27',
-  './js/calc.js?v=27',
-  './js/core/navigation.js?v=27',
+  './style.css?v=28',
+  './app.js?v=28',
+  './js/calc.js?v=28',
+  './js/core/navigation.js?v=28',
   './manifest.json',
   './icons/icon.png',
   './icons/categories/alle.svg',

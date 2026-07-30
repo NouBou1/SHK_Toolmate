@@ -978,7 +978,7 @@ function getClipDistance(material, dn) {
         'cu': [1.25, 1.50, 1.75, 2.00, 2.25, 2.75],
         'steel': [1.50, 2.00, 2.25, 2.75, 3.00, 3.25]
     };
-    const thresholds = [16, 20, 26, 32, 40];
+    const thresholds = [15, 20, 28, 35, 42];
     const dists = distances[material] || distances['cu'];
     for (let i = 0; i < thresholds.length; i++) {
         if (dn <= thresholds[i]) return dists[i];
