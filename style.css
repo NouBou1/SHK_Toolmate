@@ -411,28 +411,28 @@ nav {
 }
 
 .nav-icon[data-icon="calculate"] {
-    -webkit-mask-image: url("icons/nav/calculate.svg");
-    mask-image: url("icons/nav/calculate.svg");
+    -webkit-mask-image: url("assets/icons/nav/calculate.svg");
+    mask-image: url("assets/icons/nav/calculate.svg");
 }
 
 .nav-icon[data-icon="format_list_bulleted"] {
-    -webkit-mask-image: url("icons/nav/format_list_bulleted.svg");
-    mask-image: url("icons/nav/format_list_bulleted.svg");
+    -webkit-mask-image: url("assets/icons/nav/format_list_bulleted.svg");
+    mask-image: url("assets/icons/nav/format_list_bulleted.svg");
 }
 
 .nav-icon[data-icon="inventory_2"] {
-    -webkit-mask-image: url("icons/nav/inventory_2.svg");
-    mask-image: url("icons/nav/inventory_2.svg");
+    -webkit-mask-image: url("assets/icons/nav/inventory_2.svg");
+    mask-image: url("assets/icons/nav/inventory_2.svg");
 }
 
 .nav-icon[data-icon="calendar_month"] {
-    -webkit-mask-image: url("icons/nav/calendar_month.svg");
-    mask-image: url("icons/nav/calendar_month.svg");
+    -webkit-mask-image: url("assets/icons/nav/calendar_month.svg");
+    mask-image: url("assets/icons/nav/calendar_month.svg");
 }
 
 .nav-icon[data-icon="handyman"] {
-    -webkit-mask-image: url("icons/nav/handyman.svg");
-    mask-image: url("icons/nav/handyman.svg");
+    -webkit-mask-image: url("assets/icons/nav/handyman.svg");
+    mask-image: url("assets/icons/nav/handyman.svg");
 }
 
 .nav-text {
@@ -1152,11 +1152,11 @@ p[style*="color:#aaa"],
 }
 
 .calc-cat-btn[data-cat="favoriten"]::before {
-    background-image: url("icons/categories/favoriten.svg");
+    background-image: url("assets/icons/categories/favoriten.svg");
 }
 
 .calc-cat-btn[data-cat="alle"]::before {
-    background-image: url("icons/categories/alle.svg");
+    background-image: url("assets/icons/categories/alle.svg");
 }
 
 .fav-empty-hint {
@@ -1172,19 +1172,19 @@ p[style*="color:#aaa"],
 }
 
 .calc-cat-btn[data-cat="heizung"]::before {
-    background-image: url("icons/categories/heizung.svg");
+    background-image: url("assets/icons/categories/heizung.svg");
 }
 
 .calc-cat-btn[data-cat="wasser"]::before {
-    background-image: url("icons/categories/wasser.svg");
+    background-image: url("assets/icons/categories/wasser.svg");
 }
 
 .calc-cat-btn[data-cat="lueftung"]::before {
-    background-image: url("icons/categories/lueftung.svg");
+    background-image: url("assets/icons/categories/lueftung.svg");
 }
 
 .calc-cat-btn[data-cat="misc"]::before {
-    background-image: url("icons/categories/misc.svg");
+    background-image: url("assets/icons/categories/misc.svg");
 }
 
 .calc-cat-btn:hover {

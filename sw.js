@@ -1,20 +1,30 @@
 
-// Service Worker v16 - aligned with current app assets
-const CACHE_NAME = 'shk-mate-v16';
+// Service Worker v17 - aligned with current app assets
+const CACHE_NAME = 'shk-mate-v17';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=30',
-  './app.js?v=30',
-  './js/calc.js?v=30',
-  './js/core/navigation.js?v=30',
+  './style.css?v=31',
+  './app.js?v=31',
+  './js/calc.js?v=31',
+  './js/core/navigation.js?v=31',
   './manifest.json',
-  './icons/icon.png',
-  './icons/categories/alle.svg',
-  './icons/categories/heizung.svg',
-  './icons/categories/wasser.svg',
-  './icons/categories/lueftung.svg',
-  './icons/categories/misc.svg'
+  './assets/icons/icon.png',
+  './assets/icons/categories/favoriten.svg',
+  './assets/icons/categories/alle.svg',
+  './assets/icons/categories/heizung.svg',
+  './assets/icons/categories/wasser.svg',
+  './assets/icons/categories/lueftung.svg',
+  './assets/icons/categories/misc.svg',
+  './assets/icons/nav/calculate.svg',
+  './assets/icons/nav/format_list_bulleted.svg',
+  './assets/icons/nav/inventory_2.svg',
+  './assets/icons/nav/calendar_month.svg',
+  './assets/icons/nav/handyman.svg',
+  './assets/fonts/hanken-grotesk-latin.woff2',
+  './assets/fonts/hanken-grotesk-latin-ext.woff2',
+  './assets/fonts/jetbrains-mono-latin.woff2',
+  './assets/fonts/jetbrains-mono-latin-ext.woff2'
 ];
 
 // 1. Installieren & Cachen
