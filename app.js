@@ -71,7 +71,7 @@ function initializeFeatureModules() {
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js?v=16')
+            navigator.serviceWorker.register('sw.js?v=17')
                 .then(reg => console.log('[OK] Service Worker registriert!', reg))
                 .catch(err => console.log('[FEHLER] Service Worker:', err));
         });
