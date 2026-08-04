@@ -1059,3 +1059,66 @@ function calcRealPower() {
         handleCalculationError('calcRealPower', error, 'res_realpower');
     }
 }
+
+// ========== GASZÄHLER (AUSLITERN) ==========
+
+function getGasPowerInputs() {
+    return {
+        seconds: parseFloat(document.getElementById('gas_sec').value),
+        volume: parseFloat(document.getElementById('gas_vol').value)
+    };
+}
+
+function validateGasPowerInputs(seconds, volume) {
+    if (isNaN(seconds) || seconds <= 0) {
+        return { valid: false, error: 'Bitte gültige Zeit eingeben (> 0 Sekunden)' };
+    }
+    if (seconds < 5) {
+        return { valid: false, error: 'Warnung: Messzeit zu kurz - Ergebnis ungenau!' };
+    }
+    if (seconds > 3600) {
+        return { valid: false, error: 'Bitte Messzeit in Sekunden eingeben (max. 3600)' };
+    }
+    if (isNaN(volume) || volume <= 0) {
+        return { valid: false, error: 'Bitte gültige Menge wählen' };
+    }
+    return { valid: true };
+}
+
+function calculateGasPower(seconds, volume) {
+    // Heizwert Hi Erdgas H, Faustformel für die Geräteeinstellung
+    const GAS_HEATING_VALUE = 10.0; // kWh/m³
+    const flowRate = (volume * 3600) / seconds;
+    const load = flowRate * GAS_HEATING_VALUE;
+    return { flowRate, load, heatingValue: GAS_HEATING_VALUE };
+}
+
+function formatGasPowerResult(flowRate, load, heatingValue) {
+    return `Durchsatz: ${flowRate.toFixed(2)} m³/h\n` +
+           `Feuerungsleistung: ca. ${load.toFixed(1)} kW\n` +
+           `(bei Hi = ${heatingValue} kWh/m³)`;
+}
+
+/**
+ * Ermittelt die Feuerungsleistung durch Auslitern am Gaszähler
+ *
+ * Formel: P = (V / t) × 3600 × Hi
+ * - V: gezähltes Volumen in m³
+ * - t: gestoppte Zeit in Sekunden
+ * - Hi: Heizwert in kWh/m³
+ */
+function calcGasPower() {
+    try {
+        const inputs = getGasPowerInputs();
+        const validation = validateGasPowerInputs(inputs.seconds, inputs.volume);
+        if (!validation.valid) {
+            showResult('res_gas', validation.error, true);
+            return;
+        }
+        const result = calculateGasPower(inputs.seconds, inputs.volume);
+        const message = formatGasPowerResult(result.flowRate, result.load, result.heatingValue);
+        showResult('res_gas', message);
+    } catch (error) {
+        handleCalculationError('calcGasPower', error, 'res_gas');
+    }
+}

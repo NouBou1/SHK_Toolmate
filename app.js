@@ -67,15 +67,48 @@ function initializeFeatureModules() {
     }
 }
 
+// Lokaler Dev-Server (Live Server)? Dann keinen Service Worker verwenden.
+// Ein SW gilt pro Origin (host:port), nicht pro Projekt - auf localhost wuerde er
+// sonst auch andere Projekte auf demselben Port aus dem SHK-Cache ausliefern.
+// Die native App (Capacitor, https://localhost) ist davon ausgenommen.
+function isLocalDevServer() {
+    if (window.Capacitor) {
+        return false;
+    }
+    const host = window.location.hostname;
+    const isLocalHost = host === 'localhost' || host === '127.0.0.1' || host === '[::1]';
+    return isLocalHost && window.location.protocol === 'http:';
+}
+
+// Hinterlassenschaften aufraeumen: bereits registrierte Worker und deren Caches entfernen
+function unregisterServiceWorker() {
+    navigator.serviceWorker.getRegistrations()
+        .then(regs => Promise.all(regs.map(reg => reg.unregister())))
+        .then(() => {
+            if ('caches' in window) {
+                return caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key))));
+            }
+        })
+        .then(() => console.log('[OK] Service Worker fuer lokale Entwicklung deaktiviert'))
+        .catch(err => console.log('[FEHLER] Service Worker Cleanup:', err));
+}
+
 // Service Worker registrieren (macht die App offline-fähig)
 function registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js?v=17')
-                .then(reg => console.log('[OK] Service Worker registriert!', reg))
-                .catch(err => console.log('[FEHLER] Service Worker:', err));
-        });
+    if (!('serviceWorker' in navigator)) {
+        return;
     }
+
+    if (isLocalDevServer()) {
+        unregisterServiceWorker();
+        return;
+    }
+
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js?v=18')
+            .then(reg => console.log('[OK] Service Worker registriert!', reg))
+            .catch(err => console.log('[FEHLER] Service Worker:', err));
+    });
 }
 
 // Starte App-Initialisierung
