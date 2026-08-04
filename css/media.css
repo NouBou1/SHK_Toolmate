@@ -1,0 +1,125 @@
+/* ==========================================
+   SHK-MATE - Wetterkarte, Warnbox, Bild-Vorschau und Vollbild-Modal
+   Teil von style.css - die Reihenfolge der <link>-Tags
+   in index.html entspricht der urspruenglichen Datei.
+   ========================================== */
+
+/* Wetter Karte Design */
+.weather-card {
+    background: linear-gradient(135deg, #005f9e, #0088cc); /* SHK Blau */
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 0 auto 15px auto;
+    max-width: 600px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    font-family: sans-serif;
+}
+
+.weather-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.weather-status {
+    font-size: 0.9rem;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+.weather-body {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.big-temp {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.warning-box {
+    background-color: #ffcc00; /* Warn-Gelb */
+    color: #333;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-left: 5px solid #cc3300;
+}
+
+
+
+.material_item_btns {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+/* --- BILDER IN DER LISTE --- */
+/* .item-image-container {
+    margin-top: 10px;
+    position: relative;
+    display: inline-block;
+} */
+
+.item-thumbnail {
+    height: 60px;          /* Feste Höhe, damit die Liste nicht explodiert */
+    width: auto;           /* Breite passt sich an */
+    border-radius: 6px;
+    border: 1px solid #555;
+    cursor: zoom-in;       /* Zeigt Lupe beim Drüberfahren */
+    transition: transform 0.2s;
+}
+
+.item-thumbnail:hover {
+    transform: scale(1.05); /* Kleiner Zoom-Effekt */
+    border-color: var(--primary);
+}
+
+/* Der kleine rote Löschen-Knopf am Bild */
+.btn-delete-photo {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4444;
+    color: white;
+    border: 2px solid #2a2a2a; /* Kleiner Rand zur Trennung */
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- VOLLBILD MODAL (Overlay) --- */
+.image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.95); /* Fast schwarz, transparent */
+    z-index: 2000; /* Ganz oben */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+}
+
+.image-modal img {
+    max-width: 95%;
+    max-height: 95%;
+    border: 2px solid white;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}

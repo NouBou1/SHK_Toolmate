@@ -1,0 +1,218 @@
+/* ==========================================
+   SHK-MATE - Projekt- und Materiallisten, Eingabegruppen, Notizblock
+   Teil von style.css - die Reihenfolge der <link>-Tags
+   in index.html entspricht der urspruenglichen Datei.
+   ========================================== */
+
+/* Styling für die Material-Listen */
+.project-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    border-left: 4px solid #0056b3;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.material-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.material-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-icon-small {
+   
+    display: flex;
+    background: none;
+    border: none;
+    color: #ff4444;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 13px;
+    justify-content: end;
+}
+
+/* Eingabe-Gruppe für Material */
+.input-group {
+    display: flex;
+    gap: 8px;
+    /* Abstand zwischen den Feldern */
+    margin-bottom: 15px;
+}
+
+/* Das Mengen-Feld: schmaler */
+.input-small {
+    width: 60px;
+    text-align: center;
+    flex-shrink: 0;
+    /* Darf nicht kleiner gequetscht werden */
+}
+
+/* Das Text-Feld: nimmt den Restplatz */
+.input-group input[type="text"] {
+    flex-grow: 1;
+    margin-bottom: 0;
+    /* Standard-Margin überschreiben */
+}
+
+/* Der Plus-Button */
+.btn-add {
+    flex-shrink: 0;
+    width: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 0;
+}
+
+/* Styling für die Menge in der Liste */
+.item-amount {
+    background: #0056b3;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 0.9rem;
+    min-width: 30px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* Container für die Tabs */
+.archive-toggle {
+    display: flex;
+    background: #e0e0e0;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 10px;
+}
+
+/* Die einzelnen Tabs */
+.toggle-btn {
+    flex: 1;
+    background: transparent;
+    color: #555;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Aktiver Tab */
+.toggle-btn.active {
+    background: white;
+    color: #0056b3;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style für archivierte Items in der Liste (etwas ausgegraut) */
+.project-item.archived-style {
+    border-left-color: #888;
+    opacity: 0.8;
+}
+
+/* Styling für das Notizfeld */
+/* #quick_note {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 100px;
+    background: #fff; 
+    color: #333;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#quick_note:focus {
+    outline: none;
+    border-color: #f39c12;
+    box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.2);
+} */
+
+/* --- Styling für den Notizblock (Dark Mode) --- */
+.note-card {
+    border: 4px solid #e7991c;
+    /* Oranger Akzent bleibt */
+    /* Hintergrund passend zum Rest der App nehmen wir automatisch vom .card Style, 
+       aber wir stellen sicher, dass Text hell ist */
+    margin: 0 auto 15px auto;
+    max-width: 600px;
+    display: block;
+}
+
+#quick_note {
+    width: 98%;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 16px;
+    min-height: 100px;
+    background: #2b2b2b;
+    color: #e0e0e0;
+    resize: vertical;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+#quick_note:focus {
+    border-color: #f39c12;
+    box-shadow: 0 0 5px rgba(243, 156, 18, 0.3);
+}
+
+/* Das "Gespeichert" Badge */
+.save-badge {
+    font-size: 0.8rem;
+    color: #2ecc71;
+    /* Helles Grün */
+    background: rgba(46, 204, 113, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    opacity: 0;
+    /* Standardmäßig unsichtbar */
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+/* Kleine Buttons unten */
+.small-btn {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+}
+
+.btn-danger {
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+.btn-danger:hover {
+    background: rgba(255, 107, 107, 0.1);
+}
+
+/* Styling für die technischen Tabellen */

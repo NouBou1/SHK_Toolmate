@@ -1,0 +1,147 @@
+/* ==========================================
+   SHK-MATE - Untere Navigationsleiste, Tab-Icons und Suchleiste
+   Teil von style.css - die Reihenfolge der <link>-Tags
+   in index.html entspricht der urspruenglichen Datei.
+   ========================================== */
+
+/* nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--surface);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid #333;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+    color: #888;
+    text-align: center;
+    font-size: 0.75rem;
+    background: none;
+    border: none;
+    padding: 5px;
+    flex: 1;
+}
+
+.nav-item.active {
+    color: var(--primary);
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 3px;
+} */
+
+
+/* --- NAVIGATION UNTEN (Mobile optimiert) --- */
+nav {
+    position: fixed;        /* Klebt fest am Boden */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;            /* Volle Breite */
+    min-height: 60px;       /* Mindesthöhe für App-Navigation */
+    background-color: #0e0e10;
+    border-top: 1px solid var(--border-color);
+    display: flex;          /* Die Magie: Nebeneinander anordnen */
+    justify-content: space-around; /* Platz gleichmäßig verteilen */
+    align-items: center;    /* Vertikal zentrieren */
+    z-index: 1000;          /* Immer ganz oben sichtbar - ÜBER der Android Nav Bar */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.5); /* Leichter Schatten nach oben */
+    padding-bottom: var(--nav-bar-height);
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column; /* Icon oben, Text unten */
+    align-items: center;
+    justify-content: center;
+    flex: 1;                /* WICHTIG: Jeder Button kriegt exakt 1/5 vom Platz */
+    height: 100%;
+    padding: 5px 0;
+    cursor: pointer;
+    font-family: inherit;   /* Schriftart vererben */
+}
+
+.nav-item:focus {
+    outline: 2px solid var(--accent);
+}
+
+.nav-icon[data-icon] {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 2px;
+    display: block;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+.nav-icon[data-icon="calculate"] {
+    -webkit-mask-image: url("../assets/icons/nav/calculate.svg");
+    mask-image: url("../assets/icons/nav/calculate.svg");
+}
+
+.nav-icon[data-icon="format_list_bulleted"] {
+    -webkit-mask-image: url("../assets/icons/nav/format_list_bulleted.svg");
+    mask-image: url("../assets/icons/nav/format_list_bulleted.svg");
+}
+
+.nav-icon[data-icon="inventory_2"] {
+    -webkit-mask-image: url("../assets/icons/nav/inventory_2.svg");
+    mask-image: url("../assets/icons/nav/inventory_2.svg");
+}
+
+.nav-icon[data-icon="calendar_month"] {
+    -webkit-mask-image: url("../assets/icons/nav/calendar_month.svg");
+    mask-image: url("../assets/icons/nav/calendar_month.svg");
+}
+
+.nav-icon[data-icon="handyman"] {
+    -webkit-mask-image: url("../assets/icons/nav/handyman.svg");
+    mask-image: url("../assets/icons/nav/handyman.svg");
+}
+
+.nav-text {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.7rem;      /* Kleine Schrift für "Lager", "Plan" etc. */
+}
+
+/* Aktiver Tab (wird Orange) */
+.nav-item.active {
+    color: var(--accent);
+    background-color: rgba(254, 148, 0, 0.08);
+    border-top: 3px solid var(--accent);
+}
+
+/* Klick-Effekt entfernen (blauer Rahmen) */
+.nav-item:focus {
+    outline: none;
+}
+#searchBar {
+    margin-bottom: 10px;
+}
+
+.norm-item {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.norm-item small {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 2px;
+}
+

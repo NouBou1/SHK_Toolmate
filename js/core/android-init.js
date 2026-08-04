@@ -1,13 +1,16 @@
 // Android/Capacitor Initialisierung - Status/Navigation Bar
 // Keyboard Handling
 
+// Wartezeit, bis die Bildschirmtastatur aufgebaut ist
+const AUTO_SCROLL_DELAY_MS = 300;
+
 async function initializeAndroidBars() {
     try {
         const { StatusBar } = await import('@capacitor/status-bar');
         await configureStatusBar(StatusBar);
         await configureNavigationBar();
-    } catch(error) {
-        console.log("Capacitor Init Error (OK für Desktop):", error.message);
+    } catch (error) {
+        console.log('Capacitor Init Error (OK für Desktop):', error.message);
     }
 }
 
@@ -16,9 +19,9 @@ async function configureStatusBar(StatusBar) {
         await StatusBar.setStyle({ style: 'DARK' });
         await StatusBar.setBackgroundColor({ color: '#0a0a0a' });
         await StatusBar.setOverlaysWebView({ overlay: false });
-        console.log("[OK] StatusBar: overlaysWebView=false, color=#0a0a0a");
-    } catch(e) {
-        console.log("StatusBar API nicht verfügbar (OK für Desktop):", e.message);
+        console.log('[OK] StatusBar: overlaysWebView=false, color=#0a0a0a');
+    } catch (e) {
+        console.log('StatusBar API nicht verfügbar (OK für Desktop):', e.message);
     }
 }
 
@@ -29,38 +32,38 @@ async function configureNavigationBar() {
         if (typeof NavigationBar.setOverlaysWebView !== 'undefined') {
             await NavigationBar.setOverlaysWebView({ overlay: false });
         }
-        console.log("[OK] NavigationBar: color=#0a0a0a");
-    } catch(e) {
-        console.log("NavigationBar API nicht verfügbar (OK):", e.message);
+        console.log('[OK] NavigationBar: color=#0a0a0a');
+    } catch (e) {
+        console.log('NavigationBar API nicht verfügbar (OK):', e.message);
     }
 }
 
 function setupKeyboardHandling() {
     document.addEventListener('focusin', (e) => {
         if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
-            console.log("[DEBUG] Input focused: " + (e.target.id || e.target.tagName));
+            console.log('[DEBUG] Input focused: ' + (e.target.id || e.target.tagName));
             setTimeout(() => {
                 e.target.scrollIntoView({ behavior: 'auto', block: 'center' });
             }, 100);
         }
     });
-    
-    console.log("[OK] Keyboard handling: scrollIntoView only");
+
+    console.log('[OK] Keyboard handling: scrollIntoView only');
+}
+
+function enableAutoScrollFor(input) {
+    if (input.dataset.autoScrollEnabled) {
+        return;
+    }
+    input.dataset.autoScrollEnabled = 'true';
+    input.addEventListener('focus', (e) => {
+        setTimeout(() => scrollElementIntoView(e.target), AUTO_SCROLL_DELAY_MS);
+    });
 }
 
 function setupInputAutoScroll() {
-    const inputs = document.querySelectorAll('input, textarea, select');
-    
-    inputs.forEach(input => {
-        if (input.dataset.autoScrollEnabled) return;
-        input.dataset.autoScrollEnabled = 'true';
-        
-        input.addEventListener('focus', (e) => {
-            setTimeout(() => {
-                scrollElementIntoView(e.target);
-            }, 300);
-        });
-    });
+    document.querySelectorAll('input, textarea, select')
+        .forEach(enableAutoScrollFor);
 }
 
 function scrollElementIntoView(element) {

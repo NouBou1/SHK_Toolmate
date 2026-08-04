@@ -10,7 +10,7 @@ function requestLevelPerm() {
 }
 
 function hasDeviceOrientationPermission() {
-    return typeof DeviceOrientationEvent !== 'undefined' && 
+    return typeof DeviceOrientationEvent !== 'undefined' &&
            typeof DeviceOrientationEvent.requestPermission === 'function';
 }
 
@@ -20,7 +20,7 @@ function requestIOSPermission() {
             if (response === 'granted') {
                 setupOrientationListener();
             } else {
-                alert("Erlaubnis verweigert.");
+                alert('Erlaubnis verweigert.');
             }
         })
         .catch(console.error);
@@ -32,7 +32,7 @@ function setupOrientationListener() {
 
 function handleOrientation(event) {
     const x = event.gamma; // -90 bis 90
-    const y = event.beta;  // -180 bis 180
+    const y = event.beta; // -180 bis 180
 
     updateTiltDisplay(x, y);
     updateBubblePosition(x, y);
@@ -42,9 +42,9 @@ function handleOrientation(event) {
 function updateTiltDisplay(x, y) {
     const tiltX = document.getElementById('tilt_x');
     const tiltY = document.getElementById('tilt_y');
-    
-    if (tiltX) tiltX.innerText = Math.round(x);
-    if (tiltY) tiltY.innerText = Math.round(y);
+
+    if (tiltX) {tiltX.innerText = Math.round(x);}
+    if (tiltY) {tiltY.innerText = Math.round(y);}
 }
 
 function updateBubblePosition(x, y) {
@@ -65,17 +65,17 @@ function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
 
+function isLevelWithinTolerance(x, y) {
+    const TOLERANCE_DEGREES = 2;
+    return Math.abs(x) < TOLERANCE_DEGREES && Math.abs(y) < TOLERANCE_DEGREES;
+}
+
 function updateBubbleColor(x, y) {
     const bubble = document.getElementById('bubble');
-    if (!bubble) return;
-    
-    const isLevel = Math.abs(x) < 2 && Math.abs(y) < 2;
-    
-    if (isLevel) {
-        bubble.style.backgroundColor = "#00c851";
-        bubble.style.boxShadow = "0 0 15px #00c851";
-    } else {
-        bubble.style.backgroundColor = "#ff4444";
-        bubble.style.boxShadow = "none";
+    if (!bubble) {
+        return;
     }
+    const isLevel = isLevelWithinTolerance(x, y);
+    bubble.style.backgroundColor = isLevel ? '#00c851' : '#ff4444';
+    bubble.style.boxShadow = isLevel ? '0 0 15px #00c851' : 'none';
 }

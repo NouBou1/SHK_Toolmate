@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"^/\\\\*\\\\|^[a-zA-Z.#@:\\\\[]\" style.css)",
+      "Bash(mkdir -p css)",
+      "Bash(node -e ' *)"
+    ]
+  }
+}

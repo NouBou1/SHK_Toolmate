@@ -3,53 +3,50 @@
 
 function initFavorites() {
     const container = document.getElementById('view-rechner');
-    if (!container) return;
-
-    const cards = Array.from(container.querySelectorAll('.card:not(.note-card)'));
+    if (!container) {
+        return;
+    }
     const favs = loadFavorites();
-
-    cards.forEach((card, index) => {
-        processCard(card, index, favs);
-    });
+    container.querySelectorAll('.card:not(.note-card)')
+        .forEach((card, index) => processCard(card, index, favs));
 
     reorderFavoriteCards(favs);
-
-    if (typeof applyInitialCategory === 'function') {
-        applyInitialCategory();
-    }
+    window.applyInitialCategory?.();
 }
 
 function loadFavorites() {
-    return JSON.parse(localStorage.getItem('shk_favs')) || [];
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES)) || [];
 }
 
-function processCard(card, index, favs) {
-    const titleEl = card.querySelector('h3');
-    if (!titleEl) return;
-
-    const cardId = titleEl.innerText.trim();
-    
+function rememberCardPosition(card, index, cardId) {
     if (!card.dataset.originalIndex) {
         card.dataset.originalIndex = String(index);
     }
     card.dataset.cardId = cardId;
+}
 
-    const star = createStarElement(card, cardId, favs);
-    titleEl.appendChild(star);
+function processCard(card, index, favs) {
+    const titleEl = card.querySelector('h3');
+    if (!titleEl) {
+        return;
+    }
+    const cardId = titleEl.innerText.trim();
+    rememberCardPosition(card, index, cardId);
+    titleEl.appendChild(createStarElement(card, cardId, favs));
 }
 
 function createStarElement(card, cardId, favs) {
     const star = document.createElement('span');
     applyStarStyles(star);
-    
+
     const isFavorite = favs.includes(cardId);
     updateStarState(star, card, isFavorite);
-    
+
     star.onclick = function (e) {
         e.stopPropagation();
         toggleFavorite(card, cardId, star);
     };
-    
+
     return star;
 }
 
@@ -65,20 +62,14 @@ function updateStarState(star, card, isFavorite) {
 }
 
 function toggleFavorite(card, id, starEl) {
-    let favs = loadFavorites();
+    const current = loadFavorites();
+    const updated = current.includes(id)
+        ? removeFavorite(current, id, starEl, card)
+        : addFavorite(current, id, starEl, card);
 
-    if (favs.includes(id)) {
-        favs = removeFavorite(favs, id, starEl, card);
-    } else {
-        favs = addFavorite(favs, id, starEl, card);
-    }
-
-    saveFavorites(favs);
-    reorderFavoriteCards(favs);
-
-    if (typeof refreshFavoriteFilter === 'function') {
-        refreshFavoriteFilter();
-    }
+    saveFavorites(updated);
+    reorderFavoriteCards(updated);
+    window.refreshFavoriteFilter?.();
 }
 
 function removeFavorite(favs, id, starEl, card) {
@@ -92,53 +83,65 @@ function addFavorite(favs, id, starEl, card) {
     favs.push(id);
     starEl.innerText = '⭐';
     card.classList.add('is-favorite');
-    alert("Zu Favoriten hinzugefügt! (Erscheint jetzt immer oben)");
+    alert('Zu Favoriten hinzugefügt! (Erscheint jetzt immer oben)');
     return favs;
 }
 
 function saveFavorites(favs) {
-    localStorage.setItem('shk_favs', JSON.stringify(favs));
+    localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(favs));
 }
 
 function reorderFavoriteCards(favs) {
     const container = document.getElementById('view-rechner');
-    if (!container) return;
+    if (!container) {
+        return;
+    }
 
     const cards = Array.from(container.querySelectorAll('.card:not(.note-card)'));
-    if (!cards.length) return;
+    if (!cards.length) {
+        return;
+    }
 
     const sorted = sortCardsByFavorite(cards, favs);
     insertSortedCards(container, sorted);
 }
 
+function isFavoriteCard(card, favs) {
+    return favs.includes(card.dataset.cardId || '') ? 1 : 0;
+}
+
+function compareCards(a, b, favs) {
+    const favDiff = isFavoriteCard(b, favs) - isFavoriteCard(a, favs);
+    if (favDiff !== 0) {
+        return favDiff;
+    }
+    return Number(a.dataset.originalIndex || 0) - Number(b.dataset.originalIndex || 0);
+}
+
+/**
+ * Favoriten nach oben, sonst urspruengliche Reihenfolge
+ */
 function sortCardsByFavorite(cards, favs) {
-    return cards.slice().sort((a, b) => {
-        const aId = a.dataset.cardId || '';
-        const bId = b.dataset.cardId || '';
-        const aFav = favs.includes(aId) ? 1 : 0;
-        const bFav = favs.includes(bId) ? 1 : 0;
+    return cards.slice().sort((a, b) => compareCards(a, b, favs));
+}
 
-        if (aFav !== bFav) return bFav - aFav;
-
-        const aIndex = Number(a.dataset.originalIndex || 0);
-        const bIndex = Number(b.dataset.originalIndex || 0);
-        return aIndex - bIndex;
-    });
+/**
+ * Element, hinter dem die Rechner-Karten einsortiert werden
+ */
+function findCardInsertAnchor(container) {
+    const searchInput = document.getElementById('calcSearchInput');
+    return searchInput?.parentElement
+        || container.querySelector('#calc-categories')
+        || container.firstElementChild;
 }
 
 function insertSortedCards(container, sorted) {
-    const searchInput = document.getElementById('calcSearchInput');
-    let insertAfter = searchInput ? searchInput.parentElement : null;
-
-    if (!insertAfter) {
-        insertAfter = container.querySelector('#calc-categories') || container.firstElementChild;
-    }
+    let insertAfter = findCardInsertAnchor(container);
 
     if (!insertAfter) {
         sorted.forEach(card => container.appendChild(card));
         return;
     }
-
     sorted.forEach(card => {
         container.insertBefore(card, insertAfter.nextSibling);
         insertAfter = card;

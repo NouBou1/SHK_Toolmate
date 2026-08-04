@@ -1,57 +1,58 @@
 // Tools & Converter Modul
 // Unit-Umrechnung und Fehlercode-Suche
 
+const PRESSURE_UNITS = ['bar', 'mbar', 'pascal'];
+const POWER_UNITS = ['kw', 'watt'];
+
+function readConversionInput() {
+    return {
+        value: parseFloat(document.getElementById('conv_val').value),
+        from: document.getElementById('conv_from').value,
+        to: document.getElementById('conv_to').value
+    };
+}
+
 function convertUnits() {
-    const val = parseFloat(document.getElementById('conv_val').value);
-    const from = document.getElementById('conv_from').value;
-    const to = document.getElementById('conv_to').value;
-
-    if (isNaN(val)) return;
-
+    const { value, from, to } = readConversionInput();
+    if (isNaN(value)) {
+        return;
+    }
     if (!areUnitsCompatible(from, to)) {
         showConversionError();
         return;
     }
+    showConversionResult(value, from, to, performConversion(value, from, to));
+}
 
-    const result = performConversion(val, from, to);
-    showConversionResult(val, from, to, result);
+function isPressureConversion(from, to) {
+    return PRESSURE_UNITS.includes(from) && PRESSURE_UNITS.includes(to);
+}
+
+function isPowerConversion(from, to) {
+    return POWER_UNITS.includes(from) && POWER_UNITS.includes(to);
 }
 
 function areUnitsCompatible(from, to) {
-    const pressureUnits = ['bar', 'mbar', 'pascal'];
-    const powerUnits = ['kw', 'watt'];
-    
-    const fromIsPressure = pressureUnits.includes(from);
-    const toIsPressure = pressureUnits.includes(to);
-    const fromIsPower = powerUnits.includes(from);
-    const toIsPower = powerUnits.includes(to);
-    
-    return (fromIsPressure && toIsPressure) || (fromIsPower && toIsPower);
+    return isPressureConversion(from, to) || isPowerConversion(from, to);
 }
 
 function performConversion(val, from, to) {
     if (isPressureConversion(from, to)) {
         return convertPressure(val, from, to);
-    } else {
-        return convertPower(val, from, to);
     }
-}
-
-function isPressureConversion(from, to) {
-    const pressureUnits = ['bar', 'mbar', 'pascal'];
-    return pressureUnits.includes(from) && pressureUnits.includes(to);
+    return convertPower(val, from, to);
 }
 
 function convertPressure(val, from, to) {
     let base = val;
 
-    if (from === 'mbar') base = val / 1000;
-    if (from === 'pascal') base = val / 100000;
+    if (from === 'mbar') {base = val / 1000;}
+    if (from === 'pascal') {base = val / 100000;}
 
     let res = 0;
-    if (to === 'bar') res = base;
-    if (to === 'mbar') res = base * 1000;
-    if (to === 'pascal') res = base * 100000;
+    if (to === 'bar') {res = base;}
+    if (to === 'mbar') {res = base * 1000;}
+    if (to === 'pascal') {res = base * 100000;}
 
     return res;
 }
@@ -66,7 +67,7 @@ function convertPower(val, from, to) {
 }
 
 function showConversionError() {
-    window.showResult?.('res_conv', "Fehler: Kann Druck nicht in Leistung umrechnen!", true);
+    window.showResult?.('res_conv', 'Fehler: Kann Druck nicht in Leistung umrechnen!', true);
 }
 
 function showConversionResult(val, from, to, result) {

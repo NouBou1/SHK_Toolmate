@@ -3,7 +3,9 @@
 
 function showResult(elementId, text, isError = false) {
     const el = document.getElementById(elementId);
-    if (!el) return;
+    if (!el) {
+        return;
+    }
 
     makeVisible(el);
     setStyles(el, isError);
@@ -50,7 +52,7 @@ function animateUpdate(el) {
 
 function shareResult(btn) {
     const box = btn.closest('.result-box');
-    const textToShare = "SHK-Mate Ergebnis:\n\n" + box.getAttribute('data-result-text');
+    const textToShare = 'SHK-Mate Ergebnis:\n\n' + box.getAttribute('data-result-text');
 
     if (navigator.share) {
         shareNatively(textToShare);
@@ -64,8 +66,8 @@ function shareNatively(text) {
         title: 'SHK-Mate Berechnung',
         text: text
     })
-    .then(() => console.log('Erfolgreich geteilt'))
-    .catch((error) => console.log('Teilen abgebrochen', error));
+        .then(() => console.log('Erfolgreich geteilt'))
+        .catch((error) => console.log('Teilen abgebrochen', error));
 }
 
 function copyToClipboard(text, btn) {
@@ -76,7 +78,7 @@ function copyToClipboard(text, btn) {
 
 function showCopyConfirmation(btn) {
     const originalText = btn.innerHTML;
-    btn.innerHTML = "[OK] Kopiert!";
+    btn.innerHTML = '[OK] Kopiert!';
     setTimeout(() => btn.innerHTML = originalText, 2000);
 }
 
@@ -95,16 +97,16 @@ function filterCardsByText(cards, filter) {
         const text = card.innerText || card.textContent;
 
         if (text.toLowerCase().indexOf(filter) > -1) {
-            card.style.display = "";
+            card.style.display = '';
         } else {
-            card.style.display = "none";
+            card.style.display = 'none';
         }
     }
 }
 
 function setupAccessibilityFeatures() {
     const toggleableHeaders = document.querySelectorAll('[aria-controls]');
-    
+
     toggleableHeaders.forEach(button => {
         button.addEventListener('keydown', handleAccessibleToggle);
     });
@@ -129,8 +131,8 @@ function setupDynamicInputHandling() {
 }
 
 function isInputElement(element) {
-    return element.tagName === 'INPUT' || 
-           element.tagName === 'TEXTAREA' || 
+    return element.tagName === 'INPUT' ||
+           element.tagName === 'TEXTAREA' ||
            element.tagName === 'SELECT';
 }
 

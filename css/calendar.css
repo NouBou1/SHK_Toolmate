@@ -1,0 +1,89 @@
+/* ==========================================
+   SHK-MATE - Monatskalender, Termin-Karten und Trennlinien
+   Teil von style.css - die Reihenfolge der <link>-Tags
+   in index.html entspricht der urspruenglichen Datei.
+   ========================================== */
+
+/* --- Kalender Styles --- */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.cal-header {
+    text-align: center;
+    font-weight: bold;
+    color: var(--accent);
+    font-size: 0.9rem;
+    padding-bottom: 5px;
+}
+
+.cal-day {
+    background: #2a2a2a;
+    border-radius: 6px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid #444;
+}
+
+.cal-day:hover {
+    background: #333;
+    border-color: var(--primary);
+}
+
+.cal-day.today {
+    background: rgba(0, 86, 179, 0.3);
+    border: 1px solid var(--primary);
+    font-weight: bold;
+}
+
+.cal-day.selected {
+    background: white;
+    color: black;
+}
+
+/* Der rote Punkt für Termine */
+.cal-dot {
+    position: absolute;
+    bottom: 4px;
+    width: 6px;
+    height: 6px;
+    background-color: #ff4444;
+    border-radius: 50%;
+}
+
+/* Event Karte unter dem Kalender */
+.cal-event-card {
+    background: #333;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    border-left: 3px solid var(--accent);
+}
+.cal-event-card:hover {
+    background: #444;
+}
+
+
+/* Globale Regel für alle Trennlinien */
+hr {
+    border: 0;                  /* Alten 3D-Rahmen entfernen */
+    height: 1px;                /* Nur 1 Pixel hoch */
+    background-color: #444;     /* Dunkelgraue Farbe */
+    margin: 15px 0;             /* Abstand nach oben/unten */
+    width: 100%;                /* Nicht breiter als der Container! */
+    box-sizing: border-box;     /* Wichtig für Padding-Berechnung */
+}
+
+/* Globale Regel für graue Beschreibungstexte */
+p[style*="color:#aaa"],
+[style*="color:#aaa"] {
+    color: #b0b0b0 !important;
+}

@@ -1,0 +1,178 @@
+/* ==========================================
+   SHK-MATE - Fahrzeug-Lager, Utility-Klassen und Rechner-Kategorien
+   Teil von style.css - die Reihenfolge der <link>-Tags
+   in index.html entspricht der urspruenglichen Datei.
+   ========================================== */
+
+/* --- INVENTAR LISTE (Mobile Optimiert) --- */
+.inventory-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.inventory-item {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center; /* Alles mittig zueinander */
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* Der Bereich für Minus - Zahl - Plus */
+.inventory-controls {
+    display: flex;
+    align-items: center;
+    background: #1a1a1a; /* Dunklerer Hintergrund für den Zähler */
+    border-radius: 6px;
+    padding: 2px;
+}
+
+/* Die Plus/Minus Buttons */
+.inventory-btn {
+    background: #444;
+    color: white;
+    border: none;
+    width: 35px;  /* Schön breit für Finger */
+    height: 35px;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation; /* Verbessert Touch-Reaktion */
+}
+
+.inventory-btn:active {
+    background: var(--primary); /* Feedback beim Tippen */
+}
+
+/* Die Zahl in der Mitte */
+.inventory-count {
+    min-width: 30px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Der Name des Artikels */
+.inventory-name {
+    flex-grow: 1; /* Nimmt den restlichen Platz */
+    white-space: normal; /* Darf umbrechen, wenn Name lang ist */
+    line-height: 1.2;
+}
+
+/* Warnfarbe wenn Bestand niedrig */
+.low-stock {
+    color: #ff4444;
+}
+
+/* Utility Classes */
+.u-hidden { display: none; }
+.u-mb-15 { margin-bottom: 15px; }
+
+/* Calculator Categories */
+.calc-categories {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: visible;
+    padding-bottom: 0;
+    margin-bottom: 14px;
+}
+
+.calc-cat-btn {
+    flex: 0 0 auto;
+    width: auto !important;
+    min-width: 0;
+    padding: 7px 14px;
+    background-color: #1b1b1d;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    box-shadow: none;
+    margin-bottom: 0;
+    line-height: 1.2;
+}
+
+.calc-cat-btn[data-cat="favoriten"]::before,
+.calc-cat-btn[data-cat="alle"]::before,
+.calc-cat-btn[data-cat="heizung"]::before,
+.calc-cat-btn[data-cat="wasser"]::before,
+.calc-cat-btn[data-cat="lueftung"]::before,
+.calc-cat-btn[data-cat="misc"]::before {
+    content: "";
+    flex-shrink: 0;
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.calc-cat-btn[data-cat="favoriten"]::before {
+    background-image: url("../assets/icons/categories/favoriten.svg");
+}
+
+.calc-cat-btn[data-cat="alle"]::before {
+    background-image: url("../assets/icons/categories/alle.svg");
+}
+
+.fav-empty-hint {
+    margin: 4px 0 12px;
+    padding: 14px 16px;
+    background-color: var(--surface);
+    border: 1px dashed var(--border-color);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.calc-cat-btn[data-cat="heizung"]::before {
+    background-image: url("../assets/icons/categories/heizung.svg");
+}
+
+.calc-cat-btn[data-cat="wasser"]::before {
+    background-image: url("../assets/icons/categories/wasser.svg");
+}
+
+.calc-cat-btn[data-cat="lueftung"]::before {
+    background-image: url("../assets/icons/categories/lueftung.svg");
+}
+
+.calc-cat-btn[data-cat="misc"]::before {
+    background-image: url("../assets/icons/categories/misc.svg");
+}
+
+.calc-cat-btn:hover {
+    background-color: #353437;
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.calc-cat-btn.active {
+    background-color: var(--primary);
+    color: #002e69;
+    border-color: var(--primary);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(119, 176, 255, 0.3);
+}

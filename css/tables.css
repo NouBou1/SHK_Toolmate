@@ -1,0 +1,149 @@
+/* ==========================================
+   SHK-MATE - Technische Tabellen, Normensuche, Elektro-Zonen, Ventilanzeige
+   Teil von style.css - die Reihenfolge der <link>-Tags
+   in index.html entspricht der urspruenglichen Datei.
+   ========================================== */
+
+
+.tech-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: var(--text);
+    /* Helle Textfarbe erzwingen */
+}
+
+.tech-table caption {
+    text-align: left;
+    font-weight: bold;
+    padding-bottom: 10px;
+    color: var(--accent);
+}
+
+.tech-table th,
+.tech-table td {
+    border: 1px solid #444;
+    /* Dunklere, dezente Rahmen */
+    padding: 12px 10px;
+    /* Mehr Platz (Höhe) macht es lesbarer */
+    text-align: left;
+}
+
+.tech-table th {
+    background-color: #2a2a2a;
+    /* Dunkelgrauer Kopf statt Weiß */
+    color: var(--accent);
+    /* Orange Akzentfarbe für Überschriften */
+    font-weight: bold;
+    border-bottom: 2px solid #555;
+}
+
+/* Zebra-Streifen: Nur ganz leicht aufhellen statt Weiß */
+.tech-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Hover-Effekt: Zeile leuchtet auf, wenn man drübergeht (hilft dem Auge) */
+.tech-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Styling für die Suchergebnisse der Normen */
+.norm-item:hover {
+    background-color: #f0f8ff;
+    /* Helles Blau beim Drüberfahren */
+    cursor: default;
+}
+
+#searchBar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    /* Damit Padding nicht die Breite sprengt */
+}
+
+@keyframes highlight {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.result-box {
+    /* bestehende styles... */
+    transition: all 0.3s ease;
+}
+
+.result-box.updated {
+    animation: highlight 0.3s ease-in-out;
+}
+
+/* --- Elektro Zonen Visualisierung --- */
+.zone-visual {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.zone {
+    flex: 1;
+    padding: 15px 5px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+}
+
+.zone span {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.zone small {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+/* Farben mit Transparenz für Dark Mode */
+.z0 {
+    background-color: rgba(255, 68, 68, 0.15);
+    border-color: #ff4444;
+    color: #ff8888;
+    /* Helles Rot */
+}
+
+.z1 {
+    background-color: rgba(255, 187, 51, 0.15);
+    border-color: #ffbb33;
+    color: #ffcc66;
+    /* Helles Gelb */
+}
+
+.z2 {
+    background-color: rgba(0, 200, 81, 0.15);
+    border-color: #00c851;
+    color: #66ff99;
+    /* Helles Grün */
+}
+
+/* Styling für die Ventil-Anzeige */
+#valve_visual {
+    font-family: monospace;
+    text-shadow: 0 0 5px rgba(255, 153, 0, 0.6);
+}

@@ -12,19 +12,19 @@
 // Die Initialisierung erfolgt nach dem DOMContentLoaded Event.
 // ==========================================
 
-console.log("SHK-MATE wird initialisiert...");
+console.log('SHK-MATE wird initialisiert...');
 
 // Hauptinitialisierung der App
 function initializeApp() {
-    console.log("App-Initialisierung gestartet");
-    
+    console.log('App-Initialisierung gestartet');
+
     // Core-Module initialisieren
     initializeCoreModules();
-    
+
     // Feature-Module initialisieren
     initializeFeatureModules();
-    
-    console.log("App erfolgreich initialisiert");
+
+    console.log('App erfolgreich initialisiert');
 }
 
 function initializeCoreModules() {
@@ -35,36 +35,28 @@ function initializeCoreModules() {
     }
 }
 
+// Verzögerung für die Favoriten, damit das HTML sicher gerendert ist
+const FAVORITES_INIT_DELAY_MS = 500;
+
+// Feature-Module mit ihrer Startfunktion.
+// Nicht geladene Module werden übersprungen, die App startet trotzdem.
+const FEATURE_INITIALIZERS = [
+    { name: 'setProjectView', start: () => setProjectView('active') },
+    { name: 'loadQuickNote', start: () => loadQuickNote() },
+    { name: 'initFavorites', start: () => setTimeout(initFavorites, FAVORITES_INIT_DELAY_MS) },
+    { name: 'loadChecklist', start: () => loadChecklist() },
+    { name: 'renderInventory', start: () => renderInventory() },
+    { name: 'renderCalendar', start: () => renderCalendar() }
+];
+
+function isModuleAvailable(functionName) {
+    return typeof window[functionName] === 'function';
+}
+
 function initializeFeatureModules() {
-    // Projekte & Material
-    if (typeof setProjectView === 'function') {
-        setProjectView('active');
-    }
-    
-    // Notizen
-    if (typeof loadQuickNote === 'function') {
-        loadQuickNote();
-    }
-    
-    // Favoriten (mit Verzögerung, damit HTML sicher geladen ist)
-    if (typeof initFavorites === 'function') {
-        setTimeout(initFavorites, 500);
-    }
-    
-    // Checkliste
-    if (typeof loadChecklist === 'function') {
-        loadChecklist();
-    }
-    
-    // Inventar
-    if (typeof renderInventory === 'function') {
-        renderInventory();
-    }
-    
-    // Kalender
-    if (typeof renderCalendar === 'function') {
-        renderCalendar();
-    }
+    FEATURE_INITIALIZERS
+        .filter(feature => isModuleAvailable(feature.name))
+        .forEach(feature => feature.start());
 }
 
 // Lokaler Dev-Server (Live Server)? Dann keinen Service Worker verwenden.
@@ -93,22 +85,24 @@ function unregisterServiceWorker() {
         .catch(err => console.log('[FEHLER] Service Worker Cleanup:', err));
 }
 
+function registerServiceWorkerOnLoad() {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js?v=19')
+            .then(reg => console.log('[OK] Service Worker registriert!', reg))
+            .catch(err => console.log('[FEHLER] Service Worker:', err));
+    });
+}
+
 // Service Worker registrieren (macht die App offline-fähig)
 function registerServiceWorker() {
     if (!('serviceWorker' in navigator)) {
         return;
     }
-
     if (isLocalDevServer()) {
         unregisterServiceWorker();
         return;
     }
-
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=18')
-            .then(reg => console.log('[OK] Service Worker registriert!', reg))
-            .catch(err => console.log('[FEHLER] Service Worker:', err));
-    });
+    registerServiceWorkerOnLoad();
 }
 
 // Starte App-Initialisierung

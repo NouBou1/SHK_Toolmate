@@ -5,7 +5,7 @@ function switchTab(viewId, btn) {
     hideAllContainers();
     showContainer(viewId);
     updateActiveButton(btn);
-    
+
     if (viewId === 'material') {
         window.renderProjectList?.();
     }
@@ -32,75 +32,67 @@ function updateActiveButton(btn) {
     btn.focus();
 }
 
+// Reiter der Rechner-Ansicht
+const CATEGORY_TABS = [
+    { id: 'favoriten', name: 'Favoriten' },
+    { id: 'alle', name: 'Alle' },
+    { id: 'heizung', name: 'Heizung' },
+    { id: 'wasser', name: 'Wasser' },
+    { id: 'lueftung', name: 'Lüftung' },
+    { id: 'misc', name: 'Sonstiges' }
+];
+
+// Ordnet Rechner anhand eines Stichworts im Titel einer Kategorie zu
+const CALCULATOR_CATEGORIES = {
+    'Gaszähler': 'heizung',
+    'Heizlast': 'heizung',
+    'MAG': 'heizung',
+    'HK-Leistung': 'heizung',
+    'Leistung-Check': 'heizung',
+    'Hydraulischer Abgleich': 'heizung',
+    'Pumpe': 'heizung',
+    'Kesselleistung': 'heizung',
+    'Spreizung': 'heizung',
+    'Mischwasser': 'wasser',
+    'Aufheizzeit': 'wasser',
+    'Zirkulation': 'wasser',
+    'Strömungsgeschwindigkeit': 'wasser',
+    'Rohr-Inhalt': 'wasser',
+    'Abwasser': 'wasser',
+    'Kondensat': 'wasser',
+    'Tank': 'wasser',
+    'Lüftung': 'lueftung',
+    'Kernbohrung': 'misc',
+    'Schellen': 'misc',
+    'Etagen': 'misc'
+};
+
 function initCalculatorCategories() {
-    const categories = getCategories();
-    const calcMapping = getCalculatorMapping();
-    
-    assignCategoriesToCards(calcMapping);
-    renderCategoryButtons(categories);
+    assignCategoriesToCards();
+    renderCategoryButtons(CATEGORY_TABS);
 }
 
-function getCategories() {
-    return [
-        { id: 'favoriten', name: 'Favoriten' },
-        { id: 'alle', name: 'Alle' },
-        { id: 'heizung', name: 'Heizung' },
-        { id: 'wasser', name: 'Wasser' },
-        { id: 'lueftung', name: 'Lüftung' },
-        { id: 'misc', name: 'Sonstiges' }
-    ];
+function findCategory(title) {
+    const match = Object.keys(CALCULATOR_CATEGORIES).find(keyword => title.includes(keyword));
+    return match ? CALCULATOR_CATEGORIES[match] : 'misc';
 }
 
-function getCalculatorMapping() {
-    return {
-        'Gaszähler': 'heizung',
-        'Heizlast': 'heizung',
-        'MAG': 'heizung',
-        'HK-Leistung': 'heizung',
-        'Leistung-Check': 'heizung',
-        'Hydraulischer Abgleich': 'heizung',
-        'Pumpe': 'heizung',
-        'Kesselleistung': 'heizung',
-        'Spreizung': 'heizung',
-        'Mischwasser': 'wasser',
-        'Aufheizzeit': 'wasser',
-        'Zirkulation': 'wasser',
-        'Strömungsgeschwindigkeit': 'wasser',
-        'Rohr-Inhalt': 'wasser',
-        'Abwasser': 'wasser',
-        'Kondensat': 'wasser',
-        'Tank': 'wasser',
-        'Lüftung': 'lueftung',
-        'Kernbohrung': 'misc',
-        'Schellen': 'misc',
-        'Etagen': 'misc'
-    };
-}
+function assignCategoriesToCards() {
+    const cards = document.querySelectorAll('#view-rechner .card:not(.note-card)');
 
-function assignCategoriesToCards(calcMapping) {
-    const allCards = Array.from(document.querySelectorAll('#view-rechner .card:not(.note-card)'));
-    
-    allCards.forEach(card => {
-        const h3 = card.querySelector('h3');
-        if (!h3) return;
-        
-        const category = findCategory(h3.textContent, calcMapping);
-        card.setAttribute('data-calc-category', category);
-    });
-}
-
-function findCategory(title, calcMapping) {
-    for (const [keyword, cat] of Object.entries(calcMapping)) {
-        if (title.includes(keyword)) {
-            return cat;
+    cards.forEach(card => {
+        const heading = card.querySelector('h3');
+        if (heading) {
+            card.setAttribute('data-calc-category', findCategory(heading.textContent));
         }
-    }
-    return 'misc';
+    });
 }
 
 function renderCategoryButtons(categories) {
     const container = document.getElementById('calc-categories');
-    if (!container) return;
+    if (!container) {
+        return;
+    }
 
     categories.forEach(cat => {
         const btn = createCategoryButton(cat, cat.id === 'alle');
@@ -130,87 +122,104 @@ function updateActiveCategoryButton(button) {
     button.classList.add('active');
 }
 
-function filterCards(categoryId) {
-    const favs = categoryId === 'favoriten' ? getFavoriteIds() : null;
-    const allCards = document.querySelectorAll('#view-rechner .card');
+function shouldShowCard(card, categoryId, favoriteIds) {
+    if (favoriteIds) {
+        return favoriteIds.includes(card.dataset.cardId);
+    }
+    return categoryId === 'alle' || card.getAttribute('data-calc-category') === categoryId;
+}
+
+/**
+ * Blendet die Rechner-Karten ein bzw. aus
+ * @returns {number} Anzahl der sichtbaren Rechner (ohne Notiz-Karte)
+ */
+function applyCardFilter(categoryId, favoriteIds) {
     let visible = 0;
 
-    allCards.forEach(card => {
+    document.querySelectorAll('#view-rechner .card').forEach(card => {
         if (card.classList.contains('note-card')) {
             card.classList.remove('u-hidden');
             return;
         }
-
-        const shouldShow = favs
-            ? favs.includes(card.dataset.cardId)
-            : categoryId === 'alle' || card.getAttribute('data-calc-category') === categoryId;
-
-        if (shouldShow) {
-            card.classList.remove('u-hidden');
-            visible++;
-        } else {
-            card.classList.add('u-hidden');
-        }
+        const show = shouldShowCard(card, categoryId, favoriteIds);
+        card.classList.toggle('u-hidden', !show);
+        visible += show ? 1 : 0;
     });
+    return visible;
+}
+
+function filterCards(categoryId) {
+    const favoriteIds = categoryId === 'favoriten' ? getFavoriteIds() : null;
+    const visible = applyCardFilter(categoryId, favoriteIds);
 
     updateEmptyFavoritesHint(categoryId === 'favoriten' && visible === 0);
 }
 
 function getFavoriteIds() {
-    if (typeof loadFavorites === 'function') return loadFavorites();
+    if (typeof loadFavorites === 'function') {
+        return loadFavorites();
+    }
     try {
-        return JSON.parse(localStorage.getItem('shk_favs')) || [];
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES)) || [];
     } catch {
         return [];
     }
 }
 
-function updateEmptyFavoritesHint(show) {
-    const container = document.getElementById('view-rechner');
-    if (!container) return;
-
-    let hint = document.getElementById('fav-empty-hint');
-    if (!show) {
-        hint?.remove();
-        return;
-    }
-    if (hint) return;
-
-    hint = document.createElement('p');
+function createFavoritesHint() {
+    const hint = document.createElement('p');
     hint.id = 'fav-empty-hint';
     hint.className = 'fav-empty-hint';
     hint.innerText = 'Noch keine Favoriten. Tippe den Stern neben einem Rechner an, um ihn hier abzulegen.';
+    return hint;
+}
+
+function updateEmptyFavoritesHint(show) {
+    const existing = document.getElementById('fav-empty-hint');
+    if (!show) {
+        existing?.remove();
+        return;
+    }
+    if (existing) {
+        return;
+    }
     const categories = document.getElementById('calc-categories');
-    categories?.parentElement?.insertBefore(hint, categories.nextSibling);
+    categories?.parentElement?.insertBefore(createFavoritesHint(), categories.nextSibling);
 }
 
 function applyInitialCategory() {
     const favs = getFavoriteIds();
-    if (!favs.length) return;
+    if (!favs.length) {
+        return;
+    }
 
     const btn = document.querySelector('.calc-cat-btn[data-cat="favoriten"]');
-    if (!btn) return;
+    if (!btn) {
+        return;
+    }
     filterByCategory('favoriten', btn);
 }
 
 function refreshFavoriteFilter() {
     const active = document.querySelector('.calc-cat-btn.active');
-    if (active?.dataset.cat === 'favoriten') filterCards('favoriten');
+    if (active?.dataset.cat === 'favoriten') {filterCards('favoriten');}
+}
+
+function handleNavKeydown(event, navItems, index) {
+    const nextIndex = getNextIndex(event.key, index, navItems.length);
+    if (nextIndex === index) {
+        return;
+    }
+    event.preventDefault();
+    navItems[nextIndex].focus();
+    navItems[nextIndex].click();
 }
 
 function setupNavigationKeyboard() {
     const navItems = document.querySelectorAll('.nav-item');
-    
+
     navItems.forEach((item, index) => {
-        item.addEventListener('keydown', function(e) {
-            const nextIndex = getNextIndex(e.key, index, navItems.length);
-            
-            if (nextIndex !== index) {
-                e.preventDefault();
-                navItems[nextIndex].focus();
-                navItems[nextIndex].click();
-            }
-        });
+        item.addEventListener('keydown', event => handleNavKeydown(event, navItems, index));
     });
 }
 
@@ -226,7 +235,7 @@ function getNextIndex(key, currentIndex, totalItems) {
 function toggleTable(id) {
     const el = document.getElementById(id);
     const isHidden = el.style.display === 'none';
-    
+
     el.style.display = isHidden ? 'block' : 'none';
     updateAriaExpanded(el, isHidden);
 }
