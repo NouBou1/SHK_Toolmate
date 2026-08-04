@@ -4,7 +4,7 @@
 // Wartezeit, bis die Bildschirmtastatur aufgebaut ist
 const AUTO_SCROLL_DELAY_MS = 300;
 
-async function initializeAndroidBars() {
+export async function initializeAndroidBars() {
     try {
         const { StatusBar } = await import('@capacitor/status-bar');
         await configureStatusBar(StatusBar);
@@ -38,7 +38,7 @@ async function configureNavigationBar() {
     }
 }
 
-function setupKeyboardHandling() {
+export function setupKeyboardHandling() {
     document.addEventListener('focusin', (e) => {
         if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
             console.log('[DEBUG] Input focused: ' + (e.target.id || e.target.tagName));
@@ -61,7 +61,7 @@ function enableAutoScrollFor(input) {
     });
 }
 
-function setupInputAutoScroll() {
+export function setupInputAutoScroll() {
     document.querySelectorAll('input, textarea, select')
         .forEach(enableAutoScrollFor);
 }

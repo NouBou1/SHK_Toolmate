@@ -2,19 +2,19 @@
 // Externe Skripte werden erst nach ausdruecklicher Zustimmung geladen,
 // weil dabei die IP-Adresse an den Drittanbieter uebertragen wird.
 
-const EXTERNAL_OPT_IN_KEYS = {
+export const EXTERNAL_OPT_IN_KEYS = {
     pdf: 'shk_external_pdf_opt_in'
 };
 
-const EXTERNAL_LIB_URLS = {
+export const EXTERNAL_LIB_URLS = {
     jsPdf: 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'
 };
 
-function hasExternalOptIn(optInKey) {
+export function hasExternalOptIn(optInKey) {
     return localStorage.getItem(optInKey) === 'true';
 }
 
-function askForExternalOptIn(optInKey, serviceName) {
+export function askForExternalOptIn(optInKey, serviceName) {
     const accepted = confirm(
         `${serviceName} wird von einem Drittanbieter geladen. ` +
         'Dabei wird deine IP an den Dienst uebertragen. Fortfahren?'
@@ -47,7 +47,7 @@ function createExternalScript(scriptId, src, resolve, reject) {
  * Laedt ein externes Skript genau einmal nach.
  * Ein bereits vorhandenes Tag wird wiederverwendet.
  */
-function loadExternalScriptOnce(scriptId, src) {
+export function loadExternalScriptOnce(scriptId, src) {
     return new Promise((resolve, reject) => {
         const existing = document.getElementById(scriptId);
         if (!existing) {

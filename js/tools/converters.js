@@ -1,6 +1,8 @@
 // Tools & Converter Modul
 // Unit-Umrechnung und Fehlercode-Suche
 
+import { showResult } from '../core/utils.js';
+
 const PRESSURE_UNITS = ['bar', 'mbar', 'pascal'];
 const POWER_UNITS = ['kw', 'watt'];
 
@@ -12,7 +14,7 @@ function readConversionInput() {
     };
 }
 
-function convertUnits() {
+export function convertUnits() {
     const { value, from, to } = readConversionInput();
     if (isNaN(value)) {
         return;
@@ -67,14 +69,14 @@ function convertPower(val, from, to) {
 }
 
 function showConversionError() {
-    window.showResult?.('res_conv', 'Fehler: Kann Druck nicht in Leistung umrechnen!', true);
+    showResult('res_conv', 'Fehler: Kann Druck nicht in Leistung umrechnen!', true);
 }
 
 function showConversionResult(val, from, to, result) {
-    window.showResult?.('res_conv', `${val} ${from} = ${result} ${to}`);
+    showResult('res_conv', `${val} ${from} = ${result} ${to}`);
 }
 
-function searchError() {
+export function searchError() {
     const code = document.getElementById('error_code').value;
     if (code) {
         const url = `https://www.google.com/search?q=Heizung+Fehlercode+${encodeURIComponent(code)}`;

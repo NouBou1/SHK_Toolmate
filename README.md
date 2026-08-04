@@ -48,7 +48,7 @@ Fünf Bereiche über die untere Navigationsleiste:
 - **Ergebnis teilen** — über die native Share-Funktion oder in die Zwischenablage
 
 **Material** — Baustellen anlegen, Materiallisten führen, Positionen fotografieren,
-Rapport als PDF mit Unterschrift exportieren, Liste als Text für WhatsApp kopieren
+Rapport als PDF mit Unterschrift exportieren
 
 **Tools** — Einheiten-Wandler, Fehlercode-Suche, digitale Wasserwaage über die
 Lagesensoren des Geräts
@@ -68,12 +68,12 @@ Auto-Speicherung, alle Daten bleiben **lokal auf dem Gerät**.
 |---|---|
 | HTML5 | semantisches Markup, ARIA-Labels, Skip-Link |
 | CSS3 | Flexbox, Grid, Custom Properties, modular je Bereich |
-| JavaScript (ES2021+) | klassische Scripts, kein Bundler |
+| JavaScript (ES2022) | ES-Module, kein Bundler, kein Build-Schritt |
 | Service Worker | Offline-Cache, App-Shell-Strategie |
 | LocalStorage | Projekte, Favoriten, Notizen, Inventar, Checkliste |
 | Capacitor 8 | Android-Build, Filesystem, Share, StatusBar |
 | jsPDF | PDF-Rapport, erst nach Zustimmung nachgeladen |
-| ESLint | Lint-Regeln inklusive projektweiter Globals |
+| ESLint + node:test | Lint und 94 Tests, beides ohne weitere Abhängigkeiten |
 
 Zur Laufzeit im Browser wird nichts nachgeladen — die Schriften liegen lokal,
 und jsPDF kommt erst dann von einem CDN, wenn der PDF-Export ausdrücklich
@@ -113,7 +113,8 @@ Für Abhängigkeiten und Lint:
 
 ```bash
 npm install
-npx eslint app.js sw.js js/     # läuft ohne Ausgabe durch
+npm run lint    # ESLint über App und Tests
+npm test        # 94 Tests über alle 20 Rechner
 ```
 
 ---
@@ -137,8 +138,8 @@ Keystores siehe [SECURITY.md](SECURITY.md) — sie gehören **nicht** ins Reposi
 
 ```
 SHK_Mate/
-├── index.html                  # Entry Point, bindet alle Module ein
-├── app.js                      # App-Start, Modul-Initialisierung
+├── index.html                  # Markup; ein einziges <script type="module">
+├── app.js                      # Einstieg: Aktionen anmelden, Module starten
 ├── sw.js                       # Service Worker, Offline-Cache
 ├── manifest.json               # PWA-Manifest
 ├── capacitor.config.json       # Android-Konfiguration
@@ -156,8 +157,9 @@ SHK_Mate/
 │   │   ├── constants.js        # Normwerte, Grenzwerte, Storage-Keys
 │   │   ├── utils.js            # Ergebnisausgabe, Teilen, Kopieren
 │   │   ├── navigation.js       # Tabs, Kategorien, Kartenfilter
+│   │   ├── actions.js          # Event-Delegation statt onclick
 │   │   ├── external-scripts.js # Nachladen externer Bibliotheken
-│   │   └── android-init*.js    # Status-/Navigationsleiste, Tastatur
+│   │   └── android-init.js     # Status-/Navigationsleiste, Tastatur
 │   ├── calc/
 │   │   ├── common.js           # runCalculator() – Ablauf aller Rechner
 │   │   ├── heizung.js          # Heizlast, HK, Leistung, Kondensat, Gas
@@ -168,7 +170,10 @@ SHK_Mate/
 │   │   ├── lueftung.js         # Luftwechsel
 │   │   └── montage.js          # Versatzbogen, Gefälle, Kernbohrung, Schellen
 │   ├── modules/                # Projekte, Material, Fotos, PDF, Kalender, …
+│   │   └── project-state.js    # einzige Quelle für Projekte + aktuelles Projekt
 │   └── tools/converters.js     # Einheiten-Wandler
+├── tests/                      # node:test, 94 Tests über alle Rechner
+├── .github/workflows/ci.yml    # Lint + Tests bei jedem Push
 ├── assets/                     # Icons, Schriften, Logo
 ├── android/                    # Android-Projekt (Gradle)
 └── docs/                       # Projektdokumentation
@@ -178,9 +183,14 @@ SHK_Mate/
 
 ## Architektur
 
-Alle Dateien werden als klassische `<script>`-Tags geladen — kein Bundler, kein
-Import-Graph. Die Reihenfolge in `index.html` ist deshalb die Architektur:
-`constants.js` zuerst, danach Core, Features, Rechner, zuletzt `app.js`.
+`index.html` bindet genau **ein** Script ein: `app.js` als ES-Modul. Alles
+Weitere kommt über Importe herein, die Ladereihenfolge ergibt sich aus dem
+Importgraphen. Kein Bundler, kein Build-Schritt — der Browser löst die
+32 Module selbst auf.
+
+Das Markup enthält **kein** `onclick`. Verhalten hängt an `data-action`;
+ein Listener je Ereignistyp am `document` verteilt an die in `app.js`
+angemeldeten Aktionen — auch an Elemente, die erst später entstehen.
 
 ### Der Rechner-Ablauf
 
@@ -241,11 +251,12 @@ Vier Regeln, die für jede Änderung gelten:
 3. **Max. 400 Zeilen pro Datei**
 4. **Sprechende Namen** — kein `vol`, `dt` oder `p0`
 
-Stand heute: 462 Funktionen, keine über 14 Zeilen, größte Datei 260 Zeilen.
+Dazu: kein `onclick` im Markup, kein `innerHTML` mit Nutzerdaten, kein Zugriff
+über `window.` zwischen Modulen.
 
-Beim Anlegen einer neuen Datei sind **drei** Stellen zu pflegen: das Script- bzw.
-Link-Tag in `index.html`, die `ASSETS`-Liste in `sw.js` und — falls die Datei
-projektweite Namen bereitstellt — die `globals` in `.eslintrc.js`.
+Stand heute: 493 Funktionen, keine über 14 Zeilen, größte Datei 283 Zeilen.
+Geprüft durch `npm run lint` und 94 Tests, beides bei jedem Push über
+GitHub Actions.
 
 ---
 
@@ -269,6 +280,11 @@ projektweite Namen bereitstellt — die `globals` in `.eslintrc.js`.
 - **Toter Code fällt beim Aufräumen auf, nicht beim Schreiben.** Eine
   Validierungs-Bibliothek von 317 Zeilen wurde von keiner einzigen Zeile
   aufgerufen — die Rechner hatten ihre eigene Prüfung mitgebracht.
+- **Ein gemeinsamer Namensraum verschluckt Fehler.** Zwei Dateien hatten je eine
+  Funktion `copyToClipboard` — mit unterschiedlicher Signatur. Die später geladene
+  überschrieb die andere stillschweigend, seitdem zeigte der Teilen-Button unter
+  einem Rechenergebnis die Meldung des Notizblocks. Kein Werkzeug hat das
+  angezeigt; mit ES-Modulen kann es nicht mehr passieren.
 - **Eine Funktion pro Aufgabe zahlt sich erst beim zweiten Mal aus.** Die
   Aufteilung in `readInputs`/`validate`/`calculate`/`format` wirkte anfangs nach
   Mehrarbeit. Sie hat dann ermöglicht, den kompletten Ablauf aus 20 Rechnern
@@ -281,7 +297,6 @@ projektweite Namen bereitstellt — die `globals` in `.eslintrc.js`.
 - [ ] Rechenverlauf mit den letzten Ergebnissen je Rechner
 - [ ] Eigene Werte für Brennwert und Rohrinnendurchmesser hinterlegen
 - [ ] Projekte als Datei exportieren und importieren (Gerätewechsel)
-- [ ] Automatisierte Tests für `calculate`-Funktionen im CI
 - [ ] Materialliste direkt aus Rechenergebnissen befüllen
 - [ ] iOS-Build über Capacitor
 

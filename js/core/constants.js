@@ -12,7 +12,7 @@
  * MAG (Membran-Ausdehnungsgefäß) Konfiguration
  * Quelle: VDI 4708
  */
-const MAG_CONFIG = {
+export const MAG_CONFIG = {
     METERS_TO_BAR: 10, // Umrechnung: 10m = 1 bar
     SAFETY_OFFSET_BAR: 0.3, // Mindestzuschlag zur Verdampfungsvermeidung
     FILL_PRESSURE_OFFSET_BAR: 0.3 // Zusätzlicher Fülldruck über P0
@@ -21,7 +21,7 @@ const MAG_CONFIG = {
 /**
  * Spezifische Wärmekapazität von Wasser
  */
-const WATER_HEAT_CAPACITY = 1.163; // Wh/(kg*K)
+export const WATER_HEAT_CAPACITY = 1.163; // Wh/(kg*K)
 
 // ========== WASSER ==========
 
@@ -29,7 +29,7 @@ const WATER_HEAT_CAPACITY = 1.163; // Wh/(kg*K)
  * Rohrinhalt pro Meter nach DN (Liter/Meter)
  * Annäherungswerte für Cu/C-Stahl Rohre
  */
-const PIPE_VOLUME_FACTORS = {
+export const PIPE_VOLUME_FACTORS = {
     12: 0.13, // DN 12 (~13mm innen)
     15: 0.20, // DN 15 (~16mm innen)
     20: 0.31, // DN 20 (~20mm innen)
@@ -43,7 +43,7 @@ const PIPE_VOLUME_FACTORS = {
  * Zirkulation: Kritische Grenze
  * Nach DVGW W 551 (Trinkwasserhygiene)
  */
-const CIRCULATION_LIMIT_LITERS = 3; // Max. Inhalt ohne Zirkulation
+export const CIRCULATION_LIMIT_LITERS = 3; // Max. Inhalt ohne Zirkulation
 
 // ========== GAS ==========
 
@@ -51,7 +51,7 @@ const CIRCULATION_LIMIT_LITERS = 3; // Max. Inhalt ohne Zirkulation
  * Gas-Brennwerte (kWh/m³)
  * Durchschnittswerte
  */
-const GAS_HEATING_VALUES = {
+export const GAS_HEATING_VALUES = {
     NATURAL_GAS: 10.0, // Erdgas H (ca. 10 kWh/m³)
     PROPANE: 25.9, // Flüssiggas Propan
     BUTANE: 34.0 // Flüssiggas Butan
@@ -62,7 +62,7 @@ const GAS_HEATING_VALUES = {
 /**
  * Eingabe-Validierung: Grenzen
  */
-const INPUT_LIMITS = {
+export const INPUT_LIMITS = {
     // Heizung
     FLOOR_AREA_MIN: 0.1, // m²
     FLOOR_AREA_MAX: 10000, // m²
@@ -92,21 +92,10 @@ const INPUT_LIMITS = {
  * ACHTUNG: Diese Werte stehen auf den Geräten der Nutzer.
  * Wird ein Key geändert, sind die bisherigen Daten nicht mehr auffindbar.
  */
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
     PROJECTS: 'shk_projects',
     QUICK_NOTE: 'shk_quick_note',
     FAVORITES: 'shk_favs',
     MAINTENANCE: 'shk_maintenance',
     INVENTORY: 'shk_inventory'
-};
-
-// ========== ENTWICKLERMODUS ==========
-
-/**
- * Debug-Einstellungen
- */
-const DEBUG = {
-    ENABLED: false, // Aktiviert erweiterte Logs
-    LOG_CALCULATIONS: false, // Loggt alle Berechnungen
-    LOG_STORAGE: false // Loggt LocalStorage Operationen
 };

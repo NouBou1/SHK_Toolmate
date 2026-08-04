@@ -1,61 +1,65 @@
 
-// Service Worker v21 - aligned with current app assets
-// WICHTIG: Diese Liste muss zu den <link>- und <script>-Tags in
-// index.html passen (gleiche Pfade, gleiche ?v=-Nummer).
-const CACHE_NAME = 'shk-mate-v21';
+// Service Worker v22 - aligned with current app assets
+// Die Liste wird aus index.html und dem Importgraphen von app.js abgeleitet.
+// Stylesheets und Einstiegspunkt tragen ein ?v=, die Module nicht - sie werden
+// ueber import-Anweisungen geladen. Fuer Bestandsnutzer entscheidet daher
+// CACHE_NAME: eine neue Nummer laedt alles neu.
+const CACHE_NAME = 'shk-mate-v23';
 const ASSETS = [
+    // Seiten
     './',
     './index.html',
     './impressum.html',
     './privacy.html',
+    './manifest.json',
 
     // Stylesheets
-    './css/base.css?v=33',
-    './css/forms.css?v=33',
-    './css/navigation.css?v=33',
-    './css/projects.css?v=33',
-    './css/tables.css?v=33',
-    './css/calendar.css?v=33',
-    './css/media.css?v=33',
-    './css/inventory.css?v=35',
+    './css/base.css?v=36',
+    './css/forms.css?v=36',
+    './css/navigation.css?v=36',
+    './css/projects.css?v=36',
+    './css/tables.css?v=36',
+    './css/calendar.css?v=36',
+    './css/media.css?v=36',
+    './css/inventory.css?v=36',
 
-    // Core
-    './js/core/constants.js?v=33',
-    './js/core/android-init.js?v=33',
-    './js/core/navigation.js?v=33',
-    './js/core/utils.js?v=33',
-    './js/core/external-scripts.js?v=33',
-    './js/core/android-init-global.js?v=33',
+    // Einstiegspunkt
+    './app.js?v=36',
 
-    // Feature-Module
-    './js/modules/projects-storage.js?v=33',
-    './js/modules/projects.js?v=33',
-    './js/modules/materials.js?v=33',
-    './js/modules/photos.js?v=33',
-    './js/modules/notes.js?v=33',
-    './js/modules/favorites.js?v=33',
-    './js/modules/level.js?v=33',
-    './js/modules/checklist.js?v=33',
-    './js/modules/inventory.js?v=33',
-    './js/modules/calendar.js?v=33',
-    './js/modules/signature.js?v=33',
-    './js/modules/pdf-document.js?v=33',
-    './js/modules/pdf-storage.js?v=33',
-    './js/modules/pdf-export.js?v=33',
-    './js/tools/converters.js?v=33',
+    // Module (ueber Importe geladen, daher ohne ?v=)
+    './js/calc/behaelter.js',
+    './js/calc/common.js',
+    './js/calc/heizung.js',
+    './js/calc/hydraulik.js',
+    './js/calc/lueftung.js',
+    './js/calc/montage.js',
+    './js/calc/rohrnetz.js',
+    './js/calc/wasser.js',
+    './js/core/actions.js',
+    './js/core/android-init.js',
+    './js/core/constants.js',
+    './js/core/external-scripts.js',
+    './js/core/navigation.js',
+    './js/core/utils.js',
+    './js/modules/calendar.js',
+    './js/modules/checklist.js',
+    './js/modules/favorites.js',
+    './js/modules/favorites-storage.js',
+    './js/modules/inventory.js',
+    './js/modules/level.js',
+    './js/modules/materials.js',
+    './js/modules/notes.js',
+    './js/modules/pdf-document.js',
+    './js/modules/pdf-export.js',
+    './js/modules/pdf-storage.js',
+    './js/modules/photos.js',
+    './js/modules/project-state.js',
+    './js/modules/projects-storage.js',
+    './js/modules/projects.js',
+    './js/modules/signature.js',
+    './js/tools/converters.js',
 
-    // Rechner
-    './js/calc/common.js?v=33',
-    './js/calc/heizung.js?v=33',
-    './js/calc/hydraulik.js?v=33',
-    './js/calc/behaelter.js?v=33',
-    './js/calc/wasser.js?v=33',
-    './js/calc/rohrnetz.js?v=33',
-    './js/calc/lueftung.js?v=33',
-    './js/calc/montage.js?v=33',
-
-    './app.js?v=33',
-    './manifest.json',
+    // Icons und Schriften
     './assets/icons/icon.png',
     './assets/icons/categories/favoriten.svg',
     './assets/icons/categories/alle.svg',

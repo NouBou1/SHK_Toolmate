@@ -3,16 +3,19 @@
 // Die Unterschrift selbst wird ueber getSignatureDataURL() an den
 // PDF-Export weitergereicht - kein direkter Zugriff von aussen.
 
+// Wartezeit, damit das Modal geschlossen ist, bevor der Export startet
+const MODAL_CLOSE_DELAY_MS = 300;
+
 let signatureDataURL = null;
 let signatureCanvas = null;
 let signatureContext = null;
 let isDrawing = false;
 
-function getSignatureDataURL() {
+export function getSignatureDataURL() {
     return signatureDataURL;
 }
 
-function openSignatureModalForPDF() {
+export function openSignatureModalForPDF() {
     signatureDataURL = null;
     openSignatureModal();
 }
@@ -80,13 +83,13 @@ function getDrawPosition(e) {
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
 }
 
-function clearSignature() {
+export function clearSignature() {
     if (signatureContext && signatureCanvas) {
         signatureContext.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
     }
 }
 
-function closeSignatureModal() {
+export function closeSignatureModal() {
     const modal = document.getElementById('sig_modal');
     if (modal) {
         modal.style.display = 'none';
@@ -118,7 +121,15 @@ function validateSignature() {
     return false;
 }
 
-function previewPDFWithSignature() {
+/**
+ * Uebernimmt die Zeichnung als Unterschrift und faehrt danach fort.
+ *
+ * Was "danach" bedeutet, entscheidet der Aufrufer - dieses Modul kennt
+ * den PDF-Export nicht. Sonst importierten sich beide gegenseitig.
+ *
+ * @param {Function} onConfirmed - laeuft, sobald die Unterschrift steht
+ */
+export function confirmSignature(onConfirmed) {
     if (!validateSignature()) {
         return;
     }
@@ -126,10 +137,10 @@ function previewPDFWithSignature() {
     closeSignatureModal();
     alert('[OK] Unterschrift gespeichert! PDF wird erstellt...');
 
-    setTimeout(exportMaterialListPDFWithSignature, 300);
+    setTimeout(onConfirmed, MODAL_CLOSE_DELAY_MS);
 }
 
-function resetSignature() {
+export function resetSignature() {
     signatureDataURL = null;
     const canvasElement = document.getElementById('sig_canvas');
     if (!canvasElement) {

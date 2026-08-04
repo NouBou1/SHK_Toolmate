@@ -1,30 +1,22 @@
 // Foto Management
 // Kamera, Kompression, Speicherung und Anzeige
 
-let currentPhotoItemIndex = null;
-
-function triggerPhoto(index) {
-    currentPhotoItemIndex = index;
-    const input = document.getElementById('global_camera_input');
-    if (input) {input.click();}
-}
-
-function processPhoto(input) {
-    if (!input.files || !input.files[0]) {
-        return;
-    }
-
-    const file = input.files[0];
-
-    if (!validateFile(file)) {
-        input.value = '';
-        return;
-    }
-
-    readAndCompressFile(file, input);
-}
+import { getCurrentProject, saveProjects } from './project-state.js';
+import { renderMaterialItems } from './materials.js';
 
 const MAX_PHOTO_SIZE_MB = 5;
+const MAX_WIDTH_PX = 800;
+const JPEG_QUALITY = 0.7;
+
+let currentPhotoItemIndex = null;
+
+export function triggerPhoto(index) {
+    currentPhotoItemIndex = index;
+    const input = document.getElementById('global_camera_input');
+    if (input) {
+        input.click();
+    }
+}
 
 function validateFile(file) {
     const sizeMb = file.size / 1024 / 1024;
@@ -46,6 +38,43 @@ function handleReadError(reader, input) {
     input.value = '';
 }
 
+function handleCompressionError(err, input) {
+    console.error('Fehler beim Verarbeiten des Fotos:', err);
+    alert('[FEHLER] Foto konnte nicht verarbeitet werden. Bitte erneut versuchen.');
+    input.value = '';
+}
+
+function createCompressedImage(img) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const scaleSize = MAX_WIDTH_PX / img.width;
+
+    canvas.width = MAX_WIDTH_PX;
+    canvas.height = img.height * scaleSize;
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    return canvas.toDataURL('image/jpeg', JPEG_QUALITY);
+}
+
+function saveImageToProject(dataUrl) {
+    const project = getCurrentProject();
+    if (!project?.items[currentPhotoItemIndex]) {
+        return;
+    }
+    project.items[currentPhotoItemIndex].image = dataUrl;
+    saveProjects();
+    renderMaterialItems();
+}
+
+function compressImage(dataUrl, input) {
+    const img = new Image();
+    img.onload = () => {
+        saveImageToProject(createCompressedImage(img));
+        input.value = '';
+    };
+    img.src = dataUrl;
+}
+
 function readAndCompressFile(file, input) {
     const reader = new FileReader();
 
@@ -60,100 +89,54 @@ function readAndCompressFile(file, input) {
     reader.readAsDataURL(file);
 }
 
-function compressImage(dataUrl, input) {
-    const img = new Image();
-
-    img.onload = function() {
-        const compressedData = createCompressedImage(img);
-        saveImageToProject(compressedData);
-        input.value = '';
-    };
-
-    img.src = dataUrl;
-}
-
-function createCompressedImage(img) {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const MAX_WIDTH = 800;
-    const scaleSize = MAX_WIDTH / img.width;
-
-    canvas.width = MAX_WIDTH;
-    canvas.height = img.height * scaleSize;
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    return canvas.toDataURL('image/jpeg', 0.7);
-}
-
-function handleCompressionError(err, input) {
-    console.error('Fehler beim Verarbeiten des Fotos:', err);
-    alert('[FEHLER] Foto konnte nicht verarbeitet werden. Bitte erneut versuchen.');
-    input.value = '';
-}
-
-function saveImageToProject(dataUrl) {
-    const projectsDB = window.projectsDB;
-    const currentProjectId = window.currentProjectId;
-    const activeProj = projectsDB?.find(p => p.id === currentProjectId);
-
-    if (activeProj && activeProj.items[currentPhotoItemIndex]) {
-        activeProj.items[currentPhotoItemIndex].image = dataUrl;
-        window.saveProjects?.();
-        console.log('Bild gespeichert, aktualisiere Liste...');
-        window.renderMaterialItems?.();
+export function processPhoto(input) {
+    if (!input.files || !input.files[0]) {
+        return;
     }
+    const file = input.files[0];
+    if (!validateFile(file)) {
+        input.value = '';
+        return;
+    }
+    readAndCompressFile(file, input);
 }
 
-function findActiveProject() {
-    return window.projectsDB?.find(project => project.id === window.currentProjectId);
-}
-
-function deletePhoto(index) {
+export function deletePhoto(index) {
     if (!confirm('Möchtest du dieses Foto entfernen?')) {
         return;
     }
-    const activeProject = findActiveProject();
-    if (!activeProject?.items[index]) {
+    const project = getCurrentProject();
+    if (!project?.items[index]) {
         return;
     }
-    delete activeProject.items[index].image;
-    window.saveProjects?.();
-    window.renderMaterialItems?.();
+    delete project.items[index].image;
+    saveProjects();
+    renderMaterialItems();
 }
 
-function showBigImage(src) {
-    const overlay = createImageOverlay(src);
-    document.body.appendChild(overlay);
-}
+// ========== VOLLBILD ==========
 
 function createImageOverlay(src) {
     const overlay = document.createElement('div');
-    applyOverlayStyles(overlay);
-    overlay.onclick = () => document.body.removeChild(overlay);
+    overlay.className = 'image-modal';
+    overlay.addEventListener('click', () => overlay.remove());
 
     const img = document.createElement('img');
-    applyImageStyles(img, src);
+    img.src = src;
+    img.alt = 'Foto in voller Größe';
 
-    overlay.appendChild(img);
+    overlay.append(img);
     return overlay;
 }
 
-function applyOverlayStyles(overlay) {
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.background = 'rgba(0,0,0,0.9)';
-    overlay.style.zIndex = '2000';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-}
-
-function applyImageStyles(img, src) {
-    img.src = src;
-    img.style.maxWidth = '95%';
-    img.style.maxHeight = '95%';
-    img.style.border = '2px solid white';
+/**
+ * Zeigt das Foto einer Materialposition im Vollbild
+ */
+export function showBigImage(index) {
+    const project = getCurrentProject();
+    const src = project?.items[index]?.image;
+    if (!src) {
+        return;
+    }
+    document.body.append(createImageOverlay(src));
 }

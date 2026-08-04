@@ -1,9 +1,13 @@
 // Kalender Modul
 // Monatsansicht mit Projekt-Verknüpfung
 
+import { getProjects } from './project-state.js';
+import { openProject } from './projects.js';
+import { switchTab } from '../core/navigation.js';
+
 let currentDate = new Date();
 
-function renderCalendar() {
+export function renderCalendar() {
     const grid = document.getElementById('calendar_grid');
     const title = document.getElementById('cal_month_year');
     if (!grid) {
@@ -78,17 +82,23 @@ function appendProjectDot(dayElement) {
     dayElement.appendChild(dot);
 }
 
+function markDayAsClickable(div, dateString, day) {
+    div.dataset.action = 'showEventsForDay';
+    div.dataset.isoDate = dateString;
+    div.dataset.day = String(day);
+}
+
 function createDayElement(day, year, month, today) {
     const div = document.createElement('div');
     div.className = 'cal-day';
-    div.innerText = day;
+    div.textContent = day;
     div.classList.toggle('today', isToday(day, month, year, today));
 
     const dateString = formatDateISO(year, month, day);
     if (checkForProjects(dateString)) {
         appendProjectDot(div);
     }
-    div.onclick = () => window.showEventsForDay?.(dateString, day);
+    markDayAsClickable(div, dateString, day);
     return div;
 }
 
@@ -103,53 +113,67 @@ function formatDateISO(year, month, day) {
 }
 
 function checkForProjects(dateString) {
-    const projectsDB = window.projectsDB || [];
-    return projectsDB.some(p => p.isoDate === dateString);
+    return getProjects().some(p => p.isoDate === dateString);
 }
 
-function changeMonth(dir) {
+export function changeMonth(dir) {
     currentDate.setMonth(currentDate.getMonth() + dir);
     renderCalendar();
 }
 
-function showEventsForDay(isoDate, dayNum) {
+export function showEventsForDay(isoDate, dayNum) {
     const container = document.getElementById('calendar_events');
     if (!container) {
         return;
     }
 
     const events = getEventsForDate(isoDate);
-    container.innerHTML = buildEventsHTML(events, dayNum);
+    container.replaceChildren(...buildEventElements(events, dayNum));
     highlightSelectedDay();
 }
 
 function getEventsForDate(isoDate) {
-    const projectsDB = window.projectsDB || [];
-    return projectsDB.filter(p => p.isoDate === isoDate);
+    return getProjects().filter(p => p.isoDate === isoDate);
 }
 
-function buildEventsHTML(events, dayNum) {
-    let html = `<h5>Projekte am ${dayNum}.:</h5>`;
-
-    if (events.length === 0) {
-        html += '<p style="color:#777;">Keine Einträge.</p>';
-    } else {
-        events.forEach(p => {
-            html += createEventCardHTML(p);
-        });
-    }
-
-    return html;
+function createEmptyNote() {
+    const note = document.createElement('p');
+    note.className = 'empty-hint';
+    note.textContent = 'Keine Einträge.';
+    return note;
 }
 
-function createEventCardHTML(project) {
-    return `
-        <div class="cal-event-card" onclick="window.jumpToProject(${project.id})">
-            <strong>${project.name}</strong><br>
-            <small>${project.items.length} Positionen</small>
-            <span style="float:right;">➜</span>
-        </div>
-    `;
+function createEventText(project) {
+    const name = document.createElement('strong');
+    name.textContent = project.name;
+
+    const count = document.createElement('small');
+    count.textContent = `${project.items.length} Positionen`;
+
+    const pfeil = document.createElement('span');
+    pfeil.className = 'cal-event-arrow';
+    pfeil.textContent = '➜';
+
+    return [name, document.createElement('br'), count, pfeil];
+}
+
+function createEventCard(project) {
+    const card = document.createElement('div');
+    card.className = 'cal-event-card';
+    card.dataset.action = 'jumpToProject';
+    card.dataset.projectId = String(project.id);
+    card.append(...createEventText(project));
+    return card;
+}
+
+function buildEventElements(events, dayNum) {
+    const titel = document.createElement('h5');
+    titel.textContent = `Projekte am ${dayNum}.:`;
+
+    const inhalt = events.length === 0
+        ? [createEmptyNote()]
+        : events.map(createEventCard);
+    return [titel, ...inhalt];
 }
 
 function highlightSelectedDay() {
@@ -158,13 +182,11 @@ function highlightSelectedDay() {
     });
 }
 
-function jumpToProject(id) {
-    const switchTab = window.switchTab;
+export function jumpToProject(id) {
     const navItems = document.querySelectorAll('.nav-item');
 
-    if (switchTab && navItems[1]) {
+    if (navItems[1]) {
         switchTab('material', navItems[1]);
     }
-
-    window.openProject?.(id);
+    openProject(id);
 }

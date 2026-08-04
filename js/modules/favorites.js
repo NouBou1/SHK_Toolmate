@@ -1,7 +1,10 @@
 // Favoriten System
 // Stern-Markierung und Sortierung von Rechnern
 
-function initFavorites() {
+import { loadFavorites, saveFavorites } from './favorites-storage.js';
+import { applyInitialCategory, refreshFavoriteFilter } from '../core/navigation.js';
+
+export function initFavorites() {
     const container = document.getElementById('view-rechner');
     if (!container) {
         return;
@@ -11,11 +14,7 @@ function initFavorites() {
         .forEach((card, index) => processCard(card, index, favs));
 
     reorderFavoriteCards(favs);
-    window.applyInitialCategory?.();
-}
-
-function loadFavorites() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES)) || [];
+    applyInitialCategory();
 }
 
 function rememberCardPosition(card, index, cardId) {
@@ -37,23 +36,13 @@ function processCard(card, index, favs) {
 
 function createStarElement(card, cardId, favs) {
     const star = document.createElement('span');
-    applyStarStyles(star);
+    star.className = 'fav-star';
+    star.dataset.action = 'toggleFavorite';
+    star.setAttribute('role', 'button');
+    star.setAttribute('aria-label', 'Als Favorit merken');
 
-    const isFavorite = favs.includes(cardId);
-    updateStarState(star, card, isFavorite);
-
-    star.onclick = function (e) {
-        e.stopPropagation();
-        toggleFavorite(card, cardId, star);
-    };
-
+    updateStarState(star, card, favs.includes(cardId));
     return star;
-}
-
-function applyStarStyles(star) {
-    star.style.float = 'right';
-    star.style.cursor = 'pointer';
-    star.style.fontSize = '1.2rem';
 }
 
 function updateStarState(star, card, isFavorite) {
@@ -61,15 +50,28 @@ function updateStarState(star, card, isFavorite) {
     card.classList.toggle('is-favorite', isFavorite);
 }
 
-function toggleFavorite(card, id, starEl) {
+/**
+ * Schaltet den Favoriten-Status der Karte um, zu der der Stern gehoert
+ * @param {HTMLElement} starEl - der angeklickte Stern
+ */
+export function toggleFavorite(starEl) {
+    const card = starEl.closest('.card');
+    const id = card?.dataset.cardId;
+    if (!id) {
+        return;
+    }
     const current = loadFavorites();
     const updated = current.includes(id)
         ? removeFavorite(current, id, starEl, card)
         : addFavorite(current, id, starEl, card);
 
     saveFavorites(updated);
-    reorderFavoriteCards(updated);
-    window.refreshFavoriteFilter?.();
+    applyFavoriteOrder(updated);
+}
+
+function applyFavoriteOrder(favs) {
+    reorderFavoriteCards(favs);
+    refreshFavoriteFilter();
 }
 
 function removeFavorite(favs, id, starEl, card) {
@@ -85,10 +87,6 @@ function addFavorite(favs, id, starEl, card) {
     card.classList.add('is-favorite');
     alert('Zu Favoriten hinzugefügt! (Erscheint jetzt immer oben)');
     return favs;
-}
-
-function saveFavorites(favs) {
-    localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(favs));
 }
 
 function reorderFavoriteCards(favs) {

@@ -1,9 +1,11 @@
 // Schnell-Notiz Modul
 // Auto-Save, Copy & Clear Funktionen
 
+import { STORAGE_KEYS } from '../core/constants.js';
+
 let saveTimeout;
 
-function loadQuickNote() {
+export function loadQuickNote() {
     const noteField = document.getElementById('quick_note');
     if (!noteField) {
         return;
@@ -15,7 +17,7 @@ function loadQuickNote() {
     }
 }
 
-function autoSaveNote() {
+export function autoSaveNote() {
     const noteField = document.getElementById('quick_note');
     const statusSpan = document.getElementById('note_status');
 
@@ -40,16 +42,16 @@ function showSaveStatus(statusSpan) {
     }, 1500);
 }
 
-function copyNote() {
+export function copyNote() {
     const noteField = document.getElementById('quick_note');
     if (!noteField || !noteField.value) {
         return;
     }
 
-    copyToClipboard(noteField.value);
+    copyNoteToClipboard(noteField.value);
 }
 
-function copyToClipboard(text) {
+function copyNoteToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         alert('[OK] Notiz in Zwischenablage kopiert!');
     }).catch(err => {
@@ -58,7 +60,7 @@ function copyToClipboard(text) {
     });
 }
 
-function clearNote() {
+export function clearNote() {
     const noteField = document.getElementById('quick_note');
     if (!noteField || noteField.value === '') {
         return;

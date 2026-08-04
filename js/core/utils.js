@@ -1,7 +1,7 @@
 // Utility Funktionen
 // Ergebnis-Anzeige, Teilen und allgemeine Hilfsfunktionen
 
-function showResult(elementId, text, isError = false) {
+export function showResult(elementId, text, isError = false) {
     const el = document.getElementById(elementId);
     if (!el) {
         return;
@@ -36,8 +36,8 @@ function setContent(el, text, isError) {
 function createResultHTML(htmlText) {
     return `
         <div>${htmlText}</div>
-        <div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.1); padding-top:8px;">
-            <button class="small-btn secondary" onclick="window.shareResult(this)" style="width:auto; display:inline-flex; align-items:center; gap:5px;">
+        <div class="result-actions">
+            <button class="small-btn secondary btn-share" data-action="shareResult">
                 📤 Senden / Kopieren
             </button>
         </div>
@@ -50,7 +50,7 @@ function animateUpdate(el) {
     el.classList.add('updated');
 }
 
-function shareResult(btn) {
+export function shareResult(btn) {
     const box = btn.closest('.result-box');
     const textToShare = 'SHK-Mate Ergebnis:\n\n' + box.getAttribute('data-result-text');
 
@@ -82,7 +82,7 @@ function showCopyConfirmation(btn) {
     setTimeout(() => btn.innerHTML = originalText, 2000);
 }
 
-function filterCalculators() {
+export function filterCalculators() {
     const input = document.getElementById('calcSearchInput');
     const filter = input.value.toLowerCase();
     const container = document.getElementById('view-rechner');
@@ -104,7 +104,7 @@ function filterCardsByText(cards, filter) {
     }
 }
 
-function setupAccessibilityFeatures() {
+export function setupAccessibilityFeatures() {
     const toggleableHeaders = document.querySelectorAll('[aria-controls]');
 
     toggleableHeaders.forEach(button => {
@@ -120,7 +120,7 @@ function handleAccessibleToggle(e) {
 }
 
 // Event Delegation für dynamisch hinzugefügte Felder
-function setupDynamicInputHandling() {
+export function setupDynamicInputHandling() {
     document.addEventListener('focus', (e) => {
         if (isInputElement(e.target) && !e.target.dataset.autoScrollEnabled) {
             setTimeout(() => {

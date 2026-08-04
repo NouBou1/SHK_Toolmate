@@ -1,6 +1,11 @@
 // Projekt-Speicherung
-// Laden und Sichern der Projekte im LocalStorage.
-// Beschaedigte Daten werden gesichert statt still verworfen.
+// Lesen und Schreiben im LocalStorage. Diese Datei hält keinen Zustand -
+// der liegt in project-state.js. Beschädigte Daten werden gesichert
+// statt still verworfen.
+
+import { STORAGE_KEYS } from '../core/constants.js';
+
+const WARN_SIZE_MB = 4;
 
 function backupCorruptedProjects() {
     const corrupted = localStorage.getItem(STORAGE_KEYS.PROJECTS);
@@ -26,10 +31,10 @@ function parseProjects(raw) {
 }
 
 /**
- * Laedt die Projekte aus dem LocalStorage
+ * Lädt die Projekte aus dem LocalStorage
  * @returns {Array} Projekte, im Fehlerfall eine leere Liste
  */
-function loadProjectsFromStorage() {
+export function loadProjectsFromStorage() {
     const raw = localStorage.getItem(STORAGE_KEYS.PROJECTS);
     if (!raw) {
         return [];
@@ -45,7 +50,7 @@ function loadProjectsFromStorage() {
 
 function warnOnLargeStorage(data) {
     const megabytes = new Blob([data]).size / (1024 * 1024);
-    if (megabytes > 4) {
+    if (megabytes > WARN_SIZE_MB) {
         console.warn(`[WARNUNG] localStorage ist ${megabytes.toFixed(2)}MB groß! Speicher wird knapp.`);
     }
 }
@@ -59,9 +64,9 @@ function handleSaveError(err) {
     alert('[FEHLER] Fehler beim Speichern: ' + err.message);
 }
 
-function saveProjects() {
+export function saveProjectsToStorage(projects) {
     try {
-        const data = JSON.stringify(projectsDB);
+        const data = JSON.stringify(projects);
         warnOnLargeStorage(data);
         localStorage.setItem(STORAGE_KEYS.PROJECTS, data);
     } catch (err) {

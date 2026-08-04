@@ -1,11 +1,18 @@
 // Materialliste eines Projekts
 // Positionen erfassen, anzeigen, loeschen und als Text teilen.
+//
+// Die Listeneintraege werden per DOM-API aufgebaut, nicht per innerHTML:
+// Projekt- und Materialnamen kommen aus Nutzereingaben und wuerden als
+// HTML interpretiert, sobald jemand ein < eintippt.
+
+import { getCurrentProject, getCurrentProjectId, saveProjects } from './project-state.js';
+import { resetSignature } from './signature.js';
 
 /**
  * Eine geaenderte Materialliste macht eine vorhandene Unterschrift ungueltig
  */
 function invalidateSignature() {
-    window.resetSignature?.();
+    resetSignature();
 }
 
 function readMaterialInput() {
@@ -25,21 +32,21 @@ function clearMaterialInput(input) {
     input.inputName.focus();
 }
 
-function addMaterialItem() {
-    const project = getCurrentProjectEntry();
+export function addMaterialItem() {
+    const project = getCurrentProject();
     const input = readMaterialInput();
     if (!project || !input.text) {
         return;
     }
     project.items.push({ text: input.text, amount: input.amount });
     saveProjects();
-    window.renderMaterialItems?.();
+    renderMaterialItems();
     invalidateSignature();
     clearMaterialInput(input);
 }
 
-function deleteMaterialItem(index) {
-    const project = getCurrentProjectEntry();
+export function deleteMaterialItem(index) {
+    const project = getCurrentProject();
     if (!project) {
         return;
     }
@@ -51,66 +58,81 @@ function deleteMaterialItem(index) {
 
 // ========== ANZEIGE ==========
 
-function createImageHTML(imageSrc, index) {
-    return `
-        <div style="margin-top:10px; position:relative; width:fit-content;">
-            <img src="${imageSrc}" onclick="window.showBigImage('${imageSrc}')"
-                 style="height:60px; border-radius:4px; border:1px solid #555; cursor:pointer;">
-
-            <button onclick="window.deletePhoto(${index})"
-                    style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:20px; height:20px; font-size:12px; line-height:1; padding:0; border:none;">
-                ×
-            </button>
-        </div>
-    `;
+function createActionButton(action, index, label, className) {
+    const button = document.createElement('button');
+    button.className = className;
+    button.textContent = label;
+    button.dataset.action = action;
+    button.dataset.index = String(index);
+    return button;
 }
 
-function createMaterialButtonsHTML(index) {
-    return `
-        <div class="material_item_btns">
-            <button class="small-btn secondary" onclick="window.triggerPhoto(${index})" style="margin-right:5px;">
-                📷
-            </button>
-            <button class="small-btn btn-danger" onclick="window.deleteMaterialItem(${index})">×</button>
-        </div>
-    `;
+function createItemButtons(index) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'material_item_btns';
+    wrapper.append(
+        createActionButton('triggerPhoto', index, '📷', 'small-btn secondary btn-photo'),
+        createActionButton('deleteMaterialItem', index, '×', 'small-btn btn-danger')
+    );
+    return wrapper;
 }
 
-function createMaterialRowHTML(item, index) {
-    const label = item.name || item.text || 'Ohne Namen';
-    return `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span><strong>${item.amount}x</strong> ${label}</span>
-            ${createMaterialButtonsHTML(index)}
-        </div>
-    `;
+function createItemLabel(item) {
+    const label = document.createElement('span');
+    const amount = document.createElement('strong');
+    amount.textContent = `${item.amount}x`;
+    label.append(amount, ` ${item.name || item.text || 'Ohne Namen'}`);
+    return label;
+}
+
+function createThumbnail(item, index) {
+    const image = document.createElement('img');
+    image.className = 'item-thumbnail';
+    image.src = item.image;
+    image.alt = 'Foto zur Position';
+    image.dataset.action = 'showBigImage';
+    image.dataset.index = String(index);
+    return image;
+}
+
+function createItemImage(item, index) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'item-image-wrapper';
+    wrapper.append(
+        createThumbnail(item, index),
+        createActionButton('deletePhoto', index, '×', 'btn-delete-photo')
+    );
+    return wrapper;
+}
+
+function createItemRow(item, index) {
+    const row = document.createElement('div');
+    row.className = 'material-item-row';
+    row.append(createItemLabel(item), createItemButtons(index));
+    return row;
 }
 
 function createMaterialItemElement(item, index) {
+    const column = document.createElement('div');
+    column.className = 'material-item-column';
+    column.append(createItemRow(item, index));
+    if (item.image) {
+        column.append(createItemImage(item, index));
+    }
     const li = document.createElement('li');
     li.className = 'material-item';
-    const imageHTML = item.image ? createImageHTML(item.image, index) : '';
-
-    li.innerHTML = `
-        <div style="display:flex; flex-direction:column; width:100%;">
-            ${createMaterialRowHTML(item, index)}
-            ${imageHTML}
-        </div>
-    `;
+    li.append(column);
     return li;
 }
 
-function renderMaterialItems() {
+export function renderMaterialItems() {
     const listContainer = document.getElementById('material_list_items');
     if (!listContainer) {
         return;
     }
-    listContainer.innerHTML = '';
-
-    const project = getCurrentProjectEntry();
-    project?.items.forEach((item, index) => {
-        listContainer.appendChild(createMaterialItemElement(item, index));
-    });
+    const project = getCurrentProject();
+    const eintraege = project ? project.items.map(createMaterialItemElement) : [];
+    listContainer.replaceChildren(...eintraege);
 }
 
 // ========== TEILEN ==========
@@ -135,11 +157,18 @@ function copyText(text) {
     });
 }
 
-function copyListToClipboard() {
-    if (!currentProjectId) {
+/**
+ * Materialliste als Text in die Zwischenablage (z.B. für WhatsApp)
+ *
+ * NOCH NICHT VERDRAHTET: Es gibt bisher keinen Knopf dafür. Zum Aktivieren
+ * die Funktion in app.js unter KLICK_AKTIONEN eintragen und in der
+ * Detailansicht einen Button mit passendem Aktionsnamen ergänzen.
+ */
+export function copyListToClipboard() {
+    if (!getCurrentProjectId()) {
         return;
     }
-    const project = getCurrentProjectEntry();
+    const project = getCurrentProject();
     if (!project || project.items.length === 0) {
         alert('Liste ist leer!');
         return;

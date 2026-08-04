@@ -7,6 +7,12 @@
 //   pdf-storage.js    Dokument speichern
 //   external-scripts  jsPDF nachladen
 
+import { EXTERNAL_OPT_IN_KEYS, EXTERNAL_LIB_URLS, hasExternalOptIn, askForExternalOptIn, loadExternalScriptOnce } from '../core/external-scripts.js';
+import { getCurrentProject } from './project-state.js';
+import { createPDF } from './pdf-document.js';
+import { savePDF } from './pdf-storage.js';
+import { resetSignature } from './signature.js';
+
 const JSPDF_SERVICE_NAME = 'jsPDF (PDF-Export, via jsdelivr)';
 
 function isPdfLibLoaded() {
@@ -49,9 +55,11 @@ function confirmEmptyMaterialList(project) {
     return confirm('[WARNUNG] Materialliste ist leer. Trotzdem PDF erstellen?');
 }
 
-function getCurrentProject() {
-    const projects = window.projectsDB || [];
-    const project = projects.find(entry => entry.id === window.currentProjectId);
+/**
+ * Projekt fuer den Export ermitteln - inklusive Rueckfrage bei leerer Liste
+ */
+function getProjectForExport() {
+    const project = getCurrentProject();
 
     if (!project) {
         alert('[FEHLER] Kein Projekt ausgewählt!');
@@ -74,9 +82,9 @@ async function buildAndSavePDF(project) {
     resetSignature();
 }
 
-async function exportMaterialListPDFWithSignature() {
+export async function exportMaterialListPDFWithSignature() {
     try {
-        const project = (await ensurePdfLibsLoaded()) ? getCurrentProject() : null;
+        const project = (await ensurePdfLibsLoaded()) ? getProjectForExport() : null;
         if (project) {
             await buildAndSavePDF(project);
         }
@@ -88,7 +96,7 @@ async function exportMaterialListPDFWithSignature() {
 /**
  * Export ohne Unterschrift (Button "PDF erstellen")
  */
-function exportMaterialListPDF() {
+export function exportMaterialListPDF() {
     resetSignature();
     exportMaterialListPDFWithSignature();
 }

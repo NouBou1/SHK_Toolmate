@@ -2,50 +2,66 @@
 // Verwaltung von Materialbeständen im Fahrzeug
 
 // Ab dieser Menge wird der Bestand rot hervorgehoben
+import { STORAGE_KEYS } from '../core/constants.js';
+
 const LOW_STOCK_THRESHOLD = 3;
 
 let inventoryDB = JSON.parse(localStorage.getItem(STORAGE_KEYS.INVENTORY)) || [];
 
-function renderInventory() {
+export function renderInventory() {
     const list = document.getElementById('inventory_list');
     if (!list) {
         return;
     }
-
-    list.innerHTML = '';
     list.className = 'inventory-list';
-
-    inventoryDB.forEach((item, index) => {
-        const li = createInventoryItem(item, index);
-        list.appendChild(li);
-    });
+    list.replaceChildren(...inventoryDB.map(createInventoryItem));
 }
 
-function createStockControlsHTML(item, index) {
-    const lowStockClass = item.amount < LOW_STOCK_THRESHOLD ? 'low-stock' : '';
-    return `
-        <div class="inventory-controls">
-            <button class="inventory-btn" onclick="window.updateStock(${index}, -1)">-</button>
-            <span class="inventory-count ${lowStockClass}">${item.amount}</span>
-            <button class="inventory-btn" onclick="window.updateStock(${index}, 1)">+</button>
-        </div>
-    `;
+function createStockButton(index, delta, label) {
+    const button = document.createElement('button');
+    button.className = 'inventory-btn';
+    button.textContent = label;
+    button.dataset.action = 'updateStock';
+    button.dataset.index = String(index);
+    button.dataset.delta = String(delta);
+    return button;
+}
+
+function createStockControls(item, index) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'inventory-controls';
+
+    const count = document.createElement('span');
+    count.className = 'inventory-count';
+    count.classList.toggle('low-stock', item.amount < LOW_STOCK_THRESHOLD);
+    count.textContent = item.amount;
+
+    wrapper.append(createStockButton(index, -1, '-'), count, createStockButton(index, 1, '+'));
+    return wrapper;
+}
+
+function createDeleteButton(index) {
+    const button = document.createElement('button');
+    button.className = 'btn-icon-small btn-danger btn-delete-item';
+    button.textContent = '×';
+    button.dataset.action = 'deleteInventoryItem';
+    button.dataset.index = String(index);
+    return button;
 }
 
 function createInventoryItem(item, index) {
     const li = document.createElement('li');
     li.className = 'inventory-item';
-    li.innerHTML = `
-        ${createStockControlsHTML(item, index)}
-        <div class="inventory-name">${item.name}</div>
-        <button class="btn-icon-small btn-danger" onclick="window.deleteInventoryItem(${index})" style="height:35px; width:35px;">
-            ×
-        </button>
-    `;
+
+    const name = document.createElement('div');
+    name.className = 'inventory-name';
+    name.textContent = item.name;
+
+    li.append(createStockControls(item, index), name, createDeleteButton(index));
     return li;
 }
 
-function updateStock(index, change) {
+export function updateStock(index, change) {
     inventoryDB[index].amount += change;
 
     if (inventoryDB[index].amount < 0) {
@@ -64,7 +80,7 @@ function readInventoryInput() {
     return { nameInput, amountInput, name: nameInput.value.trim(), amount };
 }
 
-function addInventoryItem() {
+export function addInventoryItem() {
     const input = readInventoryInput();
     if (!input.name) {
         return;
@@ -77,7 +93,7 @@ function addInventoryItem() {
     input.amountInput.value = '';
 }
 
-function deleteInventoryItem(index) {
+export function deleteInventoryItem(index) {
     if (confirm('Löschen?')) {
         inventoryDB.splice(index, 1);
         saveInventory();

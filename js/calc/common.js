@@ -16,16 +16,18 @@
 //   update      Ergebnis -> zusaetzliche DOM-Ausgabe neben dem Ergebnisfeld
 // ==========================================
 
-function handleCalculationError(calculatorName, error, resultId) {
+import { showResult } from '../core/utils.js';
+
+export function handleCalculationError(calculatorName, error, resultId) {
     console.error(`Fehler in ${calculatorName}:`, error);
     showResult(resultId, 'Fehler bei der Berechnung', true);
 }
 
-function isWarningResult(calculator, result) {
+export function isWarningResult(calculator, result) {
     return calculator.warn ? calculator.warn(result) === true : false;
 }
 
-function renderCalculatorResult(calculator, result) {
+export function renderCalculatorResult(calculator, result) {
     if (calculator.update) {
         calculator.update(result);
     }
@@ -37,7 +39,7 @@ function renderCalculatorResult(calculator, result) {
  * Fuehrt einen Rechner aus: Eingaben lesen, pruefen, rechnen, anzeigen.
  * @param {Object} calculator - Rechner-Definition (siehe Dateikopf)
  */
-function runCalculator(calculator) {
+export function runCalculator(calculator) {
     try {
         const inputs = calculator.readInputs();
         const check = calculator.validate(inputs);

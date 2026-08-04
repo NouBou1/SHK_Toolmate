@@ -2,6 +2,8 @@
 // Setzt den Rapport aus Kopfbereich, Materialliste und Unterschrift zusammen.
 // Reine Layout-Aufgabe - Speichern uebernimmt pdf-storage.js.
 
+import { getSignatureDataURL } from './signature.js';
+
 const PDF_MARGIN_MM = 15;
 const PDF_START_Y = 20;
 const PDF_ROW_HEIGHT = 6;
@@ -100,7 +102,7 @@ function addPDFSignature(pdf, yPosition) {
  * Baut das komplette Rapport-PDF auf
  * @returns {Object|null} jsPDF-Dokument oder null, wenn die Bibliothek fehlt
  */
-function createPDF(project) {
+export function createPDF(project) {
     const pdf = createPdfInstance();
     if (!pdf) {
         return null;

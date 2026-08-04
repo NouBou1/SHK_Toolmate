@@ -7,13 +7,16 @@
 
 // ========== MAG (Membran-Ausdehnungsgefaess) ==========
 
-function readMagInputs() {
+import { runCalculator } from './common.js';
+import { INPUT_LIMITS, MAG_CONFIG } from '../core/constants.js';
+
+export function readMagInputs() {
     return {
         staticHeight: parseFloat(document.getElementById('mag_hoehe').value)
     };
 }
 
-function validateMagInputs(inputs) {
+export function validateMagInputs(inputs) {
     if (isNaN(inputs.staticHeight) || inputs.staticHeight <= 0) {
         return { valid: false, error: 'Bitte gültige Höhe eingeben (> 0 m)' };
     }
@@ -23,13 +26,13 @@ function validateMagInputs(inputs) {
     return { valid: true };
 }
 
-function calculateMagPressure(inputs) {
+export function calculateMagPressure(inputs) {
     const staticBar = inputs.staticHeight / MAG_CONFIG.METERS_TO_BAR;
     const preCharge = Math.round((staticBar + MAG_CONFIG.SAFETY_OFFSET_BAR) * 10) / 10;
     return { preCharge, fillPressure: preCharge + MAG_CONFIG.FILL_PRESSURE_OFFSET_BAR };
 }
 
-function formatMagResult(result) {
+export function formatMagResult(result) {
     return `Vordruck (P0): ${result.preCharge} bar\n` +
            `Anlagen-Fülldruck: ca. ${result.fillPressure.toFixed(1)} bar\n\n` +
            'Hinweis: P0 vor Montage kalt einstellen! (VDI 4708)';
@@ -40,7 +43,7 @@ function formatMagResult(result) {
  * Formel: P0 = (h / 10) + 0,3 bar
  * @see VDI 4708
  */
-function calcMAG() {
+export function calcMAG() {
     runCalculator({
         name: 'calcMAG',
         resultId: 'res_mag',
@@ -53,7 +56,7 @@ function calcMAG() {
 
 // ========== LIEGENDER TANK ==========
 
-function readTankInputs() {
+export function readTankInputs() {
     return {
         diameter: parseFloat(document.getElementById('tank_d').value),
         length: parseFloat(document.getElementById('tank_l').value),
@@ -61,7 +64,7 @@ function readTankInputs() {
     };
 }
 
-function validateTankInputs(inputs) {
+export function validateTankInputs(inputs) {
     const { diameter, length, fillHeight } = inputs;
     if (isNaN(diameter) || isNaN(length) || isNaN(fillHeight)) {
         return { valid: false, error: 'Bitte alle Werte eingeben' };
@@ -78,7 +81,7 @@ function validateTankInputs(inputs) {
 /**
  * Flaeche des gefuellten Kreisabschnitts (Kreissegment)
  */
-function calculateSegmentArea(radius, fillHeight) {
+export function calculateSegmentArea(radius, fillHeight) {
     if (fillHeight === radius * 2) {
         return Math.PI * radius * radius;
     }
@@ -88,7 +91,7 @@ function calculateSegmentArea(radius, fillHeight) {
     return circularSector - triangle;
 }
 
-function calculateTankVolume(inputs) {
+export function calculateTankVolume(inputs) {
     const radius = inputs.diameter / 2;
     const filledArea = calculateSegmentArea(radius, inputs.fillHeight);
     const liters = (filledArea * inputs.length) / 1000;
@@ -96,7 +99,7 @@ function calculateTankVolume(inputs) {
     return { liters, capacity, percent: (liters / capacity) * 100 };
 }
 
-function formatTankResult(result) {
+export function formatTankResult(result) {
     return `Aktueller Inhalt: ${Math.round(result.liters)} Liter\n` +
            `Füllstand: ${result.percent.toFixed(1)} %\n` +
            `(Gesamtkapazität: ${Math.round(result.capacity)} Liter)`;
@@ -105,7 +108,7 @@ function formatTankResult(result) {
 /**
  * Fuellstand eines liegenden zylindrischen Tanks
  */
-function calcTank() {
+export function calcTank() {
     runCalculator({
         name: 'calcTank',
         resultId: 'res_tank',

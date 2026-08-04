@@ -6,18 +6,21 @@
 
 // ========== ROHRINHALT ==========
 
-function readPipeVolumeInputs() {
+import { runCalculator } from './common.js';
+import { INPUT_LIMITS, PIPE_VOLUME_FACTORS } from '../core/constants.js';
+
+export function readPipeVolumeInputs() {
     return {
         length: parseFloat(document.getElementById('vol_len').value),
         dn: parseFloat(document.getElementById('vol_dim').value)
     };
 }
 
-function getPipeVolumeFactor(dn) {
+export function getPipeVolumeFactor(dn) {
     return PIPE_VOLUME_FACTORS[dn] || null;
 }
 
-function validatePipeVolumeInputs(inputs) {
+export function validatePipeVolumeInputs(inputs) {
     if (isNaN(inputs.length) || inputs.length <= 0) {
         return { valid: false, error: 'Bitte gültige Länge eingeben' };
     }
@@ -30,12 +33,12 @@ function validatePipeVolumeInputs(inputs) {
     return { valid: true };
 }
 
-function calculatePipeVolume(inputs) {
+export function calculatePipeVolume(inputs) {
     const litersPerMeter = getPipeVolumeFactor(inputs.dn);
     return { volume: inputs.length * litersPerMeter, litersPerMeter, dn: inputs.dn };
 }
 
-function formatPipeVolumeResult(result) {
+export function formatPipeVolumeResult(result) {
     return `Rohrinhalt: ${result.volume.toFixed(2)} Liter\n` +
            `(DN ${result.dn}: ca. ${result.litersPerMeter} l/m)\n\n` +
            'Hinweis: Wichtig für Spülvolumen & Fülldruck';
@@ -44,7 +47,7 @@ function formatPipeVolumeResult(result) {
 /**
  * Wasserinhalt einer Leitung nach Nennweite
  */
-function calcPipeVol() {
+export function calcPipeVol() {
     runCalculator({
         name: 'calcPipeVol',
         resultId: 'res_pipevol',
@@ -57,7 +60,7 @@ function calcPipeVol() {
 
 // ========== FLIESSGESCHWINDIGKEIT ==========
 
-function readFlowSpeedInputs() {
+export function readFlowSpeedInputs() {
     return {
         volume: parseFloat(document.getElementById('flow_vol').value),
         unit: document.getElementById('flow_unit').value,
@@ -65,7 +68,7 @@ function readFlowSpeedInputs() {
     };
 }
 
-function validateFlowSpeedInputs(inputs) {
+export function validateFlowSpeedInputs(inputs) {
     if (isNaN(inputs.volume) || inputs.volume <= 0) {
         return { valid: false, error: 'Bitte gültigen Durchfluss eingeben' };
     }
@@ -75,7 +78,7 @@ function validateFlowSpeedInputs(inputs) {
     return { valid: true };
 }
 
-function convertToCubicMetersPerSecond(volume, unit) {
+export function convertToCubicMetersPerSecond(volume, unit) {
     const converted = {
         'l_h': volume / 1000 / 3600,
         'l_min': volume / 1000 / 60,
@@ -84,7 +87,7 @@ function convertToCubicMetersPerSecond(volume, unit) {
     return converted[unit] || 0;
 }
 
-function calculateFlowSpeed(volume, unit, dn) {
+export function calculateFlowSpeed(volume, unit, dn) {
     const cubicMetersPerSecond = convertToCubicMetersPerSecond(volume, unit);
     const radiusMeters = (dn / 1000) / 2;
     const area = Math.PI * radiusMeters * radiusMeters;
@@ -94,7 +97,7 @@ function calculateFlowSpeed(volume, unit, dn) {
 /**
  * Prueft die Geschwindigkeit gegen die Grenzwerte des jeweiligen Mediums
  */
-function getSpeedWarning(speed, unit) {
+export function getSpeedWarning(speed, unit) {
     const limits = {
         'l_h': { limit: 1.0, reason: 'Geräuschgefahr Heizung!' },
         'l_min': { limit: 2.0, reason: 'Druckschlag/Korrosion!' },
@@ -107,12 +110,12 @@ function getSpeedWarning(speed, unit) {
     return { isCritical: false, note: '' };
 }
 
-function calculateFlowSpeedResult(inputs) {
+export function calculateFlowSpeedResult(inputs) {
     const speed = calculateFlowSpeed(inputs.volume, inputs.unit, inputs.dn);
     return { speed, ...getSpeedWarning(speed, inputs.unit) };
 }
 
-function formatFlowSpeedResult(result) {
+export function formatFlowSpeedResult(result) {
     return `Geschwindigkeit: ${result.speed.toFixed(2)} m/s${result.note}`;
 }
 
@@ -121,7 +124,7 @@ function formatFlowSpeedResult(result) {
  * Formel: v = V̇ / A
  * @see VDI 2035
  */
-function calcFlowSpeed() {
+export function calcFlowSpeed() {
     runCalculator({
         name: 'calcFlowSpeed',
         resultId: 'res_flow',

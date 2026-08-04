@@ -1,7 +1,7 @@
 // Wasserwaage Modul
 // Device Orientation API für Level-Funktion
 
-function requestLevelPerm() {
+export function requestLevelPerm() {
     if (hasDeviceOrientationPermission()) {
         requestIOSPermission();
     } else {

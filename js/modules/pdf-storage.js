@@ -88,7 +88,7 @@ function getNativeFilesystem() {
     return isCapacitor() ? window.Capacitor.Plugins?.Filesystem : null;
 }
 
-async function savePDF(pdf, projectName) {
+export async function savePDF(pdf, projectName) {
     const Filesystem = getNativeFilesystem();
     if (Filesystem) {
         await saveNativePDF(pdf, projectName, Filesystem);

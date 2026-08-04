@@ -1,6 +1,8 @@
 // Wartungs-Checkliste Modul
 // Verwaltung der Wartungsaufgaben mit Fortschrittsanzeige
 
+import { STORAGE_KEYS } from '../core/constants.js';
+
 const checklistData = [
     'Anlage spannungsfrei schalten',
     'Gashahn schließen',
@@ -15,7 +17,7 @@ const checklistData = [
     'Aufkleber anbringen'
 ];
 
-function loadChecklist() {
+export function loadChecklist() {
     const container = document.getElementById('checklist_container');
     if (!container) {
         return;
@@ -45,25 +47,24 @@ function renderChecklistItems(container, saved) {
     return doneCount;
 }
 
-function createChecklistItem(task, index, isDone) {
-    const div = document.createElement('div');
-    applyChecklistItemStyles(div);
-    div.onclick = () => toggleCheck(index);
+function createChecklistLabel(task, isDone) {
+    const box = document.createElement('span');
+    box.className = 'checklist-box';
+    box.textContent = isDone ? '[X]' : '[ ]';
 
-    div.innerHTML = `
-        <span style="font-size:1.5rem; margin-right:10px;">${isDone ? '[X]' : '[ ]'}</span>
-        <span style="${isDone ? 'text-decoration:line-through; color:#777;' : ''}">${task}</span>
-    `;
-
-    return div;
+    const label = document.createElement('span');
+    label.classList.toggle('is-done', isDone);
+    label.textContent = task;
+    return [box, label];
 }
 
-function applyChecklistItemStyles(div) {
-    div.style.padding = '10px';
-    div.style.borderBottom = '1px solid #444';
-    div.style.display = 'flex';
-    div.style.alignItems = 'center';
-    div.style.cursor = 'pointer';
+function createChecklistItem(task, index, isDone) {
+    const div = document.createElement('div');
+    div.className = 'checklist-item';
+    div.dataset.action = 'toggleCheck';
+    div.dataset.index = String(index);
+    div.append(...createChecklistLabel(task, isDone));
+    return div;
 }
 
 function updateProgressBar(doneCount) {
@@ -74,7 +75,7 @@ function updateProgressBar(doneCount) {
     }
 }
 
-function toggleCheck(index) {
+export function toggleCheck(index) {
     const saved = getSavedChecklist();
 
     if (saved[index]) {
@@ -91,7 +92,7 @@ function saveChecklist(data) {
     localStorage.setItem(STORAGE_KEYS.MAINTENANCE, JSON.stringify(data));
 }
 
-function resetChecklist() {
+export function resetChecklist() {
     if (confirm('Alles zurücksetzen?')) {
         localStorage.removeItem(STORAGE_KEYS.MAINTENANCE);
         loadChecklist();

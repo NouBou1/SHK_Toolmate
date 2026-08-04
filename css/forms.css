@@ -99,3 +99,17 @@ button.secondary {
     background-color: rgba(200, 0, 0, 0.2) !important;
     border-color: #ff6b6b !important;
 }
+
+/* Aktionsleiste unter einem Rechenergebnis */
+.result-actions {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-share {
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}

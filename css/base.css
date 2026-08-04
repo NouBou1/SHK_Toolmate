@@ -234,3 +234,28 @@ header h1 {
     align-items: center;
     gap: 8px;
 }
+
+/* ========== GEMEINSAME BAUSTEINE ========== */
+/* Ersetzen Inline-Styles, die vorher im HTML bzw. in JS-Templates standen */
+
+.empty-hint {
+    color: #aaa;
+    text-align: center;
+}
+
+/* Zwei Felder nebeneinander (z.B. Vorlauf / Ruecklauf) */
+.field-row {
+    display: flex;
+    gap: 10px;
+}
+
+.u-flex-1 {
+    flex: 1;
+}
+
+/* Erklaerender Text unter einer Karten-Ueberschrift */
+.card-hint {
+    margin-top: -10px;
+    font-size: 0.8rem;
+    color: #aaa;
+}

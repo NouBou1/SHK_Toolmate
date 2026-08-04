@@ -216,3 +216,68 @@
 }
 
 /* Styling für die technischen Tabellen */
+
+/* ========== CHECKLISTE ========== */
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.checklist-box {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+.checklist-item .is-done {
+    text-decoration: line-through;
+    color: #777;
+}
+
+/* ========== PROJEKT- UND MATERIALLISTE ========== */
+
+.project-item.is-archived {
+    opacity: 0.7;
+}
+
+.project-meta {
+    color: #aaa;
+}
+
+.btn-restore {
+    background-color: #28a745;
+    color: white;
+}
+
+.material-item-column {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.material-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-photo {
+    margin-right: 5px;
+}
+
+.item-image-wrapper {
+    position: relative;
+    width: fit-content;
+    margin-top: 10px;
+}
+
+.new-project-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}

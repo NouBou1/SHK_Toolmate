@@ -7,25 +7,27 @@
 
 // ========== VERSATZBOGEN 45° ==========
 
-function readOffsetInputs() {
+import { runCalculator } from './common.js';
+
+export function readOffsetInputs() {
     return {
         offset: parseFloat(document.getElementById('offset_cm').value)
     };
 }
 
-function validateOffsetInputs(inputs) {
+export function validateOffsetInputs(inputs) {
     if (isNaN(inputs.offset) || inputs.offset <= 0) {
         return { valid: false, error: 'Bitte gültigen Versatz eingeben' };
     }
     return { valid: true };
 }
 
-function calculateOffset(inputs) {
+export function calculateOffset(inputs) {
     const SQRT_2 = 1.4142;
     return { pipeLength: inputs.offset * SQRT_2 };
 }
 
-function formatOffsetResult(result) {
+export function formatOffsetResult(result) {
     return `Rohrlänge (Mitte-Mitte): ${result.pipeLength.toFixed(1)} cm\n` +
            '\n[ACHTUNG] Einstecktiefe der Fittings noch abziehen!';
 }
@@ -33,7 +35,7 @@ function formatOffsetResult(result) {
 /**
  * Rohrlaenge im 45°-Versatzbogen (Hypotenuse)
  */
-function calcOffset() {
+export function calcOffset() {
     runCalculator({
         name: 'calcOffset',
         resultId: 'res_offset',
@@ -46,14 +48,14 @@ function calcOffset() {
 
 // ========== GEFÄLLE ==========
 
-function readSlopeInputs() {
+export function readSlopeInputs() {
     return {
         length: parseFloat(document.getElementById('slope_len').value),
         percent: parseFloat(document.getElementById('slope_perc').value)
     };
 }
 
-function validateSlopeInputs(inputs) {
+export function validateSlopeInputs(inputs) {
     if (isNaN(inputs.length) || inputs.length <= 0) {
         return { valid: false, error: 'Bitte gültige Länge eingeben' };
     }
@@ -63,12 +65,12 @@ function validateSlopeInputs(inputs) {
     return { valid: true };
 }
 
-function calculateSlope(inputs) {
+export function calculateSlope(inputs) {
     const dropCm = inputs.length * inputs.percent;
     return { dropCm, dropMm: dropCm * 10 };
 }
 
-function formatSlopeResult(result) {
+export function formatSlopeResult(result) {
     return `Höhenunterschied: ${result.dropCm.toFixed(1)} cm\n` +
            `(${result.dropMm} mm am Zollstock)`;
 }
@@ -76,7 +78,7 @@ function formatSlopeResult(result) {
 /**
  * Hoehenunterschied einer Leitung bei vorgegebenem Gefaelle
  */
-function calcSlope() {
+export function calcSlope() {
     runCalculator({
         name: 'calcSlope',
         resultId: 'res_slope',
@@ -89,14 +91,14 @@ function calcSlope() {
 
 // ========== KERNBOHRUNG ==========
 
-function readCoreDrillInputs() {
+export function readCoreDrillInputs() {
     return {
         dn: parseFloat(document.getElementById('kb_dn').value),
         insulation: parseFloat(document.getElementById('kb_iso').value)
     };
 }
 
-function validateCoreDrillInputs(inputs) {
+export function validateCoreDrillInputs(inputs) {
     if (isNaN(inputs.dn) || inputs.dn <= 0) {
         return { valid: false, error: 'Bitte gültigen DN-Wert wählen' };
     }
@@ -106,14 +108,14 @@ function validateCoreDrillInputs(inputs) {
     return { valid: true };
 }
 
-function calculateCoreDrill(inputs) {
+export function calculateCoreDrill(inputs) {
     const CLEARANCE_MM = 30;
     const outerDiameter = inputs.dn + (2 * inputs.insulation);
     const requiredHole = outerDiameter + CLEARANCE_MM;
     return { outerDiameter, recommendation: Math.ceil(requiredHole / 10) * 10 };
 }
 
-function formatCoreDrillResult(result) {
+export function formatCoreDrillResult(result) {
     return `Rohr + Dämmung: ${result.outerDiameter} mm\n` +
            `Empfohlene Kernbohrung: ∅ ${result.recommendation} mm\n` +
            '(inkl. Montagespielraum)';
@@ -122,7 +124,7 @@ function formatCoreDrillResult(result) {
 /**
  * Durchmesser der Kernbohrung inkl. Daemmung und Montagespiel
  */
-function calcCoreDrill() {
+export function calcCoreDrill() {
     runCalculator({
         name: 'calcCoreDrill',
         resultId: 'res_kb',
@@ -136,37 +138,37 @@ function calcCoreDrill() {
 // ========== ROHRSCHELLEN-ABSTAND ==========
 
 // Maximale Abstaende in Metern, aufsteigend nach Nennweite
-const CLIP_DISTANCES = {
+export const CLIP_DISTANCES = {
     plastic: [0.80, 1.00, 1.25, 1.50, 1.75, 2.00],
     cu: [1.25, 1.50, 1.75, 2.00, 2.25, 2.75],
     steel: [1.50, 2.00, 2.25, 2.75, 3.00, 3.25]
 };
 
 // Obergrenzen der Nennweiten-Klassen; groessere DN nutzen den letzten Wert
-const CLIP_DN_THRESHOLDS = [15, 20, 28, 35, 42];
+export const CLIP_DN_THRESHOLDS = [15, 20, 28, 35, 42];
 
-function readClipDistanceInputs() {
+export function readClipDistanceInputs() {
     return {
         material: document.getElementById('clip_mat').value,
         dn: parseInt(document.getElementById('clip_dn').value, 10)
     };
 }
 
-function validateClipDistanceInputs(inputs) {
+export function validateClipDistanceInputs(inputs) {
     if (isNaN(inputs.dn) || inputs.dn <= 0) {
         return { valid: false, error: 'Bitte gültigen DN-Wert wählen' };
     }
     return { valid: true };
 }
 
-function calculateClipDistance(inputs) {
+export function calculateClipDistance(inputs) {
     const distances = CLIP_DISTANCES[inputs.material] || CLIP_DISTANCES.cu;
     const classIndex = CLIP_DN_THRESHOLDS.findIndex(threshold => inputs.dn <= threshold);
     const distance = classIndex === -1 ? distances[distances.length - 1] : distances[classIndex];
     return { distance };
 }
 
-function formatClipDistanceResult(result) {
+export function formatClipDistanceResult(result) {
     return `Max. Abstand: ${result.distance.toFixed(2)} Meter\n` +
            '(Empfehlung für waagerechte Montage)';
 }
@@ -174,7 +176,7 @@ function formatClipDistanceResult(result) {
 /**
  * Maximaler Rohrschellen-Abstand nach Material und Nennweite
  */
-function calcClipDist() {
+export function calcClipDist() {
     runCalculator({
         name: 'calcClipDist',
         resultId: 'res_clip',

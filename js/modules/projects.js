@@ -2,14 +2,16 @@
 // SHK-MATE - Projektverwaltung
 // ==========================================
 // Baustellen anlegen, oeffnen, archivieren und loeschen.
-// Materialliste: materials.js | Speichern: projects-storage.js
+// Zustand: project-state.js | Materialliste: materials.js
 // ==========================================
 
-const MAX_PROJECT_NAME_LENGTH = 50;
+import {
+    getProjects, getCurrentProject, getViewMode, setViewMode,
+    setCurrentProjectId, saveProjects, addProjectEntry, removeProjectEntry
+} from './project-state.js';
+import { renderMaterialItems } from './materials.js';
 
-let projectsDB = loadProjectsFromStorage();
-let currentProjectId = null;
-let currentViewMode = 'active';
+const MAX_PROJECT_NAME_LENGTH = 50;
 
 // ========== ANSICHT UMSCHALTEN ==========
 
@@ -28,12 +30,12 @@ function updateViewButtons(mode) {
 function toggleNewProjectInput(mode) {
     const wrapper = document.getElementById('new_project_wrapper');
     if (wrapper) {
-        wrapper.style.display = (mode === 'active') ? 'flex' : 'none';
+        wrapper.classList.toggle('u-hidden', mode !== 'active');
     }
 }
 
-function setProjectView(mode) {
-    currentViewMode = mode;
+export function setProjectView(mode) {
+    setViewMode(mode);
     updateViewButtons(mode);
     toggleNewProjectInput(mode);
     renderProjectList();
@@ -42,7 +44,7 @@ function setProjectView(mode) {
 // ========== PROJEKT ANLEGEN ==========
 
 function isDuplicateProjectName(name) {
-    return projectsDB.some(project =>
+    return getProjects().some(project =>
         project.name.toLowerCase() === name.toLowerCase() && !project.archived
     );
 }
@@ -84,7 +86,7 @@ function createProject(name, isoDate) {
 }
 
 function showNewProject() {
-    if (currentViewMode !== 'active') {
+    if (getViewMode() !== 'active') {
         setProjectView('active');
     } else {
         renderProjectList();
@@ -96,7 +98,7 @@ function clearProjectInputs(inputName, inputDate) {
     inputDate.value = '';
 }
 
-function addProject() {
+export function addProject() {
     const inputName = document.getElementById('new_project_name');
     const inputDate = document.getElementById('new_project_date');
     const name = inputName.value.trim();
@@ -104,8 +106,7 @@ function addProject() {
     if (!validateProjectName(name)) {
         return;
     }
-    projectsDB.unshift(createProject(name, inputDate.value || getTodayISO()));
-    saveProjects();
+    addProjectEntry(createProject(name, inputDate.value || getTodayISO()));
     showNewProject();
     clearProjectInputs(inputName, inputDate);
 }
@@ -113,57 +114,66 @@ function addProject() {
 // ========== PROJEKTLISTE ==========
 
 function filterProjects() {
-    return projectsDB.filter(project =>
-        currentViewMode === 'active' ? !project.archived : Boolean(project.archived)
+    return getProjects().filter(project =>
+        getViewMode() === 'active' ? !project.archived : Boolean(project.archived)
     );
 }
 
 function showEmptyMessage(container) {
-    const message = currentViewMode === 'active'
+    const message = getViewMode() === 'active'
         ? 'Keine offenen Baustellen.'
         : 'Archiv leer.';
-    container.innerHTML = `<p style="color:#aaa; text-align:center;">${message}</p>`;
+    const hinweis = document.createElement('p');
+    hinweis.className = 'empty-hint';
+    hinweis.textContent = message;
+    container.replaceChildren(hinweis);
 }
 
-function createProjectItemHTML(project) {
-    return `
-        <div>
-            <strong>${project.name}</strong><br>
-            <small style="color:#aaa;">${project.date} • ${project.items.length} Pos.</small>
-        </div>
-        <span>➜</span>
-    `;
+function createProjectSummary(project) {
+    const wrapper = document.createElement('div');
+    const name = document.createElement('strong');
+    name.textContent = project.name;
+
+    const meta = document.createElement('small');
+    meta.className = 'project-meta';
+    meta.textContent = `${project.date} • ${project.items.length} Pos.`;
+
+    wrapper.append(name, document.createElement('br'), meta);
+    return wrapper;
 }
 
 function createProjectItem(project) {
     const div = document.createElement('div');
     div.className = 'project-item';
-    div.style.opacity = project.archived ? '0.7' : '';
-    div.innerHTML = createProjectItemHTML(project);
-    div.onclick = () => openProject(project.id);
+    div.classList.toggle('is-archived', Boolean(project.archived));
+
+    const pfeil = document.createElement('span');
+    pfeil.textContent = '➜';
+    div.append(createProjectSummary(project), pfeil);
+
+    div.dataset.action = 'openProject';
+    div.dataset.projectId = String(project.id);
     return div;
 }
 
-function renderProjectList() {
+export function renderProjectList() {
     const container = document.getElementById('project_list_container');
     if (!container) {
         return;
     }
-    container.innerHTML = '';
     const projects = filterProjects();
-
     if (projects.length === 0) {
         showEmptyMessage(container);
         return;
     }
-    projects.forEach(project => container.appendChild(createProjectItem(project)));
+    container.replaceChildren(...projects.map(createProjectItem));
 }
 
 // ========== PROJEKT ÖFFNEN / SCHLIESSEN ==========
 
 function switchView(view) {
-    document.getElementById('mat-overview').style.display = view === 'overview' ? 'block' : 'none';
-    document.getElementById('mat-detail').style.display = view === 'detail' ? 'block' : 'none';
+    document.getElementById('mat-overview').classList.toggle('u-hidden', view !== 'overview');
+    document.getElementById('mat-detail').classList.toggle('u-hidden', view !== 'detail');
 }
 
 function updateArchiveButton(isArchived) {
@@ -171,42 +181,37 @@ function updateArchiveButton(isArchived) {
     if (!btn) {
         return;
     }
-    btn.innerText = isArchived ? '🔄 Wiederherstellen' : '📥 Ins Archiv verschieben';
-    btn.style.backgroundColor = isArchived ? '#28a745' : '';
-    btn.style.color = isArchived ? 'white' : '';
+    btn.textContent = isArchived ? '🔄 Wiederherstellen' : '📥 Ins Archiv verschieben';
+    btn.classList.toggle('btn-restore', Boolean(isArchived));
 }
 
 function updateProjectDetails(project) {
-    document.getElementById('detail_title').innerText = project.name;
-    document.getElementById('detail_date').innerText = 'Erstellt: ' + project.date;
+    document.getElementById('detail_title').textContent = project.name;
+    document.getElementById('detail_date').textContent = 'Erstellt: ' + project.date;
     updateArchiveButton(project.archived);
 }
 
-function getCurrentProjectEntry() {
-    return projectsDB.find(project => project.id === currentProjectId);
-}
-
-function openProject(id) {
-    currentProjectId = id;
-    const project = getCurrentProjectEntry();
+export function openProject(id) {
+    setCurrentProjectId(id);
+    const project = getCurrentProject();
     if (!project) {
         return;
     }
     switchView('detail');
     updateProjectDetails(project);
-    window.renderMaterialItems?.();
+    renderMaterialItems();
 }
 
-function closeProject() {
-    currentProjectId = null;
+export function closeProject() {
+    setCurrentProjectId(null);
     switchView('overview');
     renderProjectList();
 }
 
 // ========== ARCHIVIEREN / LÖSCHEN ==========
 
-function toggleArchiveStatus() {
-    const project = getCurrentProjectEntry();
+export function toggleArchiveStatus() {
+    const project = getCurrentProject();
     if (!project) {
         return;
     }
@@ -228,12 +233,11 @@ function confirmDeletion(project) {
     return secondConfirm && confirm('Wirklich?');
 }
 
-function deleteCurrentProject() {
-    const project = getCurrentProjectEntry();
+export function deleteCurrentProject() {
+    const project = getCurrentProject();
     if (!project || !confirmDeletion(project)) {
         return;
     }
-    projectsDB.splice(projectsDB.indexOf(project), 1);
-    saveProjects();
+    removeProjectEntry(project);
     closeProject();
 }

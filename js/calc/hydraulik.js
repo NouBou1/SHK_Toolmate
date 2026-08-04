@@ -7,14 +7,17 @@
 
 // ========== VOLUMENSTROM ==========
 
-function readVolumenstromInputs() {
+import { runCalculator } from './common.js';
+import { WATER_HEAT_CAPACITY } from '../core/constants.js';
+
+export function readVolumenstromInputs() {
     return {
         power: parseFloat(document.getElementById('vs_kw').value),
         spread: parseFloat(document.getElementById('vs_dt').value)
     };
 }
 
-function validateVolumenstromInputs(inputs) {
+export function validateVolumenstromInputs(inputs) {
     if (isNaN(inputs.power) || inputs.power <= 0) {
         return { valid: false, error: 'Bitte gültige Leistung eingeben' };
     }
@@ -27,12 +30,12 @@ function validateVolumenstromInputs(inputs) {
     return { valid: true };
 }
 
-function calculateVolumeFlow(inputs) {
+export function calculateVolumeFlow(inputs) {
     const litersPerHour = (inputs.power * 1000) / (WATER_HEAT_CAPACITY * inputs.spread);
     return { litersPerHour: Math.round(litersPerHour) };
 }
 
-function formatVolumenstromResult(result) {
+export function formatVolumenstromResult(result) {
     return `Volumenstrom: ${result.litersPerHour.toLocaleString('de-DE')} l/h\n` +
            `(= ${(result.litersPerHour / 1000).toFixed(2)} m³/h)`;
 }
@@ -42,7 +45,7 @@ function formatVolumenstromResult(result) {
  * Formel: V̇ = Q / (c × ΔT)
  * @see DIN EN 12831
  */
-function calcVolumenstrom() {
+export function calcVolumenstrom() {
     runCalculator({
         name: 'calcVolumenstrom',
         resultId: 'res_volumen',
@@ -55,7 +58,7 @@ function calcVolumenstrom() {
 
 // ========== KV-WERT / VENTILSTUFE ==========
 
-function readKvInputs() {
+export function readKvInputs() {
     return {
         watt: parseFloat(document.getElementById('kv_watt').value),
         spread: parseFloat(document.getElementById('kv_dt').value),
@@ -63,7 +66,7 @@ function readKvInputs() {
     };
 }
 
-function validateKvInputs(inputs) {
+export function validateKvInputs(inputs) {
     if (isNaN(inputs.watt) || inputs.watt <= 0) {
         return { valid: false, error: 'Bitte gültige Leistung eingeben' };
     }
@@ -76,7 +79,7 @@ function validateKvInputs(inputs) {
     return { valid: true };
 }
 
-function calculateKv(inputs) {
+export function calculateKv(inputs) {
     const litersPerHour = inputs.watt / (WATER_HEAT_CAPACITY * inputs.spread);
     const cubicMetersPerHour = litersPerHour / 1000;
     const pressureDropBar = inputs.pressureDropMbar / 1000;
@@ -86,7 +89,7 @@ function calculateKv(inputs) {
 /**
  * Ordnet einem Kv-Wert die Voreinstellung des Thermostatventils zu
  */
-function getValveSetting(kv) {
+export function getValveSetting(kv) {
     const steps = [
         { below: 0.13, setting: '1' },
         { below: 0.28, setting: '2' },
@@ -99,12 +102,12 @@ function getValveSetting(kv) {
     return match ? match.setting : 'Offen (7/N)';
 }
 
-function calculateValveSetting(inputs) {
+export function calculateValveSetting(inputs) {
     const flow = calculateKv(inputs);
     return { ...flow, setting: getValveSetting(flow.kv) };
 }
 
-function updateValveVisual(result) {
+export function updateValveVisual(result) {
     const visual = document.getElementById('valve_visual');
     if (visual) {
         visual.innerText = result.setting;
@@ -112,7 +115,7 @@ function updateValveVisual(result) {
     }
 }
 
-function formatKvResult(result) {
+export function formatKvResult(result) {
     return `Durchfluss: ${Math.round(result.litersPerHour)} l/h\n` +
            `Errechneter Kv-Wert: ${result.kv.toFixed(2)}\n` +
            `Empfohlene Stufe: ca. ${result.setting}`;
@@ -122,7 +125,7 @@ function formatKvResult(result) {
  * Kv-Wert und Ventil-Voreinstellung fuer den hydraulischen Abgleich
  * Formel: Kv = V̇ / √Δp
  */
-function calcKvValue() {
+export function calcKvValue() {
     runCalculator({
         name: 'calcKvValue',
         resultId: 'res_kv',

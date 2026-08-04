@@ -1,13 +1,16 @@
 // Navigation & Tab-Switching
 // Verwaltung von Tabs und Calculator Kategorien
 
-function switchTab(viewId, btn) {
+import { loadFavorites } from '../modules/favorites-storage.js';
+import { renderProjectList } from '../modules/projects.js';
+
+export function switchTab(viewId, btn) {
     hideAllContainers();
     showContainer(viewId);
     updateActiveButton(btn);
 
     if (viewId === 'material') {
-        window.renderProjectList?.();
+        renderProjectList();
     }
 }
 
@@ -67,7 +70,7 @@ const CALCULATOR_CATEGORIES = {
     'Etagen': 'misc'
 };
 
-function initCalculatorCategories() {
+export function initCalculatorCategories() {
     assignCategoriesToCards();
     renderCategoryButtons(CATEGORY_TABS);
 }
@@ -102,15 +105,18 @@ function renderCategoryButtons(categories) {
 
 function createCategoryButton(cat, isActive) {
     const btn = document.createElement('button');
-    btn.className = 'calc-cat-btn' + (isActive ? ' active' : '');
-
+    btn.className = 'calc-cat-btn';
+    btn.classList.toggle('active', isActive);
     btn.dataset.cat = cat.id;
-    btn.innerHTML = `<span>${cat.name}</span>`;
-    btn.onclick = () => filterByCategory(cat.id, btn);
+    btn.dataset.action = 'filterByCategory';
+
+    const label = document.createElement('span');
+    label.textContent = cat.name;
+    btn.append(label);
     return btn;
 }
 
-function filterByCategory(categoryId, button) {
+export function filterByCategory(categoryId, button) {
     updateActiveCategoryButton(button);
     filterCards(categoryId);
 }
@@ -156,14 +162,7 @@ function filterCards(categoryId) {
 }
 
 function getFavoriteIds() {
-    if (typeof loadFavorites === 'function') {
-        return loadFavorites();
-    }
-    try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES)) || [];
-    } catch {
-        return [];
-    }
+    return loadFavorites();
 }
 
 function createFavoritesHint() {
@@ -187,7 +186,7 @@ function updateEmptyFavoritesHint(show) {
     categories?.parentElement?.insertBefore(createFavoritesHint(), categories.nextSibling);
 }
 
-function applyInitialCategory() {
+export function applyInitialCategory() {
     const favs = getFavoriteIds();
     if (!favs.length) {
         return;
@@ -200,7 +199,7 @@ function applyInitialCategory() {
     filterByCategory('favoriten', btn);
 }
 
-function refreshFavoriteFilter() {
+export function refreshFavoriteFilter() {
     const active = document.querySelector('.calc-cat-btn.active');
     if (active?.dataset.cat === 'favoriten') {filterCards('favoriten');}
 }
@@ -215,7 +214,7 @@ function handleNavKeydown(event, navItems, index) {
     navItems[nextIndex].click();
 }
 
-function setupNavigationKeyboard() {
+export function setupNavigationKeyboard() {
     const navItems = document.querySelectorAll('.nav-item');
 
     navItems.forEach((item, index) => {
@@ -232,17 +231,3 @@ function getNextIndex(key, currentIndex, totalItems) {
     return currentIndex;
 }
 
-function toggleTable(id) {
-    const el = document.getElementById(id);
-    const isHidden = el.style.display === 'none';
-
-    el.style.display = isHidden ? 'block' : 'none';
-    updateAriaExpanded(el, isHidden);
-}
-
-function updateAriaExpanded(el, isExpanded) {
-    const header = el.previousElementSibling;
-    if (header && header.hasAttribute('aria-controls')) {
-        header.setAttribute('aria-expanded', isExpanded.toString());
-    }
-}

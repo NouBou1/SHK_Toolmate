@@ -7,14 +7,17 @@
 
 // ========== HEIZLAST ==========
 
-function readHeizlastInputs() {
+import { runCalculator } from './common.js';
+import { INPUT_LIMITS, WATER_HEAT_CAPACITY, GAS_HEATING_VALUES } from '../core/constants.js';
+
+export function readHeizlastInputs() {
     return {
         area: parseFloat(document.getElementById('hl_flaeche').value),
         wattPerSquareMeter: parseFloat(document.getElementById('hl_typ').value)
     };
 }
 
-function validateHeizlastInputs(inputs) {
+export function validateHeizlastInputs(inputs) {
     if (isNaN(inputs.area) || inputs.area <= 0) {
         return { valid: false, error: 'Bitte gültige Fläche eingeben (> 0)' };
     }
@@ -27,12 +30,12 @@ function validateHeizlastInputs(inputs) {
     return { valid: true };
 }
 
-function calculateHeatLoad(inputs) {
+export function calculateHeatLoad(inputs) {
     const watt = Math.round(inputs.area * inputs.wattPerSquareMeter);
     return { watt, kw: (watt / 1000).toFixed(2) };
 }
 
-function formatHeizlastResult(result) {
+export function formatHeizlastResult(result) {
     return `Bedarf: ca. ${result.watt.toLocaleString('de-DE')} Watt (${result.kw} kW)\n` +
            '\nHinweis: Überschlägswert nach DIN EN 12831';
 }
@@ -42,7 +45,7 @@ function formatHeizlastResult(result) {
  * Formel: P = A × q
  * @see DIN EN 12831
  */
-function calcHeizlast() {
+export function calcHeizlast() {
     runCalculator({
         name: 'calcHeizlast',
         resultId: 'res_heizlast',
@@ -55,7 +58,7 @@ function calcHeizlast() {
 
 // ========== HEIZKÖRPER-LEISTUNG ==========
 
-function readRadiatorInputs() {
+export function readRadiatorInputs() {
     return {
         wattPerMeter: parseFloat(document.getElementById('hk_typ').value),
         height: parseFloat(document.getElementById('hk_height').value),
@@ -63,14 +66,14 @@ function readRadiatorInputs() {
     };
 }
 
-function validateRadiatorInputs(inputs) {
+export function validateRadiatorInputs(inputs) {
     if (isNaN(inputs.lengthMm) || inputs.lengthMm <= 0) {
         return { valid: false, error: 'Bitte gültige Länge eingeben' };
     }
     return { valid: true };
 }
 
-function getRadiatorHeightCorrection(height) {
+export function getRadiatorHeightCorrection(height) {
     const corrections = {
         0.3: 0.55, 0.4: 0.70, 0.5: 0.85,
         0.6: 1.00, 0.9: 1.45
@@ -78,13 +81,13 @@ function getRadiatorHeightCorrection(height) {
     return corrections[height] || 1.0;
 }
 
-function calculateRadiatorPower(inputs) {
+export function calculateRadiatorPower(inputs) {
     const correction = getRadiatorHeightCorrection(inputs.height);
     const powerAt70 = inputs.wattPerMeter * correction * (inputs.lengthMm / 1000);
     return { powerAt70, powerAt55: powerAt70 * 0.5 };
 }
 
-function formatRadiatorResult(result) {
+export function formatRadiatorResult(result) {
     return `Leistung (70/55°C): ca. ${Math.round(result.powerAt70)} Watt\n` +
            `Leistung (55/45°C): ca. ${Math.round(result.powerAt55)} Watt\n` +
            '(Schätzwert für Altbau-Bestand)';
@@ -93,7 +96,7 @@ function formatRadiatorResult(result) {
 /**
  * Heizkoerper-Leistung nach Faustformel (Plattenheizkoerper)
  */
-function calcRadiator() {
+export function calcRadiator() {
     runCalculator({
         name: 'calcRadiator',
         resultId: 'res_hk',
@@ -106,7 +109,7 @@ function calcRadiator() {
 
 // ========== REALE LEISTUNG (Vor-/Ruecklauf) ==========
 
-function readRealPowerInputs() {
+export function readRealPowerInputs() {
     return {
         flowRate: parseFloat(document.getElementById('real_flow').value),
         flowTemp: parseFloat(document.getElementById('real_vl').value),
@@ -114,7 +117,7 @@ function readRealPowerInputs() {
     };
 }
 
-function validateRealPowerInputs(inputs) {
+export function validateRealPowerInputs(inputs) {
     if (isNaN(inputs.flowRate) || inputs.flowRate <= 0) {
         return { valid: false, error: 'Bitte gültigen Durchfluss eingeben' };
     }
@@ -127,13 +130,13 @@ function validateRealPowerInputs(inputs) {
     return { valid: true };
 }
 
-function calculateRealPower(inputs) {
+export function calculateRealPower(inputs) {
     const spread = inputs.flowTemp - inputs.returnTemp;
     const watt = inputs.flowRate * WATER_HEAT_CAPACITY * spread;
     return { spread, watt, kw: watt / 1000 };
 }
 
-function formatRealPowerResult(result) {
+export function formatRealPowerResult(result) {
     return `Spreizung: ${result.spread.toFixed(1)} K\n` +
            `Leistung: ${result.kw.toFixed(2)} kW\n` +
            `(${Math.round(result.watt)} Watt)`;
@@ -143,7 +146,7 @@ function formatRealPowerResult(result) {
  * Tatsaechlich uebertragene Leistung aus Durchfluss und Spreizung
  * Formel: P = V̇ × c × ΔT
  */
-function calcRealPower() {
+export function calcRealPower() {
     runCalculator({
         name: 'calcRealPower',
         resultId: 'res_realpower',
@@ -156,7 +159,7 @@ function calcRealPower() {
 
 // ========== KONDENSAT (Brennwert) ==========
 
-function readCondensateInputs() {
+export function readCondensateInputs() {
     return {
         power: parseFloat(document.getElementById('cond_kw').value),
         litersPerKw: parseFloat(document.getElementById('cond_fuel').value),
@@ -164,7 +167,7 @@ function readCondensateInputs() {
     };
 }
 
-function validateCondensateInputs(inputs) {
+export function validateCondensateInputs(inputs) {
     if (isNaN(inputs.power) || inputs.power <= 0) {
         return { valid: false, error: 'Bitte gültige Leistung eingeben' };
     }
@@ -174,12 +177,12 @@ function validateCondensateInputs(inputs) {
     return { valid: true };
 }
 
-function calculateCondensate(inputs) {
+export function calculateCondensate(inputs) {
     const perHour = inputs.power * inputs.litersPerKw;
     return { perHour, perDay: perHour * inputs.hours };
 }
 
-function formatCondensateResult(result) {
+export function formatCondensateResult(result) {
     return `Kondensat: ca. ${result.perHour.toFixed(2)} Liter/Stunde\n` +
            `Tagesmenge: ca. ${result.perDay.toFixed(1)} Liter\n` +
            '(Bei Vollbrennwertnutzung)';
@@ -188,7 +191,7 @@ function formatCondensateResult(result) {
 /**
  * Anfallende Kondensatmenge eines Brennwertgeraetes
  */
-function calcCondensate() {
+export function calcCondensate() {
     runCalculator({
         name: 'calcCondensate',
         resultId: 'res_cond',
@@ -201,14 +204,14 @@ function calcCondensate() {
 
 // ========== GASZÄHLER (AUSLITERN) ==========
 
-function readGasPowerInputs() {
+export function readGasPowerInputs() {
     return {
         seconds: parseFloat(document.getElementById('gas_sec').value),
         volume: parseFloat(document.getElementById('gas_vol').value)
     };
 }
 
-function validateGasPowerSeconds(seconds) {
+export function validateGasPowerSeconds(seconds) {
     if (isNaN(seconds) || seconds <= 0) {
         return { valid: false, error: 'Bitte gültige Zeit eingeben (> 0 Sekunden)' };
     }
@@ -221,7 +224,7 @@ function validateGasPowerSeconds(seconds) {
     return { valid: true };
 }
 
-function validateGasPowerInputs(inputs) {
+export function validateGasPowerInputs(inputs) {
     const secondsCheck = validateGasPowerSeconds(inputs.seconds);
     if (!secondsCheck.valid) {
         return secondsCheck;
@@ -232,13 +235,13 @@ function validateGasPowerInputs(inputs) {
     return { valid: true };
 }
 
-function calculateGasPower(inputs) {
+export function calculateGasPower(inputs) {
     const heatingValue = GAS_HEATING_VALUES.NATURAL_GAS;
     const flowRate = (inputs.volume * 3600) / inputs.seconds;
     return { flowRate, load: flowRate * heatingValue, heatingValue };
 }
 
-function formatGasPowerResult(result) {
+export function formatGasPowerResult(result) {
     return `Durchsatz: ${result.flowRate.toFixed(2)} m³/h\n` +
            `Feuerungsleistung: ca. ${result.load.toFixed(1)} kW\n` +
            `(bei Hi = ${result.heatingValue} kWh/m³)`;
@@ -248,7 +251,7 @@ function formatGasPowerResult(result) {
  * Feuerungsleistung durch Auslitern am Gaszaehler
  * Formel: P = (V / t) × 3600 × Hi
  */
-function calcGasPower() {
+export function calcGasPower() {
     runCalculator({
         name: 'calcGasPower',
         resultId: 'res_gas',
