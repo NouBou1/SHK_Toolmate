@@ -177,25 +177,30 @@
     box-shadow: 0 2px 8px rgba(119, 176, 255, 0.3);
 }
 
-/* Impressum / Datenschutz am Ende der Kalender-Ansicht */
-.legal-links {
-    margin: 24px 0 8px;
+/* Impressum / Datenschutz - steht unter jeder Ansicht */
+.app-footer {
+    width: 100%;
+    max-width: 600px;
+    margin: 8px auto 0;
+    padding: 16px 20px 4px;
+    border-top: 1px solid var(--border-color);
     text-align: center;
     font-size: 13px;
     color: var(--text-secondary);
 }
 
-.legal-links a {
+.app-footer a {
+    display: inline-block;
+    padding: 8px 6px;
     color: var(--text-secondary);
     text-decoration: underline;
-    padding: 6px 4px;
 }
 
-.legal-links a:hover,
-.legal-links a:focus {
+.app-footer a:hover,
+.app-footer a:focus {
     color: var(--primary);
 }
 
-.legal-links span {
+.app-footer span {
     margin: 0 4px;
 }

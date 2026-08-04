@@ -1,8 +1,8 @@
 
-// Service Worker v20 - aligned with current app assets
+// Service Worker v21 - aligned with current app assets
 // WICHTIG: Diese Liste muss zu den <link>- und <script>-Tags in
 // index.html passen (gleiche Pfade, gleiche ?v=-Nummer).
-const CACHE_NAME = 'shk-mate-v20';
+const CACHE_NAME = 'shk-mate-v21';
 const ASSETS = [
     './',
     './index.html',
@@ -17,7 +17,7 @@ const ASSETS = [
     './css/tables.css?v=33',
     './css/calendar.css?v=33',
     './css/media.css?v=33',
-    './css/inventory.css?v=34',
+    './css/inventory.css?v=35',
 
     // Core
     './js/core/constants.js?v=33',
