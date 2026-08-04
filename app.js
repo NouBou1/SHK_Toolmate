@@ -87,7 +87,7 @@ function unregisterServiceWorker() {
 
 function registerServiceWorkerOnLoad() {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=19')
+        navigator.serviceWorker.register('sw.js?v=20')
             .then(reg => console.log('[OK] Service Worker registriert!', reg))
             .catch(err => console.log('[FEHLER] Service Worker:', err));
     });
