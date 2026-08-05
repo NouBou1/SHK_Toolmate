@@ -40,11 +40,18 @@
   ],
   "screenshots": [
     {
-      "src": "assets/img/Gemini_Generated_Image_2qyqza2qyqza2qyq.png",
-      "sizes": "540x720",
+      "src": "assets/img/screenshot-rechner-mobil.png",
+      "sizes": "364x667",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Startseite"
+      "label": "Rechner-Ansicht mit Kategoriefilter und Schnell-Notiz"
+    },
+    {
+      "src": "assets/img/screenshot-rechner-desktop.png",
+      "sizes": "1261x816",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Rechner-Ansicht im Browser"
     }
   ],
   "prefer_related_applications": false

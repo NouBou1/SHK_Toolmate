@@ -1,5 +1,8 @@
 # SHK-ToolMate
 
+[![CI](https://github.com/NouBou1/SHK_Mate/actions/workflows/ci.yml/badge.svg)](https://github.com/NouBou1/SHK_Mate/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Eine Werkzeugkiste für den SHK-Alltag — 20 Fachrechner, Projektverwaltung und
 Dokumentation in einer App. **Vanilla HTML, CSS und JavaScript**, ohne Framework
 und ohne Build-Schritt. Läuft als installierbare PWA im Browser und über
@@ -7,7 +10,14 @@ und ohne Build-Schritt. Läuft als installierbare PWA im Browser und über
 
 **Live-Demo:** https://shk-mate.n-boussaada.de
 
-![SHK-ToolMate](assets/img/Gemini_Generated_Image_2qyqza2qyqza2qyq.png)
+<p align="center">
+  <img src="assets/img/screenshot-rechner-mobil.png"
+       alt="Rechner-Ansicht auf dem Smartphone: Kategoriefilter, Schnell-Notiz und der Gaszähler-Rechner"
+       width="320">
+</p>
+
+<p align="center"><em>Rechner-Ansicht auf dem Smartphone — Kategoriefilter, Schnell-Notiz,
+Suche und die als Favorit markierten Rechner zuoberst.</em></p>
 
 ---
 
@@ -254,9 +264,9 @@ Vier Regeln, die für jede Änderung gelten:
 Dazu: kein `onclick` im Markup, kein `innerHTML` mit Nutzerdaten, kein Zugriff
 über `window.` zwischen Modulen.
 
-Stand heute: 493 Funktionen, keine über 14 Zeilen, größte Datei 283 Zeilen.
-Geprüft durch `npm run lint` und 94 Tests, beides bei jedem Push über
-GitHub Actions.
+Stand heute: 500 Funktionen, keine über 14 Zeilen, größte Datei 263 Zeilen,
+keine Zyklen im Importgraphen. Geprüft durch `npm run lint` und 94 Tests,
+beides bei jedem Push über GitHub Actions.
 
 ---
 
@@ -304,7 +314,7 @@ GitHub Actions.
 
 ## Lizenz
 
-Der Code steht unter der MIT-Lizenz.
+Der Code steht unter der [MIT-Lizenz](LICENSE).
 
 Die Rechner bilden Faustformeln und Überschlagswerte nach gängigen Regelwerken
 ab (DIN EN 12831, VDI 4708, VDI 2035, DVGW W 551, DIN 1946-6, DIN 18017). Sie
