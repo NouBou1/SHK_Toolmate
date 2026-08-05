@@ -73,6 +73,26 @@ Lagesensoren des Geräts
 
 **Inventar** — Fahrzeugbestand mit Plus/Minus-Zählern und Warnung bei niedrigem Bestand
 
+<table>
+  <tr>
+    <td width="33%"><img src="assets/img/screenshot-ergebnis.png" width="100%"
+        alt="Gaszähler-Rechner mit ausgefüllten Feldern und dem Ergebnis 24,0 kW Feuerungsleistung"></td>
+    <td width="33%"><img src="assets/img/screenshot-warnung.png" width="100%"
+        alt="Zirkulationsrechner mit rot markiertem Ergebnis: 3,90 Liter, Zirkulation nach DVGW W 551 pflichtig"></td>
+    <td width="33%"><img src="assets/img/screenshot-werkzeuge.png" width="100%"
+        alt="Werkzeuge-Ansicht mit digitaler Wasserwaage und Einheiten-Wandler"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Rechnen</em></td>
+    <td align="center"><em>Grenzwert erkannt</em></td>
+    <td align="center"><em>Werkzeuge</em></td>
+  </tr>
+</table>
+
+*Der Rechner nennt nicht nur das Ergebnis, sondern auch die Regel dahinter: 3,90 Liter
+Inhalt überschreiten die 3-Liter-Grenze, damit wird die Zirkulation nach DVGW W 551
+zur Pflicht.*
+
 **Kalender** — Monatsansicht mit Markierung der Tage, an denen Baustellen anstehen
 
 Dazu durchgehend: **offlinefähig** über einen Service Worker, **Schnell-Notiz** mit
