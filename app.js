@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Einstiegspunkt
+// SHK-ToolMate - Einstiegspunkt
 // ==========================================
 // Einziges <script> in index.html. Alles Weitere kommt über
 // ES-Module-Importe herein; die Ladereihenfolge ergibt sich
@@ -129,6 +129,13 @@ const AENDERUNGS_AKTIONEN = {
     processPhoto: element => processPhoto(element)
 };
 
+// Enter im Eingabefeld soll dasselbe tun wie der Knopf daneben.
+const ENTER_AKTIONEN = {
+    addMaterialItem,
+    addInventoryItem,
+    addProject
+};
+
 // ========== START ==========
 
 const FEATURE_INITIALIZERS = [
@@ -144,6 +151,7 @@ function initializeActions() {
     registerActions('click', KLICK_AKTIONEN);
     registerActions('input', EINGABE_AKTIONEN);
     registerActions('change', AENDERUNGS_AKTIONEN);
+    registerActions('keydown', ENTER_AKTIONEN);
     startActionDispatch();
 }
 
@@ -158,7 +166,7 @@ function initializeApp() {
     initializeActions();
     initializeCoreModules();
     FEATURE_INITIALIZERS.forEach(start => start());
-    console.log('[OK] SHK-Mate initialisiert');
+    console.log('[OK] SHK-ToolMate initialisiert');
 }
 
 async function initializeNativeShell() {

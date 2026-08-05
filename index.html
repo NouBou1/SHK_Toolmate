@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <title>SHK ToolMate</title>
+    <title>SHK-ToolMate</title>
     <link rel="icon" type="image/png" href="assets/icons/icon.png">
     <!-- Stylesheets: Reihenfolge ist bindend (Kaskade) -->
     <link rel="stylesheet" href="css/base.css?v=37">
@@ -580,17 +580,12 @@
                         data-action="setProjectView" data-mode="archived">Archiv</button>
                 </div>
 
-                <!-- <div id="new_project_wrapper" style="display:flex; gap:10px; margin-bottom:15px; margin-top:15px;">
-                    <input type="text" id="new_project_name" placeholder="Neue Baustelle...">
-                    <button data-action="addProject">+</button>
-                </div> -->
-
                 <div id="new_project_wrapper" class="new-project-form">
                     <label for="new_project_name">Projekt Name</label>
-                    <input type="text" id="new_project_name" placeholder="Kunde / Baustelle..." aria-label="Name des neuen Projekts">
+                    <input type="text" id="new_project_name" placeholder="Kunde / Baustelle..." aria-label="Name des neuen Projekts" data-enter-action="addProject">
                     <div class="field-row">
                         <label for="new_project_date" class="sr-only">Projektdatum</label>
-                        <input type="date" id="new_project_date" class="u-flex-1" aria-label="Startdatum des Projekts">
+                        <input type="date" id="new_project_date" class="u-flex-1" aria-label="Startdatum des Projekts" data-enter-action="addProject">
                         <button data-action="addProject" style="width:auto; padding:0 20px;" aria-label="Projekt anlegen">Anlegen</button>
                     </div>
                 </div>
@@ -611,9 +606,9 @@
 
             <div class="input-group">
                 <label for="new_item_amount" class="sr-only">Anzahl</label>
-                <input type="number" id="new_item_amount" placeholder="Anz." class="input-small" aria-label="Menge des Materials">
+                <input type="number" id="new_item_amount" placeholder="Anz." class="input-small" aria-label="Menge des Materials" data-enter-action="addMaterialItem">
                 <label for="new_item_name" class="sr-only">Material</label>
-                <input type="text" id="new_item_name" placeholder="Material (z.B. Bogen HT DN50)" aria-label="Materialbeschreibung">
+                <input type="text" id="new_item_name" placeholder="Material (z.B. Bogen HT DN50)" aria-label="Materialbeschreibung" data-enter-action="addMaterialItem">
                 <button data-action="addMaterialItem" class="btn-add" aria-label="Material hinzufügen">+</button>
             </div>
             <ul id="material_list_items" class="material-list">
@@ -668,9 +663,9 @@
 
             <div class="input-group">
                 <label for="inv_amount" class="sr-only">Menge</label>
-                <input type="number" id="inv_amount" placeholder="Menge" class="input-small" aria-label="Lagermenge">
+                <input type="number" id="inv_amount" placeholder="Menge" class="input-small" aria-label="Lagermenge" data-enter-action="addInventoryItem">
                 <label for="inv_name" class="sr-only">Artikel</label>
-                <input type="text" id="inv_name" placeholder="Artikel (z.B. Silikon grau)" aria-label="Artikelbeschreibung">
+                <input type="text" id="inv_name" placeholder="Artikel (z.B. Silikon grau)" aria-label="Artikelbeschreibung" data-enter-action="addInventoryItem">
                 <button data-action="addInventoryItem" class="btn-add" aria-label="Artikel hinzufügen">+</button>
             </div>
 

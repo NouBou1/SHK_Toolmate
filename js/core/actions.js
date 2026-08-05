@@ -7,6 +7,7 @@
 //   <button data-action="calcHeizlast">          Klick
 //   <input  data-input-action="autoSaveNote">    Eingabe
 //   <input  data-change-action="processPhoto">   Auswahl geändert
+//   <input  data-enter-action="addMaterialItem"> Enter-Taste im Feld
 //
 // Zusätzliche Werte reisen als weitere data-Attribute mit und werden
 // dem Handler über das Element übergeben:
@@ -17,13 +18,21 @@
 const ATTRIBUTE = {
     click: 'data-action',
     input: 'data-input-action',
-    change: 'data-change-action'
+    change: 'data-change-action',
+    keydown: 'data-enter-action'
+};
+
+// Manche Ereignisse sollen nur unter einer Bedingung durchgereicht werden.
+// Ohne diesen Filter loeste jeder Tastendruck die Aktion aus.
+const GUARDS = {
+    keydown: event => event.key === 'Enter'
 };
 
 const registries = {
     click: new Map(),
     input: new Map(),
-    change: new Map()
+    change: new Map(),
+    keydown: new Map()
 };
 
 /**
@@ -47,7 +56,12 @@ function findHandler(type, event) {
 }
 
 function createDispatcher(type) {
+    const guard = GUARDS[type];
+
     return event => {
+        if (guard && !guard(event)) {
+            return;
+        }
         const treffer = findHandler(type, event);
         if (treffer) {
             treffer.handler(treffer.element, event);
