@@ -1,204 +1,53 @@
-# SECURITY & DATENSCHUTZ Guide
+# Sicherheit
 
-## Sicherheits-Status der App
+## Wie die App mit Daten umgeht
 
-### Implementiert
+Alle Daten bleiben auf dem Gerät. Projekte, Materiallisten, Fotos, Unterschriften,
+Notizen, Inventar und Favoriten liegen im `localStorage` des Browsers. Es gibt
+keinen Server, kein Benutzerkonto, keine Cookies und kein Tracking.
 
-1. **HTTPS-Ready**
-   - App funktioniert nur über HTTPS
-   - Service Worker benötigt HTTPS
+Fotos werden vor dem Speichern als JPEG mit 70 % Qualität komprimiert
+([photos.js](js/modules/photos.js)). Überschreitet der Projektspeicher 4 MB,
+erscheint eine Warnung in der Konsole; ist der Speicher voll, meldet die App das
+und bittet darum, alte Projekte zu löschen — automatisch aufgeräumt wird **nicht**
+([projects-storage.js](js/modules/projects-storage.js)).
 
-2. **localStorage Sicherheit**
-   - Benutzerdaten lokal gespeichert
-   - Keine Übertragung an Server
-   - Keine Tracking-Cookies
+Die einzige Verbindung nach außen ist **jsPDF**, nachgeladen von jsDelivr und erst
+dann, wenn der PDF-Export benutzt wird. Vorher fragt die App und weist darauf hin,
+dass dabei die IP-Adresse an den Anbieter übertragen wird
+([external-scripts.js](js/core/external-scripts.js)). Wer kein PDF exportiert,
+lädt nichts nach.
 
-3. **Input Validation**
-   - Projekt-Namen: Max 50 Zeichen
-   - Material-Namen: Max 100 Zeichen
-   - Mengen: 1-999
-   - Fotos: Max 5MB, nur Images
+Die vollständige Datenschutzerklärung steht in [privacy.html](privacy.html).
 
-4. **Error Handling**
-   - Graceful Fallbacks
-   - Aussagekräftige Fehlermeldungen
-   - Keine sensitiven Daten in Error-Logs
+## Was die App nicht leistet
 
-5. **Datenspeicher Limits**
-   - localStorage Quota Check
-   - Warnung bei >4MB
-   - Automatische Cleanup-Mechanismen
+- **Der `localStorage` ist unverschlüsselt.** Wer Zugriff auf das entsperrte Gerät
+  hat, kann die Daten lesen. Für Kundendaten auf dem Diensthandy heißt das:
+  Gerätesperre benutzen.
+- **Es gibt keinen Passwortschutz** in der App selbst.
+- **Kein Backup.** Browserdaten löschen entfernt alle Projekte. Der PDF-Export ist
+  derzeit der einzige Weg, etwas aus der App herauszubekommen.
 
-### Zu beachten
+## Keystores gehören nicht ins Repository
 
-1. **localStorage ist unverschlüsselt**
-   ```
-   - Jeder mit Zugriff zum Gerät kann Daten sehen
-   - Empfehlung: Nutzer sollte Gerät sperren
-   ```
+Zum Signieren der Android-App gehören `shk-mate.jks` und
+`shkMate-release.keystore`. Beide sind **Zugangsdaten**: Wer sie samt Passwort hat,
+kann Updates veröffentlichen, die für Google Play echt aussehen.
 
-2. **Fotos werden unkomprimiert gespeichert**
-   ```
-   - Komprimierung auf 70% JPEG-Qualität
-   - Große Fotos können localStorage füllen
-   - Nutzer sollte regelmäßig alte Projekte löschen
-   ```
+- Nicht committen. `.gitignore` sperrt `*.jks`, `*.keystore` und
+  `keystore.properties` — verlass dich trotzdem nicht darauf, sondern prüfe
+  `git status` vor jedem Commit.
+- Passwörter nicht in `build.gradle` oder `capacitor.config.json` schreiben.
+- Ein verlorener Keystore lässt sich nicht ersetzen. Ohne ihn kann die App im Play
+  Store nie wieder aktualisiert werden — nur unter neuer `appId` neu eingereicht.
+  Eine Sicherungskopie außerhalb des Projektordners aufbewahren.
 
-3. **Kein Passwort-Schutz**
-   ```
-   - Optional implementierbar für Pro-Version
-   - Würde User Experience beeinträchtigen
-   ```
+## Eine Lücke melden
 
----
+Per Mail an **n.boussaada92@gmail.com** oder über die
+[GitHub Issues](https://github.com/NouBou1/SHK_Mate/issues). Bei etwas, das
+Nutzerdaten betrifft, bitte zuerst per Mail statt öffentlich.
 
-## Datenschutz (DSGVO)
-
-### Privacy Policy Template
-
-```markdown
-# Datenschutzerklärung
-
-## 1. Verantwortlicher
-[Deine Informationen einfügen]
-
-## 2. Datenerfassung
-Diese App erfasst folgende Daten:
-- **Lokal auf Ihrem Gerät:**
-  - Projekte und Materiallisten
-  - Fotos
-  - Unterschriften
-  - Schnellnotizen
-
-- **Nicht erfasst:**
-  - Persönliche Daten
-  - IP-Adresse
-  - Nutzungsdaten (kein Tracking)
-
-## 3. Datenverarbeitung
-- Alle Daten werden **nur lokal** auf Ihrem Gerät gespeichert
-- Keine Datenübertragung an Server
-- Keine Weitergabe an Dritte
-
-## 4. Datenscjutzrechte (DSGVO)
-Sie haben das Recht auf:
-- Auskunft über Ihre Daten
-- Berichtigung falscher Daten
-- Löschung Ihrer Daten (durch App-Deinstallation)
-- Datenportabilität
-
-## 5. Cookies
-Diese App verwendet **keine Cookies**.
-
-## 6. Externe Dienste
-- **PDF-Export:** jsPDF von jsdelivr (ohne Tracking, nur bei Nutzung des Exports)
-
-## 7. Kontakt
-[Email Adresse]
-```
-
-### Rechtliche Anforderungen
-
-**Für EU (DSGVO):**
-- ✅ Privacy Policy auf Website/App Store
-- ✅ Datenschutzerklärung in Nutzungssprache
-- ✅ Impressum (falls kommerziell)
-- ✅ Benutzerdaten nicht an Dritte weitergeben
-
-**Für Deutschland:**
-- ✅ Impressum erforderlich
-- ✅ AGB erforderlich
-- ✅ Datenschutzerklärung erforderlich
-
----
-
-## Sicherheits-Best-Practices
-
-### 1. Regelmäßige Updates
-```javascript
-// In sw.js oder app.js:
-const APP_VERSION = "1.0.0";
-// Immer erhöhen bei Bugfixes/Security Updates
-```
-
-### 2. Fehler-Logging
-```javascript
-// Fehler protokollieren (ohne sensible Daten)
-window.addEventListener('error', function(event) {
-    console.error('App Error:', event.message);
-    // Optional: An Server senden (mit User-Zustimmung)
-});
-```
-
-### 3. Storage Limits
-```javascript
-// Bereits implementiert:
-// - localStorage Größen-Check
-// - Warnung bei >4MB
-// - Automatischer Cleanup
-```
-
-### 4. Input Sanitization
-```javascript
-// Bereits implementiert:
-// - XSS-Protection durch innerHTML-Einschränkungen
-// - Input Length Limits
-// - Dateityp-Validierung
-```
-
----
-
-## Sicherheits-Checkliste vor Release
-
-```
-Authentifizierung:
-[ ] Keine Authentifizierung erforderlich (lokal)
-[ ] Alternativ: PIN/Biometrie für Pro-Version
-
-Verschlüsselung:
-[ ] HTTPS erzwungen
-[ ] Sensible Daten nicht im localStorage
-[ ] Fotos komprimiert
-
-Datenvalidation:
-[ ] Input-Längen limitiert
-[ ] Dateitypen validiert
-[ ] Dateigröße validiert
-
-Fehlerbehandlung:
-[ ] Keine Stack-Traces für User
-[ ] Aussagekräftige Fehlermeldungen
-[ ] Graceful Degradation
-
-Logging:
-[ ] Keine sensiblen Daten geloggt
-[ ] Logs nicht persistent auf Server
-[ ] Developer Console cleansed
-
-Testing:
-[ ] Penetration Testing durchgeführt
-[ ] XSS-Tests bestanden
-[ ] CSRF-Protection überprüft
-```
-
----
-
-## Incident Response Plan
-
-**Falls Sicherheitslücke gefunden:**
-
-1. **Analyse:** Bug reproduzieren und dokumentieren
-2. **Fix:** Code-Änderung implementieren
-3. **Test:** Sicherheit überprüfen
-4. **Release:** Update schnellstmöglich bereitstellen
-5. **Kommunikation:** User informieren (falls notwendig)
-
----
-
-## Support & Reporting
-
-**Sicherheitslücken melden an:**
-- ✉️ security@shk-toolmate.de
-- Bitte **nicht** öffentlich posten
-- Responsible Disclosure erwünscht
-
+Dies ist ein privates Lern- und Portfolioprojekt ohne Servicezusage — eine feste
+Reaktionszeit kann ich nicht versprechen.
