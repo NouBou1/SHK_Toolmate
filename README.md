@@ -198,9 +198,19 @@ Weitere kommt über Importe herein, die Ladereihenfolge ergibt sich aus dem
 Importgraphen. Kein Bundler, kein Build-Schritt — der Browser löst die
 32 Module selbst auf.
 
-Das Markup enthält **kein** `onclick`. Verhalten hängt an `data-action`;
+Das Markup enthält **kein** `onclick`. Verhalten hängt an einem `data-`Attribut;
 ein Listener je Ereignistyp am `document` verteilt an die in `app.js`
 angemeldeten Aktionen — auch an Elemente, die erst später entstehen.
+
+```html
+<button data-action="calcHeizlast">              <!-- Klick             -->
+<input  data-input-action="autoSaveNote">        <!-- Eingabe            -->
+<input  data-change-action="processPhoto">       <!-- Auswahl geändert   -->
+<input  data-enter-action="addMaterialItem">     <!-- Enter-Taste        -->
+```
+
+Zusätzliche Werte reisen als weitere `data-`Attribute mit
+(`data-index`, `data-delta`), sodass das Markup keine Logik enthält.
 
 ### Der Rechner-Ablauf
 
@@ -264,9 +274,9 @@ Vier Regeln, die für jede Änderung gelten:
 Dazu: kein `onclick` im Markup, kein `innerHTML` mit Nutzerdaten, kein Zugriff
 über `window.` zwischen Modulen.
 
-Stand heute: 500 Funktionen, keine über 14 Zeilen, größte Datei 263 Zeilen,
-keine Zyklen im Importgraphen. Geprüft durch `npm run lint` und 94 Tests,
-beides bei jedem Push über GitHub Actions.
+Stand heute: rund 500 Funktionen, **keine** über 14 Zeilen, größte Datei
+263 Zeilen, keine Zyklen im Importgraphen. Geprüft durch `npm run lint` und
+94 Tests, beides bei jedem Push über GitHub Actions.
 
 ---
 
