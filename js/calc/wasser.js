@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Rechner: Trinkwasser
+// SHK-ToolMate - Rechner: Trinkwasser
 // ==========================================
 // Wasserhaerte, Mischwassermenge, Aufheizzeit
 // und Zirkulationspflicht.

@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Rechner: Behaelter
+// SHK-ToolMate - Rechner: Behaelter
 // ==========================================
 // Membran-Ausdehnungsgefaess (Vordruck) und
 // Fuellstand eines liegenden Tanks.

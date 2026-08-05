@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Rechner: Lueftung
+// SHK-ToolMate - Rechner: Lueftung
 // ==========================================
 // Luftwechsel bzw. Mindestvolumenstrom eines Raumes.
 // ==========================================

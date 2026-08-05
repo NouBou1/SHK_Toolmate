@@ -20,7 +20,7 @@ function createPdfInstance() {
 function addPDFTitle(pdf, yPosition) {
     pdf.setFontSize(20);
     pdf.setTextColor(0, 86, 179);
-    pdf.text('SHK-MATE Rapport', PDF_MARGIN_MM, yPosition);
+    pdf.text('SHK-ToolMate Rapport', PDF_MARGIN_MM, yPosition);
     return yPosition + 12;
 }
 

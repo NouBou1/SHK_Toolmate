@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Rechner: Gemeinsamer Ablauf
+// SHK-ToolMate - Rechner: Gemeinsamer Ablauf
 // ==========================================
 // Jeder Rechner besteht aus vier Schritten mit je einer Aufgabe:
 //

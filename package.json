@@ -1,7 +1,7 @@
 {
   "name": "shk-mate",
   "version": "1.0.0",
-  "description": "SHK-Mate: Professionelle Handwerker-App für Heizung, Sanitär und Klima - Berechnungen, Projektverwaltung und Dokumentation",
+  "description": "SHK-ToolMate: Professionelle Handwerker-App für Heizung, Sanitär und Klima - Berechnungen, Projektverwaltung und Dokumentation",
   "main": "app.js",
   "type": "module",
   "scripts": {

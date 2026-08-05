@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Rechner: Heizung / Waermeerzeuger
+// SHK-ToolMate - Rechner: Heizung / Waermeerzeuger
 // ==========================================
 // Heizlast, Heizkoerper-Leistung, reale Leistung,
 // Kondensatmenge und Feuerungsleistung am Gaszaehler.

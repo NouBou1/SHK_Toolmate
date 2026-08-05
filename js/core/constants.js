@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Konstanten & Konfiguration
+// SHK-ToolMate - Konstanten & Konfiguration
 // ==========================================
 // Zentrale Definition aller Konstanten für Berechnungen
 // und Konfigurationsparameter der App.

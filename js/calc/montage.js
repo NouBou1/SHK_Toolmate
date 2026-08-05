@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Rechner: Montage
+// SHK-ToolMate - Rechner: Montage
 // ==========================================
 // Versatzbogen, Gefaelle, Kernbohrung und
 // Rohrschellen-Abstand.

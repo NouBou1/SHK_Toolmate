@@ -52,7 +52,7 @@ function animateUpdate(el) {
 
 export function shareResult(btn) {
     const box = btn.closest('.result-box');
-    const textToShare = 'SHK-Mate Ergebnis:\n\n' + box.getAttribute('data-result-text');
+    const textToShare = 'SHK-ToolMate Ergebnis:\n\n' + box.getAttribute('data-result-text');
 
     if (navigator.share) {
         shareNatively(textToShare);
@@ -63,7 +63,7 @@ export function shareResult(btn) {
 
 function shareNatively(text) {
     navigator.share({
-        title: 'SHK-Mate Berechnung',
+        title: 'SHK-ToolMate Berechnung',
         text: text
     })
         .then(() => console.log('Erfolgreich geteilt'))

@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Rechner: Hydraulik
+// SHK-ToolMate - Rechner: Hydraulik
 // ==========================================
 // Volumenstrom und Kv-Wert / Ventilstufe
 // fuer den hydraulischen Abgleich.

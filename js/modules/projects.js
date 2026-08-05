@@ -1,5 +1,5 @@
 // ==========================================
-// SHK-MATE - Projektverwaltung
+// SHK-ToolMate - Projektverwaltung
 // ==========================================
 // Baustellen anlegen, oeffnen, archivieren und loeschen.
 // Zustand: project-state.js | Materialliste: materials.js
