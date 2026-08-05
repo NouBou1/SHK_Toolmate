@@ -10,14 +10,22 @@ und ohne Build-Schritt. Läuft als installierbare PWA im Browser und über
 
 **Live-Demo:** https://shk-mate.n-boussaada.de
 
-<p align="center">
-  <img src="assets/img/screenshot-rechner-mobil.png"
-       alt="Rechner-Ansicht auf dem Smartphone: Kategoriefilter, Schnell-Notiz und der Gaszähler-Rechner"
-       width="320">
-</p>
+<table>
+  <tr>
+    <td width="27%" valign="top">
+      <img src="assets/img/screenshot-rechner-mobil.png" width="100%"
+           alt="Rechner-Ansicht auf dem Smartphone: Kategoriefilter, Schnell-Notiz und der Gaszähler-Rechner">
+    </td>
+    <td width="73%" valign="top">
+      <img src="assets/img/screenshot-rechner-desktop.png" width="100%"
+           alt="Dieselbe Rechner-Ansicht im Browser, mit zusätzlichem Favoriten-Reiter">
+    </td>
+  </tr>
+</table>
 
-<p align="center"><em>Rechner-Ansicht auf dem Smartphone — Kategoriefilter, Schnell-Notiz,
-Suche und die als Favorit markierten Rechner zuoberst.</em></p>
+*Dieselbe Ansicht auf dem Smartphone und im Browser — ein Layout, keine getrennte
+Mobilfassung. Oben die Kategoriereiter, darunter Schnell-Notiz, Suche und die
+Rechner; als Favorit markierte stehen zuoberst.*
 
 ---
 
