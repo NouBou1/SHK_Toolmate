@@ -14,7 +14,7 @@
 ```bash
 # Checklist vor Deployment:
 - [ ] Alle kritischen Bugs gefixt
-- [ ] TEST_REPORT.md durchgelesen
+- [ ] npm run lint und npm test laufen durch
 - [ ] manifest.json korrekt
 - [ ] Service Worker (sw.js) aktiv
 - [ ] Icons (192x192, 512x512) vorhanden

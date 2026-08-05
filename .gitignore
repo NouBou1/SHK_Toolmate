@@ -7,9 +7,6 @@ android/.gradle/
 android/build/
 www/
 
-# Lokale Konfiguration
-capacitor.config.json
-
 # System-Dateien
 .DS_Store
 *.log
@@ -29,5 +26,5 @@ logcat*.txt
 .idea/
 .vscode/
 
-# Claude Code Projektkontext (nur lokal)
+
 CLAUDE.md
