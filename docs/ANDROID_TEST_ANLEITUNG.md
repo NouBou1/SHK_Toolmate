@@ -16,7 +16,7 @@ Die App wird nicht mehr von der Android Statusleiste (oben) und Navigationsleist
 - Navigationsleiste Farbe: `#0a0a0a` (dunkel)
 - **Wichtig**: Keine `SYSTEM_UI_FLAG_LAYOUT_*` Flags - das ist der Schlüssel!
 
-### 3. **CSS Updates** (style.css)
+### 3. **CSS Updates** (css/base.css)
 - Body padding wird jetzt vom JavaScript dynamisch gesetzt
 - Navigation hat `position: fixed` mit dynamischem bottom padding
 
@@ -85,9 +85,9 @@ View > Tool Windows > Logcat
 - **Check**: Stelle sicher dass Capacitor richtig installiert ist
 
 ## Wichtige Dateien für Tests:
-- [app.js](app.js#L1-L80) - Safe Area Logik
-- [style.css](style.css#L65-L75) - Body CSS
-- [MainActivity.java](android/app/src/main/java/com/shk/toolmate/MainActivity.java) - Java Config
+- [app.js](../app.js) - Safe Area Logik
+- [css/base.css](../css/base.css) - Body CSS
+- [MainActivity.java](../android/app/src/main/java/com/shk/mate/MainActivity.java) - Java Config
 
 ## Nächste Schritte:
 1. Code ist vorbereitet

@@ -167,8 +167,7 @@ npx cap open android    # in Android Studio öffnen
 
 Details in der [Installationsanleitung](INSTALLATION.md), der
 [Testanleitung](docs/ANDROID_TEST_ANLEITUNG.md) und dem
-[Play-Store-Leitfaden](docs/PLAYSTORE_DEPLOYMENT.md). Zum Umgang mit den
-Keystores siehe [SECURITY.md](SECURITY.md) — sie gehören **nicht** ins Repository.
+[Play-Store-Leitfaden](docs/PLAYSTORE_DEPLOYMENT.md).
 
 ---
 
